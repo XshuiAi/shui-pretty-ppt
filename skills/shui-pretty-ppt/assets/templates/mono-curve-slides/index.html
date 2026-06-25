@@ -1,0 +1,1407 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mono Curve Slides | 墨线白稿</title>
+  <style>
+    :root {
+      --stage: #9b9ba3;
+      --paper: #ffffff;
+      --ink: #101010;
+      --muted: #5f5e63;
+      --line: #d8d5d2;
+      --curve: #716458;
+      --shadow: 0 24px 46px rgba(22, 22, 26, 0.28);
+      --soft-shadow: 0 14px 26px rgba(22, 22, 26, 0.22);
+      --red: #f05a59;
+      --yellow: #f4cc43;
+      --blue: #4d9dd6;
+      --green: #6ea75b;
+      --font-ui: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      --font-hand: "Marker Felt", "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--stage);
+      color: var(--ink);
+      font-family: var(--font-ui);
+      overflow-x: hidden;
+    }
+
+    button,
+    video {
+      font: inherit;
+    }
+
+    .stage {
+      min-height: 100vh;
+      padding: clamp(14px, 2.2vw, 36px);
+    }
+
+    .shell {
+      width: min(1680px, 100%);
+      margin: 0 auto;
+    }
+
+    .topline {
+      display: none;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: clamp(18px, 3vw, 34px);
+      color: white;
+    }
+
+    .issue {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(38px, 6vw, 74px);
+      font-weight: 800;
+      letter-spacing: 0;
+      text-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+    }
+
+    .style-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .style-tag::before {
+      content: "";
+      width: 34px;
+      height: 3px;
+      background: white;
+      display: inline-block;
+    }
+
+    .slide-card {
+      --tilt-x: 0deg;
+      --tilt-y: 0deg;
+      --lift: 0px;
+      position: relative;
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      padding: clamp(20px, 4.4vw, 70px);
+      background: var(--paper);
+      border: 1px solid rgba(24, 24, 24, 0.1);
+      color: var(--ink);
+      box-shadow: var(--soft-shadow);
+      overflow: hidden;
+      transform: perspective(1200px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(var(--lift));
+      transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+      isolation: isolate;
+    }
+
+    .slide-card:hover,
+    .slide-card:focus-within {
+      --lift: -5px;
+      box-shadow: var(--shadow);
+      border-color: rgba(16, 16, 16, 0.18);
+    }
+
+    .hero-slide {
+      --hero-x: 0px;
+      --hero-y: 0px;
+      min-height: calc(100vh - clamp(28px, 4.4vw, 72px));
+      box-shadow: 0 26px 52px rgba(17, 17, 19, 0.34);
+    }
+
+    .hero-slide .script-title,
+    .hero-slide .subtitle,
+    .hero-slide .micro-label,
+    .hero-slide .hand-copy,
+    .hero-slide .slide-badge,
+    .hero-slide .credit {
+      transition: transform 260ms ease;
+    }
+
+    .hero-slide.is-active.line-live .curve-line path,
+    .slide-card.line-live .curve-line path {
+      animation: drawCurve 1600ms ease forwards, livingCurve 5200ms ease-in-out 1800ms infinite;
+    }
+
+    .hero-motion {
+      will-change: transform;
+    }
+
+    .hero-wash {
+      animation: washFloat 5600ms ease-in-out infinite;
+    }
+
+    .hero-wash:nth-of-type(2) {
+      animation-delay: 900ms;
+    }
+
+    .hero-wash:nth-of-type(3) {
+      animation-delay: 1600ms;
+    }
+
+    .hero-controls {
+      position: absolute;
+      right: clamp(22px, 8vw, 130px);
+      bottom: clamp(86px, 13vw, 170px);
+      z-index: 6;
+      display: grid;
+      gap: 14px;
+      width: min(320px, 34%);
+    }
+
+    .hero-point-row {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .hero-point {
+      display: inline-grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--ink);
+      background: rgba(255, 255, 255, 0.82);
+      color: var(--ink);
+      cursor: pointer;
+      font-weight: 900;
+      transition: transform 200ms ease, background 200ms ease, color 200ms ease, box-shadow 200ms ease;
+      animation: pointPulse 2600ms ease-in-out infinite;
+    }
+
+    .hero-point:nth-child(2) {
+      animation-delay: 240ms;
+    }
+
+    .hero-point:nth-child(3) {
+      animation-delay: 480ms;
+    }
+
+    .hero-point:hover,
+    .hero-point.is-active {
+      background: var(--ink);
+      color: var(--paper);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 18px rgba(16, 16, 16, 0.18);
+    }
+
+    .hero-live-note {
+      min-height: 88px;
+      padding: 15px 17px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(16, 16, 16, 0.14);
+      color: var(--muted);
+      font-size: clamp(12px, 1.15vw, 15px);
+      line-height: 1.65;
+      text-align: left;
+      backdrop-filter: blur(8px);
+    }
+
+    .micro-label {
+      position: relative;
+      z-index: 2;
+      color: var(--ink);
+      font-size: clamp(10px, 1.1vw, 13px);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      line-height: 1.35;
+    }
+
+    .micro-copy {
+      position: relative;
+      z-index: 2;
+      color: var(--muted);
+      font-size: clamp(11px, 1.2vw, 15px);
+      line-height: 1.7;
+    }
+
+    .hand-copy {
+      font-family: var(--font-hand);
+      font-size: clamp(12px, 1.4vw, 17px);
+      line-height: 1.45;
+      color: #222;
+    }
+
+    .script-title {
+      position: relative;
+      z-index: 2;
+      max-width: 760px;
+      margin: 0;
+      font-family: var(--font-hand);
+      font-size: clamp(48px, 8vw, 108px);
+      font-weight: 500;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      position: relative;
+      z-index: 2;
+      margin-top: clamp(14px, 2vw, 22px);
+      font-size: clamp(18px, 2.1vw, 30px);
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      line-height: 1.15;
+    }
+
+    .marker-bar {
+      display: inline-block;
+      width: 30px;
+      height: 5px;
+      background: var(--ink);
+      vertical-align: middle;
+    }
+
+    .slide-badge {
+      position: absolute;
+      top: clamp(20px, 4vw, 58px);
+      right: clamp(20px, 5vw, 82px);
+      z-index: 3;
+      display: grid;
+      gap: 12px;
+      justify-items: end;
+      text-align: right;
+    }
+
+    .badge-box {
+      display: inline-flex;
+      padding: 5px 10px;
+      background: var(--ink);
+      color: white;
+      font-size: clamp(18px, 2.4vw, 34px);
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .hero-copy {
+      position: absolute;
+      left: clamp(20px, 5vw, 86px);
+      bottom: clamp(26px, 6vw, 86px);
+      z-index: 3;
+    }
+
+    .credit {
+      position: absolute;
+      left: 49%;
+      bottom: clamp(22px, 3.8vw, 58px);
+      z-index: 3;
+      max-width: 260px;
+      font-family: var(--font-hand);
+      font-size: clamp(12px, 1.4vw, 18px);
+      line-height: 1.35;
+    }
+
+    .curve-line {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .curve-line path {
+      fill: none;
+      stroke: var(--curve);
+      stroke-width: 2.4;
+      stroke-linecap: round;
+      opacity: 0.82;
+      stroke-dasharray: 1500;
+      stroke-dashoffset: 1500;
+    }
+
+    .color-wash {
+      position: absolute;
+      z-index: 1;
+      width: clamp(58px, 9vw, 140px);
+      height: clamp(58px, 9vw, 140px);
+      border-radius: 999px;
+      opacity: 0.64;
+      filter: blur(15px);
+      mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+
+    .wash-red { background: var(--red); }
+    .wash-yellow { background: var(--yellow); }
+    .wash-blue { background: var(--blue); }
+    .wash-green { background: var(--green); }
+
+    .progress {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      height: 4px;
+      margin: 34px 0;
+      background: rgba(255, 255, 255, 0.25);
+      overflow: hidden;
+    }
+
+    .progress span {
+      display: block;
+      width: 0%;
+      height: 100%;
+      background: var(--ink);
+      transition: width 160ms linear;
+    }
+
+    .gallery-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      margin: clamp(38px, 5vw, 70px) 0 22px;
+      color: white;
+    }
+
+    .gallery-head h2 {
+      margin: 0;
+      font-family: var(--font-hand);
+      font-size: clamp(38px, 5vw, 70px);
+      font-weight: 500;
+    }
+
+    .gallery-head p {
+      max-width: 430px;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.78);
+      line-height: 1.7;
+    }
+
+    .slide-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(18px, 2.4vw, 34px);
+    }
+
+    .thumb {
+      padding: clamp(18px, 2.6vw, 34px);
+      cursor: pointer;
+    }
+
+    .thumb .script-title {
+      font-size: clamp(25px, 3.2vw, 46px);
+      max-width: 82%;
+    }
+
+    .thumb .micro-copy {
+      position: absolute;
+      max-width: 42%;
+      right: clamp(18px, 3vw, 36px);
+      top: 27%;
+      font-size: clamp(9px, 0.95vw, 12px);
+    }
+
+    .thumb::after {
+      content: "OPEN SLIDE";
+      position: absolute;
+      right: clamp(18px, 2.6vw, 34px);
+      bottom: clamp(34px, 4vw, 54px);
+      z-index: 4;
+      padding: 5px 8px;
+      background: var(--ink);
+      color: white;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .thumb:hover::after,
+    .thumb:focus-visible::after {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .thumb-footer {
+      position: absolute;
+      left: clamp(18px, 2.6vw, 34px);
+      right: clamp(18px, 2.6vw, 34px);
+      bottom: clamp(14px, 2vw, 26px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .video-slide {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(250px, 0.92fr);
+      gap: clamp(20px, 4vw, 60px);
+      align-items: center;
+      aspect-ratio: auto;
+      min-height: min(720px, calc(100vh - 120px));
+      margin-top: clamp(36px, 6vw, 86px);
+    }
+
+    .video-frame {
+      position: relative;
+      z-index: 3;
+      aspect-ratio: 16 / 9;
+      background: #f4f3f2;
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .video-frame video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .note-stack {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      gap: 18px;
+    }
+
+    .note-line {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .note-number {
+      display: inline-grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      background: var(--ink);
+      color: white;
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .color-bars {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      width: min(420px, 100%);
+      border: 1px solid var(--ink);
+      margin-top: 22px;
+    }
+
+    .color-bars span {
+      min-height: 58px;
+      padding: 10px;
+      font-size: 10px;
+      line-height: 1.25;
+      color: var(--ink);
+      border-right: 1px solid rgba(0, 0, 0, 0.2);
+    }
+
+    .color-bars span:last-child {
+      border-right: 0;
+    }
+
+    .deck-section {
+      margin-top: clamp(34px, 5vw, 80px);
+      min-height: min(720px, calc(100vh - 72px));
+    }
+
+    .deck-section .curve-line path {
+      animation-delay: 120ms;
+    }
+
+    .slide-index {
+      position: absolute;
+      top: clamp(20px, 4vw, 58px);
+      right: clamp(22px, 5vw, 82px);
+      z-index: 4;
+      color: var(--ink);
+      text-align: right;
+      font-size: clamp(10px, 1vw, 13px);
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .slide-index .marker-bar {
+      width: 44px;
+      height: 4px;
+      margin-bottom: 12px;
+    }
+
+    .deck-copy {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      gap: 18px;
+      max-width: 520px;
+    }
+
+    .deck-copy.wide {
+      max-width: 760px;
+    }
+
+    .deck-copy.right {
+      margin-left: auto;
+      padding-top: clamp(54px, 8vw, 118px);
+    }
+
+    .deck-copy.center {
+      min-height: 100%;
+      align-content: center;
+    }
+
+    .slide-points {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      width: min(860px, 100%);
+      margin-top: clamp(28px, 5vw, 70px);
+    }
+
+    .slide-point {
+      border-top: 2px solid var(--ink);
+      padding-top: 14px;
+      color: var(--muted);
+      font-size: clamp(12px, 1.2vw, 15px);
+      line-height: 1.65;
+    }
+
+    .slide-point strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .event-line {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: clamp(32px, 6vw, 96px);
+      border-top: 2px solid var(--line);
+      padding-top: 22px;
+      width: min(860px, 100%);
+    }
+
+    .event-line div {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    .event-line strong {
+      display: block;
+      color: var(--ink);
+      font-size: clamp(18px, 2.2vw, 30px);
+      font-family: var(--font-hand);
+      font-weight: 500;
+    }
+
+    .palette-board {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(280px, 1.1fr);
+      gap: clamp(24px, 4vw, 58px);
+      align-items: center;
+      height: 100%;
+    }
+
+    .palette-board .color-bars {
+      width: 100%;
+      margin-top: 0;
+    }
+
+    .closing-slide {
+      display: grid;
+      align-content: center;
+      justify-items: start;
+      min-height: min(720px, calc(100vh - 72px));
+      margin-top: clamp(34px, 5vw, 80px);
+    }
+
+    .closing-slide .script-title {
+      font-size: clamp(58px, 10vw, 138px);
+      max-width: 880px;
+    }
+
+    .closing-meta {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px 28px;
+      margin-top: clamp(34px, 5vw, 70px);
+      color: var(--muted);
+      font-size: clamp(11px, 1.1vw, 14px);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .closing-meta span {
+      color: var(--ink);
+    }
+
+    .focus-viewer {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: none;
+      place-items: center;
+      padding: clamp(18px, 4vw, 54px);
+      background: rgba(33, 33, 38, 0.72);
+      backdrop-filter: blur(6px);
+    }
+
+    .focus-viewer.is-open {
+      display: grid;
+    }
+
+    .focus-panel {
+      width: min(1080px, 100%);
+      outline: none;
+    }
+
+    .focus-expanded {
+      padding: clamp(26px, 5vw, 72px);
+    }
+
+    .focus-expanded .script-title {
+      max-width: 72%;
+      font-size: clamp(46px, 7.2vw, 104px);
+    }
+
+    .focus-expanded .micro-copy {
+      position: relative;
+      z-index: 3;
+      top: auto;
+      right: auto;
+      max-width: 420px;
+      margin-top: 22px;
+      font-size: clamp(12px, 1.35vw, 17px);
+    }
+
+    .focus-expanded .thumb-footer {
+      left: clamp(26px, 5vw, 72px);
+      right: clamp(26px, 5vw, 72px);
+      bottom: clamp(22px, 4vw, 54px);
+      font-size: 12px;
+    }
+
+    .focus-detail {
+      position: absolute;
+      right: clamp(26px, 5vw, 72px);
+      bottom: clamp(64px, 8vw, 112px);
+      z-index: 5;
+      display: grid;
+      gap: 12px;
+      width: min(340px, 36%);
+    }
+
+    .focus-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .focus-tab {
+      border: 1px solid var(--ink);
+      background: var(--paper);
+      color: var(--ink);
+      min-width: 34px;
+      height: 34px;
+      padding: 0 12px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 900;
+      transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+    }
+
+    .focus-tab:hover,
+    .focus-tab.is-active {
+      background: var(--ink);
+      color: var(--paper);
+      transform: translateY(-2px);
+    }
+
+    .focus-note {
+      min-height: 76px;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: clamp(12px, 1.1vw, 15px);
+      line-height: 1.65;
+      text-align: left;
+    }
+
+    .preview-action {
+      border: 1px solid var(--ink);
+      background: var(--ink);
+      color: var(--paper);
+      min-height: 38px;
+      padding: 0 14px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+    }
+
+    .preview-action:hover {
+      transform: translateY(-2px);
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    .long-copy {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      gap: 10px;
+      max-width: 620px;
+      color: var(--muted);
+      font-size: clamp(12px, 1.18vw, 15px);
+      line-height: 1.75;
+    }
+
+    .copy-columns {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .focus-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 44px;
+      height: 44px;
+      border: 0;
+      background: var(--paper);
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 520ms ease, transform 520ms ease;
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .slide-card.reveal {
+      transform: perspective(1200px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(calc(20px + var(--lift)));
+    }
+
+    .slide-card.reveal.is-visible {
+      transform: perspective(1200px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(var(--lift));
+    }
+
+    @keyframes drawCurve {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes livingCurve {
+      0%, 100% {
+        stroke-dashoffset: 0;
+        opacity: 0.72;
+      }
+      50% {
+        stroke-dashoffset: -48;
+        opacity: 0.98;
+      }
+    }
+
+    @keyframes washFloat {
+      0%, 100% {
+        transform: translate3d(0, 0, 0) scale(1);
+        opacity: 0.42;
+      }
+      50% {
+        transform: translate3d(12px, -14px, 0) scale(1.08);
+        opacity: 0.62;
+      }
+    }
+
+    @keyframes pointPulse {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(16, 16, 16, 0.22);
+      }
+      50% {
+        box-shadow: 0 0 0 8px rgba(16, 16, 16, 0);
+      }
+    }
+
+    @media (max-width: 860px) {
+      .stage {
+        padding: 24px 16px 42px;
+      }
+
+      .topline,
+      .gallery-head {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .slide-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .slide-points,
+      .event-line,
+      .palette-board {
+        grid-template-columns: 1fr;
+      }
+
+      .slide-card {
+        transform: none !important;
+      }
+
+      .hero-slide {
+        min-height: 420px;
+      }
+
+      .hero-controls {
+        left: 22px;
+        right: 22px;
+        bottom: 24px;
+        width: auto;
+      }
+
+      .hero-point-row {
+        justify-content: flex-start;
+      }
+
+      .slide-badge {
+        position: relative;
+        top: auto;
+        right: auto;
+        justify-items: start;
+        text-align: left;
+        margin-bottom: 40px;
+      }
+
+      .hero-copy {
+        left: 22px;
+        right: 22px;
+        bottom: 186px;
+      }
+
+      .deck-section {
+        min-height: auto;
+      }
+
+      .deck-copy.right {
+        margin-left: 0;
+        padding-top: 80px;
+      }
+
+      .credit {
+        display: none;
+      }
+
+      .video-slide {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+
+      .thumb .micro-copy {
+        display: none;
+      }
+
+      .focus-expanded .script-title {
+        max-width: 100%;
+        font-size: clamp(34px, 11vw, 54px);
+      }
+
+      .focus-viewer {
+        align-items: start;
+        overflow-y: auto;
+      }
+
+      .focus-expanded {
+        aspect-ratio: auto;
+        min-height: min(640px, calc(100vh - 52px));
+      }
+
+      .focus-detail {
+        left: 22px;
+        right: 22px;
+        bottom: 62px;
+        width: auto;
+      }
+
+      .focus-tabs {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+
+      .slide-card,
+      .reveal {
+        transform: none !important;
+      }
+
+      .hero-point,
+      .hero-wash {
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <div class="shell">
+      <section class="slide-card hero-slide reveal" data-tilt aria-label="风格首页">
+        <svg class="curve-line" viewBox="0 0 1200 675" aria-hidden="true">
+          <path d="M18 138 C72 40 148 26 184 20 C84 78 42 162 90 191 C147 228 318 186 486 170 C632 156 613 280 611 330 C607 428 734 421 827 398 C928 374 994 394 972 470 C956 526 900 558 916 650" />
+        </svg>
+        <span class="color-wash hero-wash wash-blue" style="left: 52%; top: 24%; width: 92px; height: 92px;"></span>
+        <span class="color-wash hero-wash wash-yellow" style="left: 68%; top: 44%; width: 76px; height: 76px;"></span>
+        <span class="color-wash hero-wash wash-red" style="left: 18%; top: 58%; width: 70px; height: 70px;"></span>
+        <div class="slide-badge hero-motion" data-hero-depth="-0.45">
+          <span class="badge-box">SLIDE</span>
+          <span class="hand-copy">/MNL</span>
+          <span class="micro-copy">Clean and considered<br>HTML presentation page.</span>
+        </div>
+        <div class="micro-label hero-motion" data-hero-depth="0.35">mono curve<br>slides</div>
+        <p class="hand-copy hero-motion" data-hero-depth="0.28" style="margin-top: 28px; max-width: 430px;">A clean presentation language for product updates, lessons, and quiet visual storytelling.</p>
+        <div class="hero-controls hero-motion" data-hero-depth="-0.3" aria-label="首屏互动说明">
+          <div class="hero-point-row">
+            <button class="hero-point is-active" type="button" data-hero-note="0">01</button>
+            <button class="hero-point" type="button" data-hero-note="1">02</button>
+            <button class="hero-point" type="button" data-hero-note="2">03</button>
+          </div>
+          <div class="hero-live-note" aria-live="polite">打开页面就先看到线条绘制、色彩漂浮和可点击说明点，直接建立“这是互动页面”的第一印象。</div>
+        </div>
+        <div class="hero-copy hero-motion" data-hero-depth="0.18">
+          <h1 class="script-title">Curved notes.</h1>
+          <div class="subtitle">CLEAN PRESENTATION<br>TEMPLATE</div>
+        </div>
+        <div class="credit hero-motion" data-hero-depth="-0.2">Created as a reusable web PPT style by Shui Pretty PPT.</div>
+      </section>
+
+      <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+
+      <section class="gallery-head">
+        <h2>Slide gallery.</h2>
+        <p>上方卡片是目录预览。点击任意卡片，会跳到下方对应的一整页幻灯片，而不是只停留在缩略图。</p>
+      </section>
+
+      <section class="slide-grid" aria-label="示例页面卡片">
+        <button class="slide-card thumb reveal" data-tilt data-slide-target="concept-slide" data-focus-title="Create new concept." data-focus-copy="适合用来讲一个功能更新、一次工作流复盘，或者一段视频教程的开场概念。" data-focus-points="一句话先定义这张页面要解决什么问题。|右侧补充背景，不和大标题抢层级。|底部短横作为视觉停顿，让页面不空。">
+          <div class="micro-label">curve<br>passion</div>
+          <h3 class="script-title">Create new concept.</h3>
+          <p class="micro-copy">One clear idea per slide keeps the page calm and easy to follow.</p>
+          <div class="thumb-footer"><span>Created and designed by skill</span><span class="marker-bar"></span></div>
+        </button>
+
+        <button class="slide-card thumb reveal" data-tilt data-slide-target="priority-slide" data-focus-title="Professionals, this priority." data-focus-copy="适合承载重点列表、能力拆解和阶段顺序。彩色光斑只辅助视线，不抢正文。" data-focus-points="彩色光斑可以对应三类信息：问题、动作、结果。|曲线路径引导视线从左上走到核心标题。|适合讲优先级、流程节点和能力拆解。">
+          <svg class="curve-line" viewBox="0 0 480 270" aria-hidden="true">
+            <path d="M24 0 C118 34 52 74 110 98 C188 130 264 74 308 114 C360 162 238 178 202 208 C170 236 205 252 250 266" />
+          </svg>
+          <span class="color-wash wash-blue" style="left: 16%; top: 6%;"></span>
+          <span class="color-wash wash-yellow" style="left: 36%; top: 33%;"></span>
+          <span class="color-wash wash-red" style="left: 22%; top: 61%;"></span>
+          <div class="micro-label" style="margin-left: 52%;">Professionals, this<br>priority.</div>
+          <h3 class="script-title" style="margin-left: 52%; margin-top: 26px;">HTM</h3>
+          <p class="micro-copy">Following after artwork.</p>
+          <div class="thumb-footer"><span>Created and designed by skill</span><span>02</span></div>
+        </button>
+
+        <button class="slide-card thumb reveal" data-tilt data-slide-target="hidden-slide" data-focus-title="Hidden power from inside." data-focus-copy="适合讲一个隐藏能力、一个被忽略的功能，或者一个反差型观点。" data-focus-points="大标题放右侧，制造留白和停顿。|左侧小字用于交代背景或冲突。|右上黑色短横像一个视觉书签，提示重点。">
+          <svg class="curve-line" viewBox="0 0 480 270" aria-hidden="true">
+            <path d="M85 -20 C126 62 26 90 88 122 C158 158 238 116 260 176 C276 220 334 214 452 204" />
+          </svg>
+          <span class="marker-bar" style="position:absolute; right:34px; top:34px;"></span>
+          <h3 class="script-title" style="margin-left: 52%; margin-top: 18px;">Hidden power from inside.</h3>
+          <p class="micro-copy" style="left: 32px; right:auto;">For concise but expressive explainers.</p>
+          <div class="thumb-footer"><span>Created and designed by skill</span><span>03</span></div>
+        </button>
+
+        <button class="slide-card thumb reveal" data-tilt data-slide-target="event-slide" data-focus-title="Early Upcoming. Event." data-focus-copy="适合排课程日程、直播预告、版本节奏、活动安排。" data-focus-points="黑底词块用于强调当前阶段。|底部时间信息可以换成课程、直播或版本节点。|适合把复杂安排拆成一张轻量时间卡。">
+          <svg class="curve-line" viewBox="0 0 480 270" aria-hidden="true">
+            <path d="M330 -14 C282 18 362 42 316 74 C270 108 340 136 428 116" />
+          </svg>
+          <h3 class="script-title">Early<br><span style="background:#111;color:#fff;padding:0 8px;">Upcoming.</span><br>Event.</h3>
+          <p class="micro-copy">Time, theme, and next action can live on one calm slide.</p>
+          <div class="thumb-footer"><span>08:00PM / Saturday</span><span class="marker-bar"></span></div>
+        </button>
+
+        <button class="slide-card thumb reveal" data-tilt data-slide-target="lesson-slide" data-focus-title="Let's learn how to make." data-focus-copy="适合教程型内容：一边强调主题，一边列出步骤、影响和结果。" data-focus-points="粗黑色块可以遮住次要文字，也可以承载章节名。|右侧适合放 01、02、03 这样的学习步骤。|适合做教程页、方法论页和课程切片。">
+          <h3 class="script-title">Let's learn<br>how to make</h3>
+          <span class="marker-bar" style="width:116px;height:22px;margin-top:8px;"></span>
+          <p class="micro-copy">01 Influence behavior<br>02 Ultimately shape culture</p>
+          <div class="thumb-footer"><span>lesson version</span><span>05</span></div>
+        </button>
+
+        <button class="slide-card thumb reveal" data-tilt data-slide-target="palette-slide" data-focus-title="Use color pallate." data-focus-copy="适合做配色解释、设计系统说明，也可以放到页面底部作为风格样张。" data-focus-points="色块只在需要解释系统时出现，不大面积铺满。|每个色块可以对应一个内容角色。|适合作为整页的视觉规范或素材说明。">
+          <h3 class="script-title">Use color<br>pallate.</h3>
+          <div class="color-bars">
+            <span style="background:var(--green);">Moss<br>Green</span>
+            <span style="background:var(--red);">Warm<br>Red</span>
+            <span style="background:var(--yellow);">Yellow<br>Note</span>
+            <span style="background:var(--blue);">Clean<br>Blue</span>
+          </div>
+          <p class="micro-copy">For most pages, color stays limited and intentional.</p>
+          <div class="thumb-footer"><span>clean version</span><span>06</span></div>
+        </button>
+      </section>
+
+      <section class="slide-card deck-section reveal" id="concept-slide" data-tilt aria-label="Create new concept 独立页">
+        <svg class="curve-line" viewBox="0 0 1200 675" aria-hidden="true">
+          <path d="M-10 118 C124 38 198 98 250 152 C325 230 454 146 558 198 C648 242 628 332 735 366 C842 400 984 300 1210 362" />
+        </svg>
+        <div class="slide-index"><span class="marker-bar"></span><br>Slide 01</div>
+        <div class="deck-copy center wide">
+          <div class="micro-label">concept slide</div>
+          <h2 class="script-title">Create new concept.</h2>
+          <p class="micro-copy">适合用来讲一个功能更新、一次工作流复盘，或者一段视频教程的开场概念。每一页只服务一个核心观点，现场讲解时更容易停顿和展开。</p>
+          <div class="slide-points">
+            <div class="slide-point"><strong>Focus</strong>先用一句话定义问题。</div>
+            <div class="slide-point"><strong>Context</strong>补充背景，不和标题抢层级。</div>
+            <div class="slide-point"><strong>Pause</strong>用短横和留白制造停顿。</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide-card deck-section reveal" id="priority-slide" data-tilt aria-label="Professionals priority 独立页">
+        <svg class="curve-line" viewBox="0 0 1200 675" aria-hidden="true">
+          <path d="M55 96 C214 74 164 204 332 198 C476 194 516 64 650 118 C762 164 690 306 816 326 C948 348 998 230 1168 258" />
+        </svg>
+        <span class="color-wash wash-blue" style="left: 14%; top: 16%;"></span>
+        <span class="color-wash wash-yellow" style="left: 28%; top: 48%;"></span>
+        <span class="color-wash wash-red" style="left: 17%; top: 66%;"></span>
+        <div class="slide-index"><span class="marker-bar"></span><br>Slide 02</div>
+        <div class="deck-copy right">
+          <div class="micro-label">focused slide</div>
+          <h2 class="script-title">Professionals,<br>this priority.</h2>
+          <p class="micro-copy">适合承载重点列表、能力拆解和阶段顺序。彩色光斑可以对应三类信息：问题、动作、结果，负责辅助视线，不抢正文。</p>
+        </div>
+        <div class="slide-points">
+          <div class="slide-point"><strong>Problem</strong>把复杂问题先拆成一组可讨论对象。</div>
+          <div class="slide-point"><strong>Action</strong>用中间动线引导观众看见处理过程。</div>
+          <div class="slide-point"><strong>Result</strong>右侧大标题收束结论，适合领导快速判断。</div>
+        </div>
+      </section>
+
+      <section class="slide-card deck-section reveal" id="hidden-slide" data-tilt aria-label="Hidden power 独立页">
+        <svg class="curve-line" viewBox="0 0 1200 675" aria-hidden="true">
+          <path d="M150 -20 C260 104 82 154 194 230 C318 314 482 170 580 304 C666 422 838 334 1150 388" />
+        </svg>
+        <div class="slide-index"><span class="marker-bar"></span><br>Slide 03</div>
+        <div class="deck-copy right">
+          <div class="micro-label">quiet discovery</div>
+          <h2 class="script-title">Hidden power<br>from inside.</h2>
+          <p class="micro-copy">适合讲一个隐藏能力、一个被忽略的功能，或者一个反差型观点。页面左侧留出背景，右侧集中给出判断。</p>
+        </div>
+        <div class="slide-points">
+          <div class="slide-point"><strong>Before</strong>用户原本看不到这个能力。</div>
+          <div class="slide-point"><strong>Reveal</strong>用一个页面展示它被发现的路径。</div>
+          <div class="slide-point"><strong>After</strong>结论落在更清晰的行动建议上。</div>
+        </div>
+      </section>
+
+      <section class="slide-card deck-section reveal" id="event-slide" data-tilt aria-label="Early upcoming event 独立页">
+        <svg class="curve-line" viewBox="0 0 1200 675" aria-hidden="true">
+          <path d="M820 -30 C702 60 930 110 760 202 C628 274 740 352 1060 312" />
+        </svg>
+        <div class="slide-index"><span class="marker-bar"></span><br>Slide 04</div>
+        <div class="deck-copy">
+          <div class="micro-label">schedule slide</div>
+          <h2 class="script-title">Early<br><span style="background:#111;color:#fff;padding:0 10px;">Upcoming.</span><br>Event.</h2>
+          <p class="micro-copy">适合排课程日程、直播预告、版本节奏、活动安排。每个节点可以替换成时间、主题和下一步动作。</p>
+        </div>
+        <div class="event-line">
+          <div><strong>08:00PM</strong>主题开场与背景说明。</div>
+          <div><strong>08:20PM</strong>核心内容、案例或工具演示。</div>
+          <div><strong>08:45PM</strong>总结下一步，留出问答空间。</div>
+        </div>
+      </section>
+
+      <section class="slide-card deck-section reveal" id="lesson-slide" data-tilt aria-label="Let's learn 独立页">
+        <div class="slide-index"><span class="marker-bar"></span><br>Slide 05</div>
+        <div class="deck-copy wide">
+          <div class="micro-label">lesson structure</div>
+          <h2 class="script-title">Let's learn<br>how to make</h2>
+          <span class="marker-bar" style="width: 168px; height: 26px;"></span>
+          <p class="micro-copy">适合教程型内容：一边强调主题，一边列出步骤、影响和结果。右侧的 01 / 02 / 03 可以替换成真实课程模块。</p>
+        </div>
+        <div class="slide-points" style="margin-left:auto;">
+          <div class="slide-point"><strong>01</strong>先定义目标和完成标准。</div>
+          <div class="slide-point"><strong>02</strong>拆出操作步骤和工具路径。</div>
+          <div class="slide-point"><strong>03</strong>展示结果，给出复用方法。</div>
+        </div>
+      </section>
+
+      <section class="slide-card deck-section reveal" id="palette-slide" data-tilt aria-label="Color palette 独立页">
+        <div class="slide-index"><span class="marker-bar"></span><br>Slide 06</div>
+        <div class="palette-board">
+          <div class="deck-copy">
+            <div class="micro-label">visual system</div>
+            <h2 class="script-title">Use color<br>pallate.</h2>
+            <p class="micro-copy">适合做配色解释、设计系统说明，也可以放到页面底部作为风格样张。色彩只在需要解释系统时出现，不大面积铺满。</p>
+          </div>
+          <div>
+            <div class="color-bars">
+              <span style="background:var(--green);">Moss<br>Green</span>
+              <span style="background:var(--red);">Warm<br>Red</span>
+              <span style="background:var(--yellow);">Yellow<br>Note</span>
+              <span style="background:var(--blue);">Clean<br>Blue</span>
+            </div>
+            <div class="slide-points" style="grid-template-columns: 1fr; margin-top: 24px;">
+              <div class="slide-point"><strong>Rule</strong>颜色只用于强调，不替代内容层级。</div>
+              <div class="slide-point"><strong>Use</strong>每个色块可以对应一个内容角色。</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide-card video-slide reveal" data-tilt aria-label="视频承载示例">
+        <svg class="curve-line" viewBox="0 0 1200 675" aria-hidden="true">
+          <path d="M-12 505 C128 420 86 305 212 294 C346 282 312 443 458 426 C604 410 615 284 776 306 C936 328 978 222 1208 168" />
+        </svg>
+        <div class="video-frame">
+          <video controls preload="metadata" src="assets/codex-may-update-sherry.mp4" aria-label="Codex May update video"></video>
+        </div>
+        <div class="note-stack">
+          <div class="micro-label">video lesson / product update</div>
+          <h2 class="script-title" style="font-size: clamp(42px, 6vw, 86px);">Build interface.</h2>
+          <div class="note-line">
+            <span class="note-number">01</span>
+            <p class="micro-copy">左侧承载视频或动图，右侧拆解本页要讲的三个核心点。</p>
+          </div>
+          <div class="note-line">
+            <span class="note-number">02</span>
+            <p class="micro-copy">适合发布给朋友、客户或学员：不用做成 PPT，也能保留演示稿的干净感。</p>
+          </div>
+          <div class="note-line">
+            <span class="note-number">03</span>
+            <p class="micro-copy">曲线和短横负责“设计感”，正文依然清楚、克制、可读。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide-card closing-slide reveal" data-tilt aria-label="结尾页">
+        <svg class="curve-line" viewBox="0 0 1200 675" aria-hidden="true">
+          <path d="M-40 502 C152 420 210 574 360 490 C510 406 570 210 738 248 C884 282 874 458 1050 396 C1124 370 1168 318 1240 348" />
+        </svg>
+        <span class="color-wash wash-blue" style="left: 70%; top: 18%; width: 90px; height: 90px;"></span>
+        <span class="color-wash wash-yellow" style="left: 44%; top: 66%; width: 78px; height: 78px;"></span>
+        <div class="slide-index"><span class="marker-bar"></span><br>Closing</div>
+        <div class="micro-label">mono curve slides / final page</div>
+        <h2 class="script-title">Keep exploring.</h2>
+        <p class="micro-copy" style="max-width: 520px; margin-top: 22px;">一套适合课程、产品更新、案例复盘和轻量演示的 HTML 幻灯片风格。前面每张卡片都可以扩展成独立页面，最后用结尾页收束。</p>
+        <div class="closing-meta">
+          <div>Style: <span>Mono Curve Slides</span></div>
+          <div>Use: <span>HTML Presentation</span></div>
+          <div>Status: <span>Reusable Template</span></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="focus-viewer" id="focusViewer" aria-hidden="true">
+    <button class="focus-close" type="button" aria-label="关闭">×</button>
+    <div class="focus-panel slide-card focus-expanded" tabindex="-1"></div>
+  </div>
+
+  <script>
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible', 'line-live');
+        } else {
+          entry.target.classList.remove('line-live');
+        }
+      });
+    }, { threshold: 0.18 });
+
+    document.querySelectorAll('.reveal').forEach((item) => revealObserver.observe(item));
+
+    const canMotion = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (canMotion && window.matchMedia('(pointer: fine)').matches) {
+      document.querySelectorAll('[data-tilt]').forEach((card) => {
+        card.addEventListener('pointermove', (event) => {
+          const rect = card.getBoundingClientRect();
+          const x = (event.clientX - rect.left) / rect.width - 0.5;
+          const y = (event.clientY - rect.top) / rect.height - 0.5;
+          card.style.setProperty('--tilt-y', `${x * 2.2}deg`);
+          card.style.setProperty('--tilt-x', `${y * -2.2}deg`);
+        });
+        card.addEventListener('pointerleave', () => {
+          card.style.setProperty('--tilt-x', '0deg');
+          card.style.setProperty('--tilt-y', '0deg');
+        });
+      });
+
+      const heroSlide = document.querySelector('.hero-slide');
+      const heroMotionItems = document.querySelectorAll('[data-hero-depth]');
+      if (heroSlide) {
+        heroSlide.classList.add('is-active', 'line-live');
+        heroSlide.addEventListener('pointermove', (event) => {
+          const rect = heroSlide.getBoundingClientRect();
+          const x = ((event.clientX - rect.left) / rect.width - 0.5) * 18;
+          const y = ((event.clientY - rect.top) / rect.height - 0.5) * 18;
+          heroMotionItems.forEach((item) => {
+            const depth = Number(item.dataset.heroDepth || 0);
+            item.style.transform = `translate3d(${(x * depth).toFixed(2)}px, ${(y * depth).toFixed(2)}px, 0)`;
+          });
+        });
+        heroSlide.addEventListener('pointerleave', () => {
+          heroMotionItems.forEach((item) => {
+            item.style.transform = 'translate3d(0, 0, 0)';
+          });
+        });
+      }
+    }
+
+    const heroNotes = [
+      '打开页面就先看到线条绘制、色彩漂浮和可点击说明点，直接建立“这是互动页面”的第一印象。',
+      '鼠标经过首屏时，标题、角标和说明区会有轻微位移，像纸面被轻轻推动。',
+      '01 / 02 / 03 是页面内置的信息节点，适合放章节解释、课程重点或产品亮点。'
+    ];
+    const heroNote = document.querySelector('.hero-live-note');
+    document.querySelectorAll('.hero-point').forEach((button) => {
+      button.addEventListener('click', () => {
+        const index = Number(button.dataset.heroNote || 0);
+        document.querySelectorAll('.hero-point').forEach((item) => item.classList.toggle('is-active', item === button));
+        if (heroNote) heroNote.textContent = heroNotes[index] || heroNotes[0];
+      });
+    });
+
+    const progressBar = document.getElementById('progressBar');
+    const updateProgress = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? (window.scrollY / max) * 100 : 0;
+      progressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+    };
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+
+    const viewer = document.getElementById('focusViewer');
+    const focusPanel = viewer.querySelector('.focus-panel');
+    const closeButton = viewer.querySelector('.focus-close');
+
+    const openPreview = (button) => {
+      const points = (button.dataset.focusPoints || button.dataset.focusCopy || '')
+        .split('|')
+        .map((point) => point.trim())
+        .filter(Boolean);
+      const detailButtons = points.map((_, index) => `<button class="focus-tab${index === 0 ? ' is-active' : ''}" type="button" data-point="${index}">0${index + 1}</button>`).join('');
+      const targetId = button.dataset.slideTarget || '';
+      focusPanel.dataset.previewTarget = targetId;
+      focusPanel.innerHTML = `${button.innerHTML}
+        <div class="focus-detail" aria-label="展开说明">
+          <div class="focus-tabs">${detailButtons}</div>
+          <div class="focus-note" aria-live="polite">${points[0] || button.dataset.focusCopy || ''}</div>
+          ${targetId ? '<button class="preview-action" type="button">进入完整页</button>' : ''}
+        </div>`;
+      viewer.classList.add('is-open');
+      viewer.setAttribute('aria-hidden', 'false');
+      focusPanel.focus();
+      focusPanel.querySelectorAll('.focus-tab').forEach((tabButton) => {
+        tabButton.addEventListener('click', (event) => {
+          event.stopPropagation();
+          const index = Number(tabButton.dataset.point);
+          focusPanel.querySelectorAll('.focus-tab').forEach((item) => item.classList.toggle('is-active', item === tabButton));
+          focusPanel.querySelector('.focus-note').textContent = points[index] || '';
+        });
+      });
+      const action = focusPanel.querySelector('.preview-action');
+      if (action) {
+        action.addEventListener('click', (event) => {
+          event.stopPropagation();
+          jumpToPreviewTarget();
+        });
+      }
+    };
+
+    const jumpToPreviewTarget = () => {
+      const targetId = focusPanel.dataset.previewTarget;
+      const target = targetId ? document.getElementById(targetId) : null;
+      if (!target) return;
+      closeViewer();
+      window.setTimeout(() => {
+        target.scrollIntoView({ behavior: canMotion ? 'smooth' : 'auto', block: 'center' });
+      }, 120);
+    };
+
+    document.querySelectorAll('[data-slide-target]').forEach((button) => {
+      button.addEventListener('click', () => {
+        openPreview(button);
+      });
+    });
+
+    document.querySelectorAll('[data-focus-title]').forEach((button) => {
+      button.addEventListener('click', () => {
+        if (button.dataset.slideTarget) return;
+        openPreview(button);
+      });
+    });
+
+    const closeViewer = () => {
+      viewer.classList.remove('is-open');
+      viewer.setAttribute('aria-hidden', 'true');
+    };
+    closeButton.addEventListener('click', closeViewer);
+    focusPanel.addEventListener('click', (event) => {
+      if (event.target.closest('.focus-tab') || event.target.closest('.preview-action')) return;
+      if (focusPanel.dataset.previewTarget) jumpToPreviewTarget();
+    });
+    viewer.addEventListener('click', (event) => {
+      if (event.target === viewer) closeViewer();
+    });
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeViewer();
+    });
+  </script>
+</body>
+</html>

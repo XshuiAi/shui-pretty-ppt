@@ -1,0 +1,1115 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>One Dot Cinnabar | 一点丹红</title>
+  <style>
+    :root {
+      --stage: #e7dfdc;
+      --paper: #fbfaf7;
+      --paper-2: #f4f1ed;
+      --ink: #222222;
+      --muted: #6f6b68;
+      --faint: #d8d4d0;
+      --line: #e5dfda;
+      --red: #d8242f;
+      --red-deep: #b71924;
+      --graphite: #3e3e3e;
+      --shadow: 0 22px 44px rgba(38, 34, 32, 0.26);
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--stage);
+      color: var(--ink);
+      font-family: var(--font);
+      overflow-x: hidden;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .deck-shell {
+      min-height: 100vh;
+      padding: clamp(18px, 4vw, 54px);
+    }
+
+    .deck-frame {
+      width: min(1240px, 100%);
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 10px 0 18px;
+      background: linear-gradient(180deg, rgba(231, 223, 220, 0.96), rgba(231, 223, 220, 0));
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .progress-track {
+      position: relative;
+      flex: 1;
+      height: 2px;
+      background: rgba(34, 34, 34, 0.14);
+      overflow: hidden;
+    }
+
+    .progress-track span {
+      display: block;
+      width: 0%;
+      height: 100%;
+      background: var(--red);
+      transition: width 220ms ease;
+    }
+
+    .jump-select {
+      border: 1px solid rgba(34, 34, 34, 0.16);
+      background: rgba(255, 255, 255, 0.62);
+      color: var(--ink);
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .report-slide {
+      position: relative;
+      display: grid;
+      width: 100%;
+      min-height: min(720px, calc(100vh - 96px));
+      aspect-ratio: 16 / 9;
+      margin: 0 0 clamp(28px, 5vw, 70px);
+      padding: clamp(34px, 5.6vw, 76px);
+      background:
+        radial-gradient(circle at 20% 18%, rgba(0, 0, 0, 0.028), transparent 1px),
+        radial-gradient(circle at 78% 54%, rgba(0, 0, 0, 0.022), transparent 1px),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.62)),
+        var(--paper);
+      background-size: 6px 6px, 9px 9px, auto, auto;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(42, 37, 34, 0.08);
+      overflow: hidden;
+      scroll-margin-top: 84px;
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 520ms ease, transform 520ms ease;
+    }
+
+    .report-slide.is-active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .report-slide::after {
+      content: "";
+      position: absolute;
+      top: clamp(34px, 5.6vw, 76px);
+      right: clamp(34px, 5.6vw, 76px);
+      width: 2px;
+      height: 0;
+      background: rgba(216, 36, 47, 0.42);
+      transition: height 680ms ease 160ms;
+    }
+
+    .report-slide.is-active::after {
+      height: 58%;
+    }
+
+    .page-label {
+      position: absolute;
+      top: clamp(26px, 4vw, 56px);
+      right: clamp(42px, 6vw, 88px);
+      z-index: 3;
+      color: #87827e;
+      text-align: right;
+      font-size: clamp(10px, 1vw, 13px);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      line-height: 1.3;
+      text-transform: uppercase;
+    }
+
+    .brand {
+      position: relative;
+      z-index: 2;
+      align-self: start;
+      color: var(--red);
+      font-size: clamp(15px, 1.8vw, 25px);
+      font-weight: 900;
+      letter-spacing: 0.01em;
+    }
+
+    .brand small {
+      display: block;
+      margin-top: 4px;
+      color: var(--ink);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .hero-title {
+      position: relative;
+      z-index: 2;
+      align-self: center;
+      max-width: 780px;
+      margin-top: 12px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      color: var(--red);
+      font-size: clamp(44px, 7vw, 86px);
+      line-height: 0.98;
+      letter-spacing: 0.015em;
+      font-weight: 900;
+    }
+
+    .subtitle {
+      margin-top: 20px;
+      color: var(--ink);
+      font-size: clamp(20px, 2.8vw, 34px);
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .section-heading {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: var(--red);
+      font-size: clamp(26px, 3.8vw, 48px);
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .section-dot {
+      flex: 0 0 auto;
+      width: clamp(14px, 1.5vw, 22px);
+      height: clamp(14px, 1.5vw, 22px);
+      border-radius: 999px;
+      background: var(--red);
+    }
+
+    .deck-meta {
+      position: relative;
+      z-index: 2;
+      align-self: end;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px 42px;
+      color: var(--ink);
+      font-size: clamp(12px, 1.1vw, 15px);
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .deck-meta span {
+      color: var(--muted);
+      font-weight: 500;
+      text-transform: none;
+    }
+
+    .presenter-control {
+      position: fixed;
+      right: clamp(18px, 3vw, 34px);
+      bottom: clamp(18px, 3vw, 34px);
+      z-index: 80;
+      display: grid;
+      gap: 10px;
+      justify-items: end;
+    }
+
+    .presenter-toggle {
+      width: 48px;
+      height: 48px;
+      border: 1px solid rgba(34, 34, 34, 0.18);
+      background: rgba(255, 255, 255, 0.86);
+      color: var(--red);
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 900;
+      box-shadow: 0 12px 24px rgba(38, 34, 32, 0.14);
+      transition: transform 180ms ease, background 180ms ease;
+    }
+
+    .presenter-toggle:hover,
+    .presenter-toggle[aria-expanded="true"] {
+      transform: translateY(-3px);
+      background: white;
+    }
+
+    .jump-panel {
+      display: none;
+      width: min(430px, 42%);
+      padding: 22px;
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 18px 34px rgba(38, 34, 32, 0.18);
+    }
+
+    .jump-panel.is-open {
+      display: block;
+    }
+
+    .jump-panel h3 {
+      color: var(--ink);
+      font-size: clamp(17px, 1.6vw, 24px);
+      font-weight: 900;
+    }
+
+    .jump-panel p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .jump-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .jump-chip {
+      border: 1px solid rgba(216, 36, 47, 0.32);
+      background: white;
+      color: var(--red);
+      padding: 9px 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 900;
+      transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+    }
+
+    .jump-chip:hover,
+    .jump-chip.is-active {
+      background: var(--red);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .red-dot-large {
+      width: 30px;
+      height: 30px;
+      margin: 28px 0;
+      border-radius: 999px;
+      background: var(--red);
+    }
+
+    .content-nav {
+      align-self: center;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(20px, 4vw, 60px);
+      width: min(920px, 100%);
+    }
+
+    .nav-card {
+      border: 0;
+      background: transparent;
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .nav-card span {
+      display: block;
+      color: var(--red);
+      font-weight: 900;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: transform 180ms ease;
+    }
+
+    .nav-card strong {
+      display: block;
+      margin-top: 8px;
+      color: var(--red);
+      font-size: clamp(17px, 1.7vw, 24px);
+      line-height: 1.2;
+    }
+
+    .nav-card small {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .nav-card:hover span,
+    .nav-card.is-active span {
+      transform: translateX(8px);
+    }
+
+    .chapter-layout {
+      display: grid;
+      grid-template-columns: 0.55fr 1fr;
+      gap: clamp(28px, 5vw, 86px);
+      align-items: center;
+    }
+
+    .chapter-number {
+      color: rgba(34, 34, 34, 0.12);
+      font-size: clamp(86px, 14vw, 184px);
+      font-weight: 900;
+      line-height: 0.8;
+    }
+
+    .red-rule {
+      width: 100%;
+      height: 2px;
+      margin: 22px 0;
+      background: linear-gradient(90deg, var(--red), rgba(216, 36, 47, 0));
+      transform-origin: left;
+      transform: scaleX(0);
+      transition: transform 700ms ease 140ms;
+    }
+
+    .report-slide.is-active .red-rule {
+      transform: scaleX(1);
+    }
+
+    .body-copy {
+      color: var(--muted);
+      font-size: clamp(14px, 1.35vw, 18px);
+      line-height: 1.85;
+    }
+
+    .layout-two {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+      gap: clamp(30px, 5vw, 76px);
+      align-items: center;
+    }
+
+    .media-frame {
+      position: relative;
+      min-height: 360px;
+      background:
+        linear-gradient(135deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.01)),
+        repeating-linear-gradient(45deg, #d9d6d2 0 1px, #ece8e4 1px 10px);
+      filter: grayscale(1);
+      overflow: hidden;
+    }
+
+    .media-frame::before {
+      content: "IMAGE / VIDEO / CHART";
+      position: absolute;
+      left: 22px;
+      bottom: 18px;
+      color: rgba(34, 34, 34, 0.56);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+    }
+
+    .red-panel {
+      position: absolute;
+      left: -34px;
+      top: 36%;
+      width: min(300px, 70%);
+      padding: 28px;
+      background: rgba(216, 36, 47, 0.88);
+      color: white;
+    }
+
+    .number-list {
+      display: grid;
+      gap: clamp(24px, 4vw, 48px);
+    }
+
+    .number-item {
+      display: grid;
+      grid-template-columns: 92px minmax(0, 1fr);
+      gap: 26px;
+      align-items: start;
+    }
+
+    .number-item b {
+      color: var(--red);
+      font-size: clamp(42px, 6vw, 74px);
+      line-height: 0.9;
+      font-weight: 500;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+      align-self: center;
+    }
+
+    .metric-card {
+      padding: 28px;
+      background: rgba(255, 255, 255, 0.58);
+      border: 1px solid var(--line);
+    }
+
+    .metric-card strong {
+      display: block;
+      color: var(--red);
+      font-size: clamp(36px, 5vw, 68px);
+      line-height: 1;
+    }
+
+    .metric-card span {
+      display: block;
+      margin-top: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .bar-chart {
+      align-self: center;
+      display: grid;
+      gap: 22px;
+      padding-right: clamp(0px, 4vw, 70px);
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 130px minmax(0, 1fr) 44px;
+      gap: 16px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .bar-track {
+      height: 20px;
+      background: rgba(62, 62, 62, 0.16);
+      overflow: hidden;
+    }
+
+    .bar-track span {
+      display: block;
+      width: 0%;
+      height: 100%;
+      background: var(--red);
+      transition: width 900ms ease;
+    }
+
+    .report-slide.is-active .bar-track span {
+      width: var(--value);
+    }
+
+    .timeline {
+      align-self: center;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0;
+      border-top: 2px solid var(--faint);
+      padding-top: 32px;
+    }
+
+    .time-node {
+      position: relative;
+      padding-right: 22px;
+    }
+
+    button.time-node {
+      border: 0;
+      background: transparent;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .time-node::before {
+      content: "";
+      position: absolute;
+      top: -41px;
+      left: 0;
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      background: var(--red);
+      box-shadow: 0 0 0 8px rgba(216, 36, 47, 0.08);
+    }
+
+    .time-node strong {
+      display: block;
+      color: var(--red);
+      font-size: clamp(17px, 2vw, 28px);
+      text-transform: uppercase;
+    }
+
+    .time-node p {
+      margin-top: 10px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 13px;
+    }
+
+    .time-node em {
+      display: inline-flex;
+      margin-top: 12px;
+      color: var(--red);
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 900;
+    }
+
+    .time-node:hover strong,
+    .time-node.is-selected strong {
+      text-decoration: underline;
+      text-decoration-color: var(--red);
+      text-underline-offset: 6px;
+    }
+
+    .inline-node-note {
+      align-self: end;
+      max-width: 660px;
+      min-height: 82px;
+      margin-top: 34px;
+      padding: 16px 18px;
+      border-left: 3px solid var(--red);
+      background: rgba(216, 36, 47, 0.06);
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .split-guide {
+      align-self: end;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 30px;
+    }
+
+    .split-guide div {
+      padding: 16px 18px;
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px solid var(--line);
+    }
+
+    .split-guide strong {
+      display: block;
+      color: var(--red);
+      margin-bottom: 8px;
+    }
+
+    .detail-columns {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: clamp(26px, 5vw, 72px);
+      align-items: center;
+    }
+
+    .detail-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .detail-list li {
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .evidence-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 22px;
+      border: 1px solid rgba(216, 36, 47, 0.34);
+      background: transparent;
+      color: var(--red);
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .evidence-panel {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 280ms ease;
+    }
+
+    .evidence-panel.is-open {
+      grid-template-rows: 1fr;
+    }
+
+    .evidence-inner {
+      overflow: hidden;
+    }
+
+    .evidence-inner p {
+      margin-top: 14px;
+      padding: 16px 18px;
+      border-left: 3px solid var(--red);
+      background: rgba(216, 36, 47, 0.06);
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .next-button {
+      position: absolute;
+      right: clamp(34px, 5.6vw, 76px);
+      bottom: clamp(28px, 4vw, 56px);
+      z-index: 5;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border: 1px solid rgba(34, 34, 34, 0.18);
+      background: rgba(255, 255, 255, 0.74);
+      color: var(--red);
+      cursor: pointer;
+      font-size: 20px;
+      transition: transform 180ms ease, background 180ms ease;
+    }
+
+    .next-button:hover {
+      transform: translateY(-3px);
+      background: white;
+    }
+
+    .closing {
+      align-content: center;
+      justify-items: start;
+    }
+
+    .closing h2 {
+      color: var(--red);
+      font-size: clamp(42px, 7vw, 92px);
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .closing p {
+      margin-top: 18px;
+      color: var(--ink);
+      font-size: clamp(18px, 2vw, 28px);
+      font-weight: 600;
+    }
+
+    @media (max-width: 860px) {
+      .deck-shell {
+        padding: 16px;
+      }
+
+      .topbar {
+        position: relative;
+        flex-wrap: wrap;
+      }
+
+      .report-slide {
+        aspect-ratio: auto;
+        min-height: auto;
+        padding: 26px;
+      }
+
+      .content-nav,
+      .chapter-layout,
+      .layout-two,
+      .metric-grid,
+      .timeline,
+      .split-guide,
+      .detail-columns {
+        grid-template-columns: 1fr;
+      }
+
+      .page-label {
+        position: static;
+        text-align: left;
+        margin-bottom: 22px;
+        order: -1;
+      }
+
+      .report-slide::after {
+        display: none;
+      }
+
+      .deck-meta,
+      .hero-title,
+      .bar-chart,
+      .timeline {
+        margin-top: 30px;
+      }
+
+      .jump-select {
+        width: 100%;
+      }
+
+      .jump-panel {
+        width: 100%;
+        max-width: min(340px, calc(100vw - 32px));
+      }
+
+      .jump-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .timeline {
+        gap: 18px;
+        border-top: 0;
+        padding-top: 0;
+      }
+
+      .time-node {
+        padding-left: 28px;
+      }
+
+      .time-node::before {
+        top: 0;
+        left: -2px;
+      }
+
+      .number-item {
+        grid-template-columns: 64px minmax(0, 1fr);
+      }
+
+      .media-frame {
+        min-height: 260px;
+      }
+
+      .next-button {
+        position: static;
+        margin-top: 28px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+
+      .report-slide {
+        opacity: 1;
+        transform: none;
+      }
+
+      .bar-track span {
+        width: var(--value);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck-shell">
+    <div class="deck-frame">
+      <div class="topbar" aria-label="页面进度">
+        <span>One Dot Cinnabar / 一点丹红</span>
+        <div class="progress-track" aria-hidden="true"><span id="progressBar"></span></div>
+        <select class="jump-select" id="jumpSelect" aria-label="选择幻灯片"></select>
+        <span id="pageNow">01 / 07</span>
+      </div>
+
+      <section class="report-slide" id="cover" data-title="封面">
+        <div class="brand">PLACED LOGO<small>Your company name here</small></div>
+        <div class="hero-title">
+          <h1>MINIMALISM<br>20XX</h1>
+          <p class="subtitle">极简风红白色工作总结报告</p>
+          <div class="red-dot-large" aria-hidden="true"></div>
+        </div>
+        <div class="deck-meta">
+          <div>Department: <span>输入部门名称</span></div>
+          <div>Speaker: <span>姓名名</span></div>
+          <div>Date: <span>20XX年XX月XX日</span></div>
+        </div>
+        <button class="next-button" type="button" data-next aria-label="下一页">↓</button>
+      </section>
+
+      <section class="report-slide" id="contents" data-title="目录">
+        <div class="page-label">Contents<br>Page 02</div>
+        <h2 class="section-heading"><span class="section-dot"></span>目录</h2>
+        <nav class="content-nav" aria-label="汇报目录">
+          <button class="nav-card" type="button" data-target="intro"><span>Part 01</span><strong>岗位工作介绍</strong><small>Introduction</small></button>
+          <button class="nav-card" type="button" data-target="metrics"><span>Part 02</span><strong>取得工作成绩</strong><small>Achievement</small></button>
+          <button class="nav-card" type="button" data-target="media"><span>Part 03</span><strong>存在问题不足</strong><small>Weakness</small></button>
+          <button class="nav-card" type="button" data-target="timeline"><span>Part 04</span><strong>不足改进方案</strong><small>Improvement</small></button>
+          <button class="nav-card" type="button" data-target="plan"><span>Part 05</span><strong>工作安排计划</strong><small>Planning</small></button>
+          <button class="nav-card" type="button" data-target="closing"><span>End</span><strong>总结与致谢</strong><small>Closing</small></button>
+        </nav>
+        <button class="next-button" type="button" data-next aria-label="下一页">↓</button>
+      </section>
+
+      <section class="report-slide" id="intro" data-title="岗位工作介绍">
+        <div class="page-label">Work Positioning<br>Page 03</div>
+        <div class="chapter-layout">
+          <div>
+            <div class="chapter-number">01</div>
+            <h2 class="section-heading"><span class="section-dot"></span>岗位工作介绍</h2>
+            <div class="red-rule"></div>
+          </div>
+          <div>
+            <p class="body-copy">这里适合放一段来自文档的岗位职责、项目背景或汇报对象说明。将来你给我文字、图片或视频后，我会把长文本压缩成适合演讲的段落，把证据材料放到可展开区域里。</p>
+            <button class="evidence-toggle" type="button">查看补充说明</button>
+            <div class="evidence-panel">
+              <div class="evidence-inner">
+                <p>补充说明可以承载原始文档摘录、图片说明、访谈记录、数据来源或视频备注，避免主页面变成大段文字。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="next-button" type="button" data-next aria-label="下一页">↓</button>
+      </section>
+
+      <section class="report-slide" id="metrics" data-title="数据与成绩">
+        <div class="page-label">Compared With<br>Page 04</div>
+        <h2 class="section-heading"><span class="section-dot"></span>完成同比环比</h2>
+        <div class="metric-grid">
+          <div class="metric-card"><strong>80%</strong><span>目标完成率，可替换为文档中的关键数据。</span></div>
+          <div class="metric-card"><strong>4.3</strong><span>关键评分或增长指标，适合汇报成果。</span></div>
+          <div class="metric-card"><strong>12</strong><span>项目节点、交付数量或案例数量。</span></div>
+        </div>
+        <div class="bar-chart" aria-label="示例条形图">
+          <div class="bar-row"><span>系列 1</span><div class="bar-track"><span style="--value: 78%"></span></div><b>4.3</b></div>
+          <div class="bar-row"><span>系列 2</span><div class="bar-track"><span style="--value: 46%; background: var(--graphite);"></span></div><b>2.5</b></div>
+          <div class="bar-row"><span>系列 3</span><div class="bar-track"><span style="--value: 88%"></span></div><b>4.8</b></div>
+        </div>
+        <button class="next-button" type="button" data-next aria-label="下一页">↓</button>
+      </section>
+
+      <section class="report-slide" id="media" data-title="图文证据">
+        <div class="page-label">Capability Improving<br>Page 05</div>
+        <div class="layout-two">
+          <div>
+            <h2 class="section-heading"><span class="section-dot"></span>个人能力提升</h2>
+            <div class="red-rule"></div>
+            <div class="number-list">
+              <div class="number-item"><b>01</b><p class="body-copy">这里放文档提炼出的第一条能力、问题或结论。</p></div>
+              <div class="number-item"><b>02</b><p class="body-copy">这里放第二条关键说明，可以对应图片或视频中的证据。</p></div>
+              <div class="number-item"><b>03</b><p class="body-copy">这里放第三条行动方向，让汇报结构更清楚。</p></div>
+            </div>
+          </div>
+          <div class="media-frame">
+            <div class="red-panel">未来可以在这里插入你的截图、照片、配图或视频，并自动生成对应说明。</div>
+          </div>
+        </div>
+        <button class="next-button" type="button" data-next aria-label="下一页">↓</button>
+      </section>
+
+      <section class="report-slide" id="timeline" data-title="改进方案">
+        <div class="page-label">Mentality Adjustment<br>Page 06</div>
+        <h2 class="section-heading"><span class="section-dot"></span>工作心态调整</h2>
+        <div class="timeline">
+          <button class="time-node" type="button" data-detail-target="mindset-deep-dive"><strong>Week 01</strong><p>内容较多：点击进入独立一屏，承载详细背景、行动、证据和结果。</p><em>进入独立页 →</em></button>
+          <button class="time-node" type="button" data-inline-note="内容不多时，不会单独开一页，只在当前页展开一句补充说明。这里适合放简短提醒、状态备注或一句结论。"><strong>Week 02</strong><p>内容较少：点击只展开当前页说明，不额外增加页面。</p><em>本页展开</em></button>
+          <div class="time-node"><strong>Week 03</strong><p>补足问题，完善素材、数据和证据。</p></div>
+          <div class="time-node"><strong>Week 04</strong><p>输出总结报告和下一步计划。</p></div>
+        </div>
+        <div class="inline-node-note" id="inlineNodeNote">演示规则：如果你给的某一项内容很多，我会自动拆成独立一屏；如果内容少，就保留在这一页里，避免页面数量膨胀。</div>
+        <div class="split-guide">
+          <div><strong>内容多</strong><p class="body-copy">拆成独立页，放背景、步骤、证据、图片、视频或长说明。</p></div>
+          <div><strong>内容少</strong><p class="body-copy">留在当前页，用展开说明承载，不打断汇报节奏。</p></div>
+        </div>
+        <button class="next-button" type="button" data-next aria-label="下一页">↓</button>
+      </section>
+
+      <section class="report-slide" id="mindset-deep-dive" data-title="Week 01独立页">
+        <div class="page-label">Deep Dive<br>Auto Split Page</div>
+        <div class="detail-columns">
+          <div>
+            <div class="chapter-number">01</div>
+            <h2 class="section-heading"><span class="section-dot"></span>Week 01 独立说明页</h2>
+            <div class="red-rule"></div>
+            <p class="body-copy">这是“内容较多时自动拆页”的演示。未来你给我文档、图片或视频素材后，我会判断这一项是否需要独立页：如果它包含多段背景、过程、证据、图表或视频，就拆出来单独讲。</p>
+          </div>
+          <div>
+            <ul class="detail-list">
+              <li><strong>背景：</strong>说明这一阶段为什么重要，适合放来自文档的原始背景。</li>
+              <li><strong>动作：</strong>把长文本拆成 3 到 5 个可演讲步骤。</li>
+              <li><strong>证据：</strong>可插入截图、照片、表格、视频片段或数据图。</li>
+              <li><strong>结论：</strong>用一句话收束，方便现场汇报快速过页。</li>
+            </ul>
+            <button class="evidence-toggle" type="button">查看示例长内容</button>
+            <div class="evidence-panel">
+              <div class="evidence-inner">
+                <p>如果你提供的素材很多，我会保留主页面的简洁感，把长说明、证据截图、补充数据放在这种独立页或可展开区域里。这样既可以讲得深入，也不会让首页或目录页变得拥挤。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="next-button" type="button" data-next aria-label="下一页">↓</button>
+      </section>
+
+      <section class="report-slide" id="plan" data-title="计划">
+        <div class="page-label">Implementation Plan<br>Page 07</div>
+        <h2 class="section-heading"><span class="section-dot"></span>目标实施计划</h2>
+        <div class="timeline">
+          <div class="time-node"><strong>Time/Item</strong><p>输入与此小标题相关的文字描述内容。</p></div>
+          <div class="time-node"><strong>Time/Item</strong><p>输入与此小标题相关的文字描述内容。</p></div>
+          <div class="time-node"><strong>Time/Item</strong><p>输入与此小标题相关的文字描述内容。</p></div>
+          <div class="time-node"><strong>Time/Item</strong><p>输入与此小标题相关的文字描述内容。</p></div>
+        </div>
+        <button class="next-button" type="button" data-next aria-label="下一页">↓</button>
+      </section>
+
+      <section class="report-slide closing" id="closing" data-title="致谢">
+        <div class="page-label">Closing<br>Page 08</div>
+        <h2>THANK YOU</h2>
+        <p>成就梦想，超越巅峰，为更精彩的明天努力拼搏！</p>
+        <div class="red-dot-large" aria-hidden="true"></div>
+        <div class="brand">PLACED LOGO<small>Your company name here</small></div>
+      </section>
+    </div>
+
+    <div class="presenter-control" aria-label="演讲控制">
+      <div class="jump-panel" id="presenterJumpPanel">
+        <h3>页码导航</h3>
+        <p>演讲者工具：需要时打开，平时不占用正式封面版面。</p>
+        <div class="jump-grid" id="coverJumpList"></div>
+      </div>
+      <button class="presenter-toggle" type="button" id="presenterToggle" aria-expanded="false" aria-controls="presenterJumpPanel" aria-label="打开页码导航">☰</button>
+    </div>
+  </main>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.report-slide'));
+    const progressBar = document.getElementById('progressBar');
+    const pageNow = document.getElementById('pageNow');
+    const jumpSelect = document.getElementById('jumpSelect');
+    const coverJumpList = document.getElementById('coverJumpList');
+    const presenterToggle = document.getElementById('presenterToggle');
+    const presenterJumpPanel = document.getElementById('presenterJumpPanel');
+    const navCards = Array.from(document.querySelectorAll('.nav-card'));
+    let activeIndex = 0;
+    let wheelLock = false;
+    let navigationLock = false;
+
+    const buildJumpControls = () => {
+      const options = slides.map((slide, index) => {
+        const label = `${String(index + 1).padStart(2, '0')} ${slide.dataset.title || slide.id}`;
+        return { label, index };
+      });
+      jumpSelect.innerHTML = options.map((item) => `<option value="${item.index}">${item.label}</option>`).join('');
+      coverJumpList.innerHTML = options.map((item) => `<button class="jump-chip" type="button" data-jump="${item.index}">${String(item.index + 1).padStart(2, '0')}</button>`).join('');
+      coverJumpList.querySelectorAll('.jump-chip').forEach((button) => {
+        button.addEventListener('click', () => setActive(Number(button.dataset.jump), true));
+      });
+    };
+
+    const setActive = (index, shouldScroll = false) => {
+      activeIndex = Math.max(0, Math.min(slides.length - 1, index));
+      slides.forEach((slide, idx) => slide.classList.toggle('is-active', idx === activeIndex));
+      const current = slides[activeIndex];
+      const pct = ((activeIndex + 1) / slides.length) * 100;
+      progressBar.style.width = `${pct}%`;
+      pageNow.textContent = `${String(activeIndex + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+      jumpSelect.value = String(activeIndex);
+      coverJumpList.querySelectorAll('.jump-chip').forEach((button) => {
+        button.classList.toggle('is-active', Number(button.dataset.jump) === activeIndex);
+      });
+      navCards.forEach((card) => card.classList.toggle('is-active', card.dataset.target === current.id));
+      if (shouldScroll) {
+        navigationLock = true;
+        current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        window.setTimeout(() => { navigationLock = false; }, 900);
+      }
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      if (navigationLock) return;
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) setActive(slides.indexOf(entry.target), false);
+      });
+    }, { threshold: 0.62 });
+
+    slides.forEach((slide) => observer.observe(slide));
+    buildJumpControls();
+    setActive(0, false);
+
+    jumpSelect.addEventListener('change', () => setActive(Number(jumpSelect.value), true));
+
+    presenterToggle.addEventListener('click', () => {
+      const isOpen = presenterJumpPanel.classList.toggle('is-open');
+      presenterToggle.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    document.querySelectorAll('[data-next]').forEach((button) => {
+      button.addEventListener('click', () => setActive(activeIndex + 1, true));
+    });
+
+    navCards.forEach((card) => {
+      card.addEventListener('click', () => {
+        const targetIndex = slides.findIndex((slide) => slide.id === card.dataset.target);
+        if (targetIndex >= 0) setActive(targetIndex, true);
+      });
+    });
+
+    document.querySelectorAll('.evidence-toggle').forEach((button) => {
+      button.addEventListener('click', () => {
+        const panel = button.nextElementSibling;
+        panel.classList.toggle('is-open');
+        button.textContent = panel.classList.contains('is-open') ? '收起补充说明' : '查看补充说明';
+      });
+    });
+
+    document.querySelectorAll('[data-detail-target]').forEach((button) => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.time-node').forEach((item) => item.classList.remove('is-selected'));
+        button.classList.add('is-selected');
+        const targetIndex = slides.findIndex((slide) => slide.id === button.dataset.detailTarget);
+        if (targetIndex >= 0) setActive(targetIndex, true);
+      });
+    });
+
+    document.querySelectorAll('[data-inline-note]').forEach((button) => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.time-node').forEach((item) => item.classList.remove('is-selected'));
+        button.classList.add('is-selected');
+        document.getElementById('inlineNodeNote').textContent = button.dataset.inlineNote;
+      });
+    });
+
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowDown' || event.key === 'PageDown') setActive(activeIndex + 1, true);
+      if (event.key === 'ArrowUp' || event.key === 'PageUp') setActive(activeIndex - 1, true);
+      if (event.key === 'Home') setActive(0, true);
+      if (event.key === 'End') setActive(slides.length - 1, true);
+    });
+
+    window.addEventListener('wheel', (event) => {
+      if (Math.abs(event.deltaY) < 45 || wheelLock || window.innerWidth < 860) return;
+      wheelLock = true;
+      setActive(activeIndex + (event.deltaY > 0 ? 1 : -1), true);
+      window.setTimeout(() => { wheelLock = false; }, 780);
+    }, { passive: true });
+  </script>
+</body>
+</html>

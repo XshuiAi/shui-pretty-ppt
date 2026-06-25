@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sapphire Defense Deck / 宝蓝答辩稿</title>
+  <style>
+    :root {
+      --blue-950: #06215a;
+      --blue-900: #08327f;
+      --blue-800: #0b4eb8;
+      --blue-700: #1267d8;
+      --blue-500: #2e85f0;
+      --blue-200: #cde4ff;
+      --blue-100: #edf6ff;
+      --gold: #e4b950;
+      --ink: #10203a;
+      --muted: #66748a;
+      --line: #bad7f7;
+      --paper: #ffffff;
+      --soft: #f4f9ff;
+      --shadow: 0 18px 48px rgba(5, 35, 92, 0.16);
+      --font: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      --serif: Georgia, "Times New Roman", "Songti SC", serif;
+      --brush: "STXingkai", "Xingkai SC", "HanziPen SC", "Kaiti SC", "KaiTi", "STKaiti", "Songti SC", serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: var(--font);
+      background: var(--soft);
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, select {
+      font: inherit;
+    }
+
+    .deck {
+      height: 100vh;
+      overflow-y: auto;
+      scroll-snap-type: y mandatory;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(46,133,240,0.16), transparent 34%),
+        linear-gradient(180deg, #f8fbff, #eef5ff);
+    }
+
+    .slide {
+      position: relative;
+      min-height: 100vh;
+      width: 100vw;
+      padding: clamp(18px, 3vw, 42px);
+      overflow: hidden;
+      scroll-snap-align: start;
+      background:
+        linear-gradient(90deg, rgba(8,50,127,0.035) 1px, transparent 1px) 0 0 / 64px 64px,
+        linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(248,251,255,0.92) 68%, rgba(238,247,255,0.9) 100%),
+        url("./assets/sapphire-abstract-paper.svg") center / cover no-repeat;
+      display: flex;
+      flex-direction: column;
+      opacity: 0.4;
+      transform: translateY(24px);
+      transition: opacity 700ms ease, transform 700ms ease;
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 72% 18%, rgba(18,103,216,0.12), transparent 24%),
+        radial-gradient(circle at 20% 80%, rgba(228,185,80,0.14), transparent 24%);
+      opacity: 0.78;
+    }
+
+    .slide.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .chapter-bar {
+      height: 58px;
+      display: grid;
+      grid-template-columns: minmax(210px, 1.15fr) 2fr minmax(130px, 0.55fr);
+      align-items: center;
+      color: #fff;
+      background:
+        linear-gradient(90deg, rgba(6,33,90,0.98), rgba(8,64,165,0.96)),
+        linear-gradient(90deg, transparent, rgba(255,255,255,0.18));
+      border-radius: 0 0 18px 18px;
+      box-shadow: 0 12px 30px rgba(8,50,127,0.22);
+      overflow: hidden;
+    }
+
+    .chapter-title {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-left: 22px;
+      font-size: clamp(20px, 2.2vw, 34px);
+      font-weight: 900;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .seal {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.65);
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: center;
+      gap: clamp(10px, 2vw, 30px);
+      font-size: clamp(13px, 1.2vw, 18px);
+      font-weight: 800;
+    }
+
+    .nav a {
+      position: relative;
+      opacity: 0.78;
+      padding: 4px 0;
+    }
+
+    .nav a.active,
+    .nav a:hover {
+      opacity: 1;
+    }
+
+    .nav a.active::after,
+    .nav a:hover::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -7px;
+      height: 3px;
+      background: #fff;
+      border-radius: 99px;
+    }
+
+    .brand {
+      padding-right: 20px;
+      text-align: right;
+      font-size: 13px;
+      font-weight: 900;
+      opacity: 0.9;
+      letter-spacing: 0.04em;
+    }
+
+    .slide-body {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      display: grid;
+      gap: clamp(16px, 2vw, 28px);
+      padding: clamp(18px, 2.6vw, 38px) clamp(10px, 2.4vw, 30px) 16px;
+      min-height: 0;
+    }
+
+    .cover .slide-body {
+      grid-template-columns: 1.1fr 0.9fr;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--blue-800);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 44px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--blue-700), var(--gold));
+      border-radius: 99px;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+    h1 {
+      font-size: clamp(46px, 7vw, 118px);
+      line-height: 0.94;
+      font-weight: 950;
+      color: var(--blue-950);
+      letter-spacing: 0;
+      text-shadow: 0 16px 34px rgba(6,33,90,0.08);
+    }
+
+    .brush-title {
+      margin: 8px 0 12px;
+      color: var(--blue-800);
+      font-family: var(--brush);
+      font-size: clamp(46px, 6.4vw, 108px);
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-shadow: 0 8px 18px rgba(18,103,216,0.18);
+    }
+
+    .subtitle {
+      max-width: 760px;
+      color: #2a3d59;
+      font-size: clamp(18px, 2vw, 28px);
+      line-height: 1.55;
+      font-weight: 700;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 36px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 8px 18px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--blue-900);
+      background: rgba(255,255,255,0.82);
+      box-shadow: 0 8px 18px rgba(8,50,127,0.08);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .campus-card {
+      position: relative;
+      min-height: 500px;
+      border-radius: 28px;
+      border: 1px solid rgba(18,103,216,0.22);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.42), rgba(237,246,255,0.7)),
+        url("./assets/sapphire-campus-cover.svg") center / cover no-repeat;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .campus-card::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border: 1px solid rgba(18,103,216,0.2);
+      border-radius: 22px;
+      pointer-events: none;
+    }
+
+    .sky {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 20%, rgba(255,255,255,0.95) 0 10%, transparent 11%),
+        radial-gradient(ellipse at 76% 26%, rgba(255,255,255,0.92) 0 12%, transparent 13%),
+        linear-gradient(180deg, #e7f5ff 0%, #ffffff 58%, #dff1ff 100%);
+      opacity: 0;
+    }
+
+    .building {
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      bottom: 70px;
+      height: 160px;
+      background: linear-gradient(180deg, #d7b58f, #a77250);
+      border: 3px solid rgba(255,255,255,0.75);
+      box-shadow: 0 -12px 0 rgba(255,255,255,0.42) inset;
+      opacity: 0;
+    }
+
+    .building::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 150px;
+      height: 210px;
+      transform: translateX(-50%);
+      background: linear-gradient(180deg, #e9cfaa, #b17c55);
+      clip-path: polygon(50% 0, 100% 26%, 100% 100%, 0 100%, 0 26%);
+      border: 3px solid rgba(255,255,255,0.75);
+    }
+
+    .windows {
+      position: absolute;
+      inset: 36px 24px 28px;
+      background:
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.68) 0 18px, transparent 18px 44px),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.42) 0 10px, transparent 10px 38px);
+      opacity: 0.8;
+    }
+
+    .tree-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 108px;
+      background:
+        radial-gradient(circle at 10% 60%, #4d9d57 0 34px, transparent 35px),
+        radial-gradient(circle at 22% 48%, #68b96b 0 42px, transparent 43px),
+        radial-gradient(circle at 38% 54%, #4f9f66 0 37px, transparent 38px),
+        radial-gradient(circle at 55% 50%, #6dbf73 0 46px, transparent 47px),
+        radial-gradient(circle at 72% 56%, #4d9d57 0 38px, transparent 39px),
+        radial-gradient(circle at 88% 52%, #72c77b 0 44px, transparent 45px);
+      filter: saturate(0.92);
+      opacity: 0;
+    }
+
+    .seal-watermark {
+      position: absolute;
+      inset: 17% auto auto 50%;
+      width: min(44vw, 560px);
+      aspect-ratio: 1;
+      transform: translateX(-50%);
+      border: 18px double rgba(18,103,216,0.08);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: rgba(18,103,216,0.12);
+      font-size: clamp(46px, 8vw, 130px);
+      font-weight: 950;
+      pointer-events: none;
+    }
+
+    .wave {
+      position: absolute;
+      left: -4%;
+      right: -4%;
+      bottom: -28px;
+      height: 104px;
+      background:
+        radial-gradient(120% 115% at 50% 0%, transparent 48%, rgba(18,103,216,0.18) 49% 54%, transparent 55%),
+        linear-gradient(180deg, transparent 20%, var(--blue-800) 21% 50%, var(--blue-950) 51%);
+      opacity: 0.96;
+    }
+
+    .page-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      text-align: center;
+    }
+
+    .page-title h2 {
+      color: var(--blue-900);
+      font-size: clamp(28px, 3vw, 52px);
+      font-weight: 950;
+      letter-spacing: 0.06em;
+    }
+
+    .page-title::before,
+    .page-title::after {
+      content: "";
+      width: min(18vw, 220px);
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--blue-500), transparent);
+    }
+
+    .grid-4,
+    .grid-3,
+    .grid-2 {
+      display: grid;
+      gap: clamp(14px, 2vw, 26px);
+    }
+
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card,
+    .method-card,
+    .result-card {
+      position: relative;
+      min-width: 0;
+      border: 2px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 14px 34px rgba(8,50,127,0.08);
+      overflow: hidden;
+    }
+
+    .card {
+      padding: clamp(18px, 2vw, 28px);
+    }
+
+    .card-num {
+      position: absolute;
+      top: -12px;
+      right: 16px;
+      color: rgba(18,103,216,0.16);
+      font-size: clamp(54px, 5vw, 86px);
+      line-height: 1;
+      font-weight: 950;
+      font-family: var(--serif);
+    }
+
+    .icon-dot {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: linear-gradient(135deg, var(--blue-700), var(--blue-950));
+      box-shadow: 0 12px 24px rgba(18,103,216,0.25);
+      font-size: 24px;
+      margin-bottom: 18px;
+    }
+
+    .card h3,
+    .method-card h3,
+    .result-card h3 {
+      color: var(--blue-900);
+      font-size: clamp(20px, 1.8vw, 30px);
+      line-height: 1.2;
+      font-weight: 950;
+      margin-bottom: 12px;
+    }
+
+    .card p,
+    .method-card p,
+    .result-card p,
+    .note,
+    li {
+      color: var(--muted);
+      font-size: clamp(14px, 1.08vw, 18px);
+      line-height: 1.75;
+      font-weight: 600;
+    }
+
+    .keyword-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .keyword {
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--blue-800);
+      background: #fff;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .panel {
+      border: 2px solid var(--line);
+      border-radius: 20px;
+      padding: clamp(18px, 2vw, 28px);
+      background: rgba(255,255,255,0.86);
+      box-shadow: 0 16px 40px rgba(8,50,127,0.08);
+    }
+
+    .panel-head {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 38px;
+      padding: 6px 18px;
+      margin-bottom: 18px;
+      color: #fff;
+      background: linear-gradient(90deg, var(--blue-700), var(--blue-950));
+      border-radius: 999px;
+      box-shadow: 0 10px 22px rgba(18,103,216,0.24);
+      font-weight: 950;
+    }
+
+    .timeline {
+      position: relative;
+      display: grid;
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: clamp(22px, 3vw, 54px);
+      align-items: center;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .photo {
+      min-height: 116px;
+      border-radius: 12px;
+      border: 1px solid rgba(18,103,216,0.28);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.14), rgba(18,103,216,0.12)),
+        url("./assets/sapphire-campus-panel.svg") center / cover no-repeat;
+      box-shadow: inset 0 -24px 0 rgba(59,142,72,0.25);
+    }
+
+    .timeline-list {
+      position: relative;
+      display: grid;
+      gap: 22px;
+      padding-left: 34px;
+    }
+
+    .timeline-list::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 8px;
+      bottom: 8px;
+      width: 4px;
+      border-radius: 99px;
+      background: linear-gradient(var(--blue-200), var(--blue-800));
+    }
+
+    .timeline-item {
+      position: relative;
+      padding: 14px 18px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -34px;
+      top: 22px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--blue-700);
+      box-shadow: 0 0 0 6px rgba(18,103,216,0.16);
+    }
+
+    .method-ring {
+      position: relative;
+      min-height: 480px;
+      display: grid;
+      place-items: center;
+    }
+
+    .ring {
+      width: min(36vw, 410px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background:
+        conic-gradient(from -40deg, var(--blue-900) 0 23%, #65a9ff 23% 25%, var(--blue-700) 25% 48%, #65a9ff 48% 50%, var(--blue-900) 50% 73%, #65a9ff 73% 75%, var(--blue-700) 75% 100%);
+      box-shadow: 0 18px 42px rgba(8,50,127,0.18);
+      display: grid;
+      place-items: center;
+    }
+
+    .ring-core {
+      width: 54%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--blue-900);
+      font-size: clamp(24px, 2.4vw, 40px);
+      font-weight: 950;
+      box-shadow: inset 0 0 0 10px var(--blue-100);
+    }
+
+    .method-card {
+      position: absolute;
+      width: min(30vw, 410px);
+      padding: 18px 18px 18px 22px;
+    }
+
+    .method-card:nth-of-type(1) { left: 0; top: 28px; }
+    .method-card:nth-of-type(2) { right: 0; top: 28px; }
+    .method-card:nth-of-type(3) { left: 0; bottom: 22px; }
+    .method-card:nth-of-type(4) { right: 0; bottom: 22px; }
+
+    .chart-board {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(16px, 2vw, 28px);
+      align-items: stretch;
+    }
+
+    .bars {
+      display: flex;
+      gap: 26px;
+      align-items: end;
+      min-height: 260px;
+      padding: 28px 16px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(18,103,216,0.08) 1px, transparent 1px) 0 0 / 100% 52px,
+        #fff;
+      border-radius: 16px;
+    }
+
+    .bar {
+      flex: 1;
+      min-width: 44px;
+      height: calc(var(--value) * 1%);
+      border-radius: 12px 12px 0 0;
+      background: linear-gradient(180deg, #69aaff, var(--blue-900));
+      transform-origin: bottom;
+      transform: scaleY(0.2);
+      transition: transform 850ms cubic-bezier(.2,.9,.2,1);
+      position: relative;
+    }
+
+    .slide.is-visible .bar { transform: scaleY(1); }
+    .bar::after {
+      content: attr(data-label);
+      position: absolute;
+      left: 50%;
+      bottom: -28px;
+      transform: translateX(-50%);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .book {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      min-height: 430px;
+      border-radius: 22px;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .book-page {
+      padding: clamp(20px, 2.4vw, 36px);
+      border-right: 1px solid var(--line);
+      background:
+        linear-gradient(90deg, rgba(18,103,216,0.04) 1px, transparent 1px) 0 0 / 28px 28px,
+        #fff;
+    }
+
+    .book-page:last-child { border-right: 0; }
+
+    .stars {
+      color: var(--gold);
+      letter-spacing: 0.15em;
+      font-size: 18px;
+      margin: 8px 0 16px;
+    }
+
+    ul {
+      margin: 14px 0 0;
+      padding-left: 20px;
+    }
+
+    .footer-line {
+      position: absolute;
+      left: clamp(22px, 4vw, 68px);
+      right: clamp(22px, 4vw, 68px);
+      bottom: clamp(14px, 2vw, 28px);
+      height: 6px;
+      background: linear-gradient(90deg, var(--blue-950), var(--blue-700), var(--blue-950));
+      border-radius: 99px;
+      box-shadow: 0 -8px 18px rgba(18,103,216,0.18);
+    }
+
+    .next {
+      position: fixed;
+      z-index: 30;
+      right: 30px;
+      bottom: 28px;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: 1px solid rgba(18,103,216,0.2);
+      color: var(--blue-900);
+      background: rgba(255,255,255,0.86);
+      box-shadow: 0 12px 30px rgba(8,50,127,0.16);
+      cursor: pointer;
+      font-size: 26px;
+      font-weight: 900;
+      transition: transform 220ms ease, background 220ms ease;
+    }
+
+    .next:hover {
+      transform: translateY(-4px);
+      background: #fff;
+    }
+
+    .jump {
+      position: fixed;
+      z-index: 31;
+      right: 30px;
+      top: 28px;
+      min-width: 190px;
+      height: 48px;
+      padding: 0 18px;
+      border: 1px solid rgba(18,103,216,0.22);
+      background: rgba(255,255,255,0.9);
+      color: var(--ink);
+      box-shadow: 0 10px 28px rgba(8,50,127,0.1);
+      font-weight: 900;
+    }
+
+    [data-step] {
+      opacity: 0;
+      transform: translateY(18px) scale(0.985);
+      filter: blur(3px);
+      transition: opacity 520ms ease, transform 520ms ease, filter 520ms ease;
+    }
+
+    [data-step].shown {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+
+    .hint {
+      position: absolute;
+      right: clamp(24px, 4vw, 68px);
+      bottom: clamp(82px, 8vw, 110px);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      opacity: 0.8;
+    }
+
+    @media (max-width: 900px) {
+      .deck { scroll-snap-type: none; }
+      .slide {
+        min-height: auto;
+        padding: 16px;
+      }
+      .chapter-bar {
+        height: auto;
+        min-height: 70px;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 14px;
+        border-radius: 0 0 14px 14px;
+      }
+      .chapter-title { padding-left: 0; white-space: normal; }
+      .nav { justify-content: flex-start; overflow-x: auto; padding-bottom: 4px; }
+      .brand { text-align: left; padding-right: 0; }
+      .cover .slide-body,
+      .grid-4,
+      .grid-3,
+      .grid-2,
+      .timeline,
+      .chart-board,
+      .book {
+        grid-template-columns: 1fr;
+      }
+      .campus-card { min-height: 360px; }
+      .method-ring {
+        min-height: auto;
+        display: grid;
+        gap: 16px;
+      }
+      .ring {
+        width: min(72vw, 320px);
+        margin: 0 auto;
+      }
+      .method-card {
+        position: relative;
+        width: 100%;
+        left: auto !important;
+        right: auto !important;
+        top: auto !important;
+        bottom: auto !important;
+      }
+      .jump {
+        position: sticky;
+        top: 0;
+        right: auto;
+        left: 0;
+        width: 100%;
+        border-radius: 0;
+      }
+      .next {
+        right: 18px;
+        bottom: 18px;
+        width: 50px;
+        height: 50px;
+      }
+      .hint { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 1ms !important;
+        transition-duration: 1ms !important;
+      }
+      .slide, [data-step], .bar {
+        opacity: 1;
+        transform: none;
+        filter: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <select class="jump" aria-label="选择幻灯片">
+    <option value="#cover">01 封面</option>
+    <option value="#contents">02 目录</option>
+    <option value="#background">03 研究背景</option>
+    <option value="#method">04 研究方法</option>
+    <option value="#thinking">05 研究思路</option>
+    <option value="#process">06 过程问题</option>
+    <option value="#results">07 研究成果</option>
+    <option value="#conclusion">08 结论建议</option>
+    <option value="#closing">09 尾页</option>
+  </select>
+  <button class="next" type="button" aria-label="下一页">↓</button>
+
+  <main class="deck">
+    <section class="slide cover" id="cover" data-section="cover">
+      <div class="slide-body">
+        <div>
+          <div class="eyebrow">Sapphire Defense Deck / 宝蓝答辩稿</div>
+          <div class="brush-title">研思笃行</div>
+          <h1>Research<br />HTML<br />Defense</h1>
+          <p class="subtitle">把论文答辩、课题汇报、研究复盘和正式项目说明，转成可逐步讲解、可滚动展示、可复用的 HTML 演示页面。</p>
+          <div class="meta-row">
+            <span class="pill">Presenter: Author Name</span>
+            <span class="pill">Institute: Team / School</span>
+            <span class="pill">Date: 20XX.XX</span>
+          </div>
+        </div>
+        <div class="campus-card" aria-hidden="true">
+          <div class="sky"></div>
+          <div class="seal-watermark">09</div>
+          <div class="building"><div class="windows"></div></div>
+          <div class="tree-line"></div>
+          <div class="wave"></div>
+        </div>
+      </div>
+      <div class="footer-line"></div>
+    </section>
+
+    <section class="slide" id="contents" data-section="contents">
+      <header class="chapter-bar">
+        <div class="chapter-title"><span class="seal">S</span>目录 CONTENTS</div>
+        <nav class="nav">
+          <a href="#background">背景与意义</a>
+          <a href="#method">方法与思路</a>
+          <a href="#process">过程与问题</a>
+          <a href="#results">成果与结论</a>
+        </nav>
+        <div class="brand">AUTHOR / RESEARCH</div>
+      </header>
+      <div class="slide-body">
+        <div class="page-title"><h2>点击分块讲解目录</h2></div>
+        <div class="grid-4">
+          <article class="card" data-step>
+            <div class="card-num">01</div>
+            <div class="icon-dot">景</div>
+            <h3>研究背景与意义</h3>
+            <p>说明问题从哪里来，为什么值得研究，以及它和实际场景之间的关系。</p>
+            <div class="keyword-row"><span class="keyword">背景</span><span class="keyword">痛点</span><span class="keyword">价值</span></div>
+          </article>
+          <article class="card" data-step>
+            <div class="card-num">02</div>
+            <div class="icon-dot">法</div>
+            <h3>研究方法与思路</h3>
+            <p>把资料收集、分析框架、实验流程和内容组织方式讲清楚。</p>
+            <div class="keyword-row"><span class="keyword">方法</span><span class="keyword">框架</span><span class="keyword">路径</span></div>
+          </article>
+          <article class="card" data-step>
+            <div class="card-num">03</div>
+            <div class="icon-dot">程</div>
+            <h3>研究过程与问题</h3>
+            <p>记录关键阶段、遇到的问题、调整动作和可复用经验。</p>
+            <div class="keyword-row"><span class="keyword">过程</span><span class="keyword">问题</span><span class="keyword">迭代</span></div>
+          </article>
+          <article class="card" data-step>
+            <div class="card-num">04</div>
+            <div class="icon-dot">果</div>
+            <h3>研究成果与结论</h3>
+            <p>集中展示结果、数据证据、结论判断和后续建议。</p>
+            <div class="keyword-row"><span class="keyword">成果</span><span class="keyword">结论</span><span class="keyword">建议</span></div>
+          </article>
+        </div>
+      </div>
+      <p class="hint">点击页面空白处：按 01 → 02 → 03 → 04 逐块显现</p>
+      <div class="footer-line"></div>
+    </section>
+
+    <section class="slide" id="background" data-section="background">
+      <header class="chapter-bar">
+        <div class="chapter-title"><span class="seal">1.1</span>研究背景</div>
+        <nav class="nav">
+          <a class="active" href="#background">背景与意义</a>
+          <a href="#method">方法与思路</a>
+          <a href="#process">过程与问题</a>
+          <a href="#results">成果与结论</a>
+        </nav>
+        <div class="brand">PAGE 03</div>
+      </header>
+      <div class="slide-body grid-2">
+        <div class="panel" data-step>
+          <div class="panel-head">01. 研究问题</div>
+          <h2 style="font-size:clamp(32px,4vw,68px);color:var(--blue-950);line-height:1.08;">为什么 PPT 正在转向 HTML 演示？</h2>
+          <p class="note" style="margin-top:18px;">当内容来自 Markdown、飞书文档、图片、视频和表格时，HTML 更容易承载长内容、交互结构、在线分享与持续迭代。</p>
+          <ul>
+            <li>传统 PPT 更适合固定页数，但修改和复用成本高。</li>
+            <li>HTML 可以自然支持滚动、点击展开、视频嵌入和数据动效。</li>
+            <li>同一份结构可以沉淀为模板，下一次直接套用。</li>
+          </ul>
+        </div>
+        <div class="panel" data-step>
+          <div class="panel-head">02. 应用场景</div>
+          <div class="photo-grid">
+            <div class="photo"></div>
+            <div class="photo"></div>
+            <div class="photo"></div>
+            <div class="photo"></div>
+          </div>
+          <p class="note" style="margin-top:18px;">这里可以替换为真实校园、实验室、项目现场、产品截图或团队照片。模板会根据图片数量自动安排为拼图、图文页或独立详情页。</p>
+        </div>
+      </div>
+      <div class="footer-line"></div>
+    </section>
+
+    <section class="slide" id="method" data-section="method">
+      <header class="chapter-bar">
+        <div class="chapter-title"><span class="seal">2.1</span>研究方法</div>
+        <nav class="nav">
+          <a href="#background">背景与意义</a>
+          <a class="active" href="#method">方法与思路</a>
+          <a href="#process">过程与问题</a>
+          <a href="#results">成果与结论</a>
+        </nav>
+        <div class="brand">PAGE 04</div>
+      </header>
+      <div class="slide-body">
+        <div class="page-title"><h2>方法思路</h2></div>
+        <div class="method-ring">
+          <article class="method-card" data-step>
+            <h3>01. 资料输入</h3>
+            <p>接收文档、截图、Markdown、表格、视频链接和补充说明，先做内容归类。</p>
+          </article>
+          <article class="method-card" data-step>
+            <h3>02. 结构拆解</h3>
+            <p>把内容拆成封面、目录、论证、数据、案例、结论和附录等页面模块。</p>
+          </article>
+          <div class="ring" data-step>
+            <div class="ring-core">方法<br />思路</div>
+          </div>
+          <article class="method-card" data-step>
+            <h3>03. 视觉生成</h3>
+            <p>沿用宝蓝答辩稿的标题栏、蓝白卡片、章节导航和底部波浪视觉。</p>
+          </article>
+          <article class="method-card" data-step>
+            <h3>04. 交互呈现</h3>
+            <p>每页可按讲解节奏逐块显现，避免一次性把所有信息丢给观众。</p>
+          </article>
+        </div>
+      </div>
+      <div class="footer-line"></div>
+    </section>
+
+    <section class="slide" id="thinking" data-section="thinking">
+      <header class="chapter-bar">
+        <div class="chapter-title"><span class="seal">2.2</span>研究思路</div>
+        <nav class="nav">
+          <a href="#background">背景与意义</a>
+          <a class="active" href="#method">方法与思路</a>
+          <a href="#process">过程与问题</a>
+          <a href="#results">成果与结论</a>
+        </nav>
+        <div class="brand">PAGE 05</div>
+      </header>
+      <div class="slide-body grid-3">
+        <article class="card" data-step>
+          <div class="card-num">01</div>
+          <h3>从内容出发</h3>
+          <p>先判断内容是论文、课题、工作汇报还是产品研究，再决定页面密度和讲述顺序。</p>
+          <div class="keyword-row"><span class="keyword">内容归类</span><span class="keyword">章节判断</span></div>
+        </article>
+        <article class="card" data-step>
+          <div class="card-num">02</div>
+          <h3>从听众出发</h3>
+          <p>正式场合优先保证清晰、稳定、可信，动效只服务讲解节奏，不抢主题。</p>
+          <div class="keyword-row"><span class="keyword">领导汇报</span><span class="keyword">答辩展示</span></div>
+        </article>
+        <article class="card" data-step>
+          <div class="card-num">03</div>
+          <h3>从复用出发</h3>
+          <p>把标题、导航、卡片、图表、结论页做成可替换组件，下一次直接调用。</p>
+          <div class="keyword-row"><span class="keyword">模板化</span><span class="keyword">可迭代</span></div>
+        </article>
+      </div>
+      <div class="footer-line"></div>
+    </section>
+
+    <section class="slide" id="process" data-section="process">
+      <header class="chapter-bar">
+        <div class="chapter-title"><span class="seal">3.1</span>过程与问题</div>
+        <nav class="nav">
+          <a href="#background">背景与意义</a>
+          <a href="#method">方法与思路</a>
+          <a class="active" href="#process">过程与问题</a>
+          <a href="#results">成果与结论</a>
+        </nav>
+        <div class="brand">PAGE 06</div>
+      </header>
+      <div class="slide-body timeline">
+        <div class="photo-grid" data-step>
+          <div class="photo"></div>
+          <div class="photo"></div>
+          <div class="photo"></div>
+          <div class="photo"></div>
+          <div class="photo"></div>
+          <div class="photo"></div>
+        </div>
+        <div class="timeline-list">
+          <article class="timeline-item" data-step>
+            <h3>第一阶段：内容收集</h3>
+            <p>整理原始文档、图片、表格与口头补充，标记必须展示和可放附录的内容。</p>
+          </article>
+          <article class="timeline-item" data-step>
+            <h3>第二阶段：结构成稿</h3>
+            <p>把长内容拆为页面，优先保留论证链路，避免把所有文字塞进同一页。</p>
+          </article>
+          <article class="timeline-item" data-step>
+            <h3>第三阶段：视觉校准</h3>
+            <p>统一蓝白配色、标题栏、底部波浪和内容卡样式，保证正式感和辨识度。</p>
+          </article>
+          <article class="timeline-item" data-step>
+            <h3>第四阶段：现场演示</h3>
+            <p>通过滚动、箭头和逐块显现控制节奏，减少误触跳页带来的风险。</p>
+          </article>
+        </div>
+      </div>
+      <div class="footer-line"></div>
+    </section>
+
+    <section class="slide" id="results" data-section="results">
+      <header class="chapter-bar">
+        <div class="chapter-title"><span class="seal">4.1</span>研究成果</div>
+        <nav class="nav">
+          <a href="#background">背景与意义</a>
+          <a href="#method">方法与思路</a>
+          <a href="#process">过程与问题</a>
+          <a class="active" href="#results">成果与结论</a>
+        </nav>
+        <div class="brand">PAGE 07</div>
+      </header>
+      <div class="slide-body chart-board">
+        <div class="panel" data-step>
+          <div class="panel-head">主要研究成果</div>
+          <h2 style="font-size:clamp(30px,3vw,58px);color:var(--blue-950);line-height:1.1;">HTML 演示让内容从“文件”变成“可交互页面”</h2>
+          <div class="stars">★★★★★</div>
+          <p class="note">模板可以承载文档、图片、配图、视频、表格和复杂长文本；在正式汇报中，逐块显现能够让听众跟上讲解节奏。</p>
+          <div class="keyword-row"><span class="keyword">可分享</span><span class="keyword">可部署</span><span class="keyword">可复用</span><span class="keyword">可交互</span></div>
+        </div>
+        <div class="panel" data-step>
+          <div class="panel-head">效果对比</div>
+          <div class="bars">
+            <div class="bar" style="--value:48" data-label="整理"></div>
+            <div class="bar" style="--value:62" data-label="表达"></div>
+            <div class="bar" style="--value:82" data-label="交互"></div>
+            <div class="bar" style="--value:94" data-label="复用"></div>
+          </div>
+          <p class="note" style="margin-top:36px;">真实项目中可替换为调研数据、完成率、评分、阅读量、转化率或项目里程碑。</p>
+        </div>
+      </div>
+      <div class="footer-line"></div>
+    </section>
+
+    <section class="slide" id="conclusion" data-section="conclusion">
+      <header class="chapter-bar">
+        <div class="chapter-title"><span class="seal">4.2</span>研究结论</div>
+        <nav class="nav">
+          <a href="#background">背景与意义</a>
+          <a href="#method">方法与思路</a>
+          <a href="#process">过程与问题</a>
+          <a class="active" href="#results">成果与结论</a>
+        </nav>
+        <div class="brand">PAGE 08</div>
+      </header>
+      <div class="slide-body">
+        <div class="book">
+          <div class="book-page" data-step>
+            <div class="panel-head">结论一</div>
+            <h3>HTML 更适合承载复合型内容</h3>
+            <p>当资料里同时出现文字、图片、视频、表格和网页链接时，HTML 比单页 PPT 更容易组织为可浏览、可跳转的结构。</p>
+            <ul>
+              <li>章节导航清晰</li>
+              <li>长内容可分层展开</li>
+              <li>可直接部署分享</li>
+            </ul>
+          </div>
+          <div class="book-page" data-step>
+            <div class="panel-head">结论二</div>
+            <h3>正式场合要克制动效</h3>
+            <p>宝蓝答辩稿的动效重点是逐块显现、章节定位和图表进入，不做过度花哨的装饰动画。</p>
+            <ul>
+              <li>点击显现而不误跳页</li>
+              <li>滚动和箭头负责翻页</li>
+              <li>视觉重心始终在内容上</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-line"></div>
+    </section>
+
+    <section class="slide cover" id="closing" data-section="closing">
+      <div class="slide-body">
+        <div>
+          <div class="eyebrow">Thank You</div>
+          <h1>Questions<br />&amp; Next<br />Steps</h1>
+          <p class="subtitle">下一步可以把真实论文、年终总结、课题材料、项目复盘或商务研究文档交给模板，自动生成更贴合内容的正式演示版本。</p>
+          <div class="meta-row">
+            <span class="pill">Created by Author Name</span>
+            <span class="pill">Sapphire Defense Deck</span>
+          </div>
+        </div>
+        <div class="campus-card" aria-hidden="true">
+          <div class="sky"></div>
+          <div class="seal-watermark">END</div>
+          <div class="building"><div class="windows"></div></div>
+          <div class="tree-line"></div>
+          <div class="wave"></div>
+        </div>
+      </div>
+      <div class="footer-line"></div>
+    </section>
+  </main>
+
+  <script>
+    const deck = document.querySelector('.deck');
+    const slides = [...document.querySelectorAll('.slide')];
+    const navLinks = [...document.querySelectorAll('.nav a')];
+    const jump = document.querySelector('.jump');
+    const next = document.querySelector('.next');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        const id = `#${entry.target.id}`;
+        navLinks.forEach((link) => link.classList.toggle('active', link.getAttribute('href') === id));
+        if (jump && [...jump.options].some((option) => option.value === id)) jump.value = id;
+      });
+    }, { root: deck, threshold: 0.45 });
+
+    slides.forEach((slide) => {
+      observer.observe(slide);
+      slide.addEventListener('click', (event) => {
+        if (event.target.closest('a, button, select, input, textarea')) return;
+        revealNext(slide);
+      });
+    });
+
+    function revealNext(slide) {
+      const steps = [...slide.querySelectorAll('[data-step]')];
+      const hidden = steps.find((step) => !step.classList.contains('shown'));
+      if (hidden) hidden.classList.add('shown');
+    }
+
+    function currentIndex() {
+      return slides.reduce((active, slide, index) => (
+        slide.getBoundingClientRect().top <= window.innerHeight * 0.35 ? index : active
+      ), 0);
+    }
+
+    function go(index) {
+      slides[Math.max(0, Math.min(index, slides.length - 1))]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    jump.addEventListener('change', (event) => {
+      document.querySelector(event.target.value)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    next.addEventListener('click', () => {
+      const slide = slides[currentIndex()];
+      const before = slide.querySelectorAll('[data-step]:not(.shown)').length;
+      revealNext(slide);
+      const after = slide.querySelectorAll('[data-step]:not(.shown)').length;
+      if (before === 0 || after === before) go(currentIndex() + 1);
+    });
+
+    window.addEventListener('keydown', (event) => {
+      const slide = slides[currentIndex()];
+      if (event.key === 'ArrowRight' || event.key === 'Enter') {
+        event.preventDefault();
+        revealNext(slide);
+      }
+      if (event.key === 'ArrowDown' || event.key === 'PageDown' || event.key === ' ') {
+        event.preventDefault();
+        go(currentIndex() + 1);
+      }
+      if (event.key === 'ArrowUp' || event.key === 'PageUp') {
+        event.preventDefault();
+        go(currentIndex() - 1);
+      }
+    });
+
+  </script>
+</body>
+</html>

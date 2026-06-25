@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vermilion Civic Deck / 红色汇报稿</title>
+  <style>
+    :root {
+      --red-950: #5a0504;
+      --red-900: #8c0806;
+      --red-800: #bd0908;
+      --red-700: #d61010;
+      --red-600: #ef1c16;
+      --red-100: #fff0e9;
+      --gold: #d7a844;
+      --gold-soft: #f4dfaf;
+      --paper: #fff9ef;
+      --warm: #efe2cf;
+      --ink: #321818;
+      --muted: #7d5d55;
+      --line: rgba(166, 43, 30, 0.2);
+      --shadow: 0 22px 56px rgba(94, 24, 16, 0.17);
+      --font: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      --brush: "STXingkai", "Xingkai SC", "HanziPen SC", "Kaiti SC", "KaiTi", "STKaiti", "FangSong", serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: var(--font);
+      background: var(--warm);
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, select { font: inherit; }
+
+    .deck {
+      height: 100vh;
+      overflow-y: auto;
+      scroll-snap-type: y mandatory;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(255, 228, 152, 0.35), transparent 26%),
+        linear-gradient(180deg, #d8cebf, #efe6d8);
+    }
+
+    .slide {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      min-height: 100vh;
+      padding: clamp(18px, 3vw, 44px);
+      scroll-snap-align: start;
+      overflow: hidden;
+      background: var(--paper);
+      display: flex;
+      flex-direction: column;
+      opacity: 0.38;
+      transform: translateY(20px);
+      transition: opacity 700ms ease, transform 700ms ease;
+    }
+
+    .slide.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 54% 10%, rgba(255, 226, 150, 0.52), transparent 16%),
+        radial-gradient(circle at 54% 10%, rgba(188, 8, 8, 0.08) 0 8%, transparent 9%),
+        linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,249,236,0.76) 35%, rgba(255,237,205,0.62) 100%),
+        linear-gradient(120deg, #fffaf0 0%, #fff3df 58%, #ffe3bd 100%);
+      opacity: 1;
+      pointer-events: none;
+    }
+
+    .slide::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,255,255,0.2) 34%, rgba(255,245,224,0.18)),
+        radial-gradient(ellipse at 48% 52%, rgba(255,255,255,0.92), transparent 46%);
+      opacity: 0.78;
+    }
+
+    .mountains {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 74px;
+      height: 52vh;
+      min-height: 380px;
+      opacity: 0.58;
+      pointer-events: none;
+      background:
+        linear-gradient(170deg, transparent 41%, rgba(99,124,128,0.38) 42% 57%, transparent 58%) -2% 34% / 38% 100%,
+        linear-gradient(153deg, transparent 37%, rgba(130,146,142,0.32) 38% 61%, transparent 62%) 25% 24% / 42% 100%,
+        linear-gradient(161deg, transparent 36%, rgba(83,108,113,0.35) 37% 58%, transparent 59%) 52% 36% / 44% 100%,
+        linear-gradient(150deg, transparent 40%, rgba(176,162,135,0.22) 41% 56%, transparent 57%) 78% 40% / 34% 100%,
+        linear-gradient(180deg, transparent, rgba(150,166,160,0.28));
+      background-repeat: no-repeat;
+      filter: blur(0.2px);
+    }
+
+    .silk {
+      position: absolute;
+      left: -8vw;
+      right: -8vw;
+      bottom: 0;
+      height: 26vh;
+      min-height: 190px;
+      pointer-events: none;
+      background:
+        radial-gradient(80% 90% at 20% 20%, rgba(255, 135, 65, 0.55), transparent 45%),
+        linear-gradient(155deg, transparent 20%, #b80303 21% 40%, #ff1f12 48%, #9a0504 74%, transparent 75%),
+        radial-gradient(100% 70% at 62% 10%, #ff3a1c 0 18%, #b90505 39%, #7c0203 64%, transparent 65%);
+      border-radius: 52% 48% 0 0 / 50% 50% 0 0;
+      box-shadow: inset 0 16px 28px rgba(255, 194, 88, 0.22), 0 -18px 40px rgba(160, 8, 8, 0.16);
+      opacity: 0.98;
+    }
+
+    .flag-fold {
+      position: absolute;
+      left: 0;
+      top: 70px;
+      width: 200px;
+      height: 170px;
+      pointer-events: none;
+      background:
+        linear-gradient(128deg, #d20505 0 40%, #ff3020 41% 61%, #990303 62%),
+        radial-gradient(circle at 68% 30%, rgba(255,255,255,0.35), transparent 18%);
+      clip-path: polygon(0 0, 82% 0, 65% 36%, 82% 72%, 48% 62%, 22% 100%, 0 82%);
+      filter: drop-shadow(0 14px 22px rgba(112, 5, 5, 0.22));
+    }
+
+    .stage {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      display: grid;
+      min-height: 0;
+      gap: clamp(18px, 2.5vw, 34px);
+      padding: clamp(18px, 3vw, 48px);
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .cover .stage,
+    .chapter .stage,
+    .closing .stage {
+      place-items: center;
+      text-align: center;
+    }
+
+    .top-menu {
+      position: fixed;
+      z-index: 40;
+      top: 24px;
+      right: 30px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .jump {
+      min-width: 180px;
+      height: 48px;
+      padding: 0 18px;
+      color: var(--red-950);
+      background: rgba(255, 250, 240, 0.92);
+      border: 1px solid rgba(189, 9, 8, 0.2);
+      box-shadow: 0 14px 34px rgba(94, 24, 16, 0.12);
+      font-weight: 900;
+    }
+
+    .next {
+      width: 52px;
+      height: 52px;
+      border: 1px solid rgba(189, 9, 8, 0.2);
+      border-radius: 50%;
+      color: #fff;
+      background: linear-gradient(135deg, var(--red-700), var(--red-950));
+      box-shadow: 0 14px 32px rgba(189, 9, 8, 0.24);
+      cursor: pointer;
+      font-size: 24px;
+      font-weight: 900;
+      transition: transform 220ms ease;
+    }
+
+    .next:hover { transform: translateY(-3px); }
+
+    .deck-nav {
+      position: fixed;
+      z-index: 39;
+      left: 28px;
+      bottom: 26px;
+      display: flex;
+      gap: 8px;
+      padding: 8px;
+      border: 1px solid rgba(189, 9, 8, 0.16);
+      border-radius: 999px;
+      background: rgba(255, 250, 240, 0.78);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 14px 36px rgba(94, 24, 16, 0.12);
+    }
+
+    .deck-nav a {
+      min-width: 38px;
+      height: 34px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      color: var(--red-900);
+      font-weight: 950;
+      font-size: 13px;
+      transition: color 200ms ease, background 200ms ease;
+    }
+
+    .deck-nav a.active,
+    .deck-nav a:hover {
+      color: #fff;
+      background: var(--red-800);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--red-900);
+      font-size: clamp(13px, 1.1vw, 17px);
+      font-weight: 950;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: clamp(16px, 2vw, 26px);
+    }
+
+    .eyebrow::before,
+    .eyebrow::after {
+      content: "";
+      width: 42px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--red-700));
+    }
+
+    .brush {
+      color: var(--red-900);
+      font-family: var(--brush);
+      font-size: clamp(58px, 7.4vw, 128px);
+      line-height: 1.04;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-shadow: 0 10px 18px rgba(160, 8, 8, 0.16);
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
+      color: var(--red-950);
+      font-size: clamp(34px, 4vw, 70px);
+      font-weight: 950;
+      line-height: 1.18;
+      letter-spacing: 0.08em;
+    }
+
+    .subtitle {
+      max-width: 850px;
+      margin: 22px auto 0;
+      color: var(--red-900);
+      font-size: clamp(17px, 1.55vw, 25px);
+      line-height: 1.7;
+      font-weight: 750;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 34px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 7px 18px;
+      border-radius: 999px;
+      color: var(--red-900);
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(189, 9, 8, 0.18);
+      font-weight: 900;
+      box-shadow: 0 10px 24px rgba(94,24,16,0.08);
+    }
+
+    .page-title {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--red-900);
+    }
+
+    .page-title .num {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(135deg, var(--red-700), var(--red-950));
+      font-size: 32px;
+      font-weight: 950;
+      box-shadow: 0 12px 28px rgba(189,9,8,0.25);
+    }
+
+    .page-title h2 {
+      color: var(--red-900);
+      font-size: clamp(28px, 3.2vw, 56px);
+      font-weight: 950;
+      line-height: 1.15;
+    }
+
+    .page-title small {
+      display: block;
+      margin-top: 4px;
+      color: var(--red-700);
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .grid-4,
+    .grid-3,
+    .grid-2 {
+      display: grid;
+      gap: clamp(16px, 2.2vw, 30px);
+      align-items: stretch;
+    }
+
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .content-card,
+    .chapter-card,
+    .icon-card,
+    .timeline-item {
+      position: relative;
+      min-width: 0;
+      padding: clamp(18px, 2vw, 30px);
+      border: 1px solid rgba(189, 9, 8, 0.16);
+      background: rgba(255, 249, 239, 0.84);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform 220ms ease, box-shadow 220ms ease;
+    }
+
+    .content-card:hover,
+    .chapter-card:hover,
+    .icon-card:hover,
+    .timeline-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 58px rgba(94, 24, 16, 0.2);
+    }
+
+    .content-card::before,
+    .chapter-card::before,
+    .icon-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 5px;
+      height: 100%;
+      background: linear-gradient(var(--gold), var(--red-800));
+    }
+
+    .content-card h3,
+    .chapter-card h3,
+    .icon-card h3,
+    .timeline-item h3 {
+      color: var(--red-900);
+      font-size: clamp(20px, 2vw, 34px);
+      line-height: 1.25;
+      font-weight: 950;
+      margin-bottom: 12px;
+    }
+
+    .content-card p,
+    .chapter-card p,
+    .icon-card p,
+    .timeline-item p,
+    li {
+      color: var(--muted);
+      font-size: clamp(14px, 1.1vw, 18px);
+      line-height: 1.78;
+      font-weight: 650;
+    }
+
+    .section-kicker {
+      color: var(--red-800);
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+
+    .toc {
+      width: min(980px, 100%);
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(18px, 2.4vw, 34px) clamp(24px, 4vw, 70px);
+    }
+
+    .toc a {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      gap: 16px;
+      align-items: center;
+      text-align: left;
+      padding: 18px 20px;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      transition: transform 220ms ease, background 220ms ease, border-color 220ms ease;
+    }
+
+    .toc a:hover {
+      transform: translateY(-4px);
+      border-color: rgba(189, 9, 8, 0.22);
+      background: rgba(255,255,255,0.5);
+    }
+
+    .toc-num {
+      height: 62px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(135deg, var(--red-700), var(--red-950));
+      font-size: 30px;
+      font-weight: 950;
+      box-shadow: 0 12px 26px rgba(189,9,8,0.22);
+    }
+
+    .toc strong {
+      color: var(--red-900);
+      font-size: clamp(20px, 2vw, 30px);
+      font-weight: 950;
+    }
+
+    .toc span {
+      display: block;
+      color: var(--red-700);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+
+    .image-strip {
+      display: grid;
+      grid-template-columns: 0.75fr 1.25fr;
+      gap: 0;
+      align-items: stretch;
+      min-height: 320px;
+      border: 1px solid rgba(189,9,8,0.16);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      background: rgba(255,255,255,0.58);
+    }
+
+    .photo {
+      min-height: 260px;
+      background:
+        linear-gradient(180deg, rgba(250,205,126,0.48), rgba(91,70,44,0.25)),
+        linear-gradient(155deg, transparent 22%, #6d4a2e 23% 30%, transparent 31%),
+        repeating-linear-gradient(18deg, #775035 0 12px, #9a724c 13px 22px, #3d281b 23px 25px);
+      box-shadow: inset 0 -46px 0 rgba(117,73,34,0.18);
+    }
+
+    .photo-caption {
+      display: grid;
+      align-content: center;
+      padding: clamp(22px, 3vw, 48px);
+      background: linear-gradient(135deg, var(--red-800), var(--red-950));
+      color: #fff;
+    }
+
+    .photo-caption h3,
+    .photo-caption p { color: #fff; }
+    .photo-caption p { opacity: 0.86; }
+
+    .timeline {
+      position: relative;
+      display: grid;
+      gap: 18px;
+      padding-left: 32px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      bottom: 10px;
+      width: 4px;
+      background: linear-gradient(var(--gold), var(--red-800));
+      border-radius: 999px;
+    }
+
+    .timeline-item {
+      box-shadow: 0 12px 28px rgba(94,24,16,0.1);
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -30px;
+      top: 28px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--red-800);
+      box-shadow: 0 0 0 7px rgba(189,9,8,0.12);
+    }
+
+    .icon {
+      width: 84px;
+      height: 84px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(135deg, var(--red-700), var(--red-950));
+      box-shadow: 0 18px 36px rgba(189,9,8,0.24);
+      font-size: 34px;
+      font-weight: 950;
+    }
+
+    .icon-card {
+      text-align: center;
+    }
+
+    .bars {
+      display: flex;
+      align-items: end;
+      gap: 26px;
+      min-height: 270px;
+      padding: 30px 22px;
+      border: 1px solid rgba(189,9,8,0.14);
+      background:
+        linear-gradient(180deg, rgba(189,9,8,0.08) 1px, transparent 1px) 0 0 / 100% 54px,
+        rgba(255,255,255,0.5);
+      box-shadow: var(--shadow);
+    }
+
+    .bar {
+      flex: 1;
+      min-width: 44px;
+      height: calc(var(--value) * 1%);
+      border-radius: 14px 14px 0 0;
+      background: linear-gradient(180deg, #ff4a2d, var(--red-900));
+      transform-origin: bottom;
+      transform: scaleY(0.2);
+      transition: transform 850ms cubic-bezier(.2,.9,.2,1);
+      position: relative;
+    }
+
+    .slide.is-visible .bar { transform: scaleY(1); }
+
+    .bar::after {
+      content: attr(data-label);
+      position: absolute;
+      left: 50%;
+      bottom: -30px;
+      transform: translateX(-50%);
+      color: var(--red-900);
+      font-size: 13px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .quote-box {
+      max-width: 980px;
+      padding: clamp(30px, 4vw, 60px);
+      border: 1px solid rgba(189,9,8,0.16);
+      background: rgba(255,255,255,0.56);
+      box-shadow: var(--shadow);
+      text-align: left;
+    }
+
+    .quote-box h3 {
+      color: var(--red-900);
+      font-family: var(--brush);
+      font-size: clamp(32px, 4vw, 70px);
+      line-height: 1.2;
+      letter-spacing: 0.12em;
+      margin-bottom: 18px;
+    }
+
+    [data-step] {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+      transition: transform 220ms ease, box-shadow 220ms ease;
+    }
+
+    .hint {
+      position: absolute;
+      z-index: 5;
+      right: clamp(24px, 4vw, 72px);
+      bottom: clamp(84px, 8vw, 120px);
+      color: rgba(90,5,4,0.6);
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    @media (max-width: 900px) {
+      .deck { scroll-snap-type: none; }
+      .slide {
+        height: auto;
+        min-height: auto;
+        padding: 14px;
+      }
+      .stage {
+        padding: 24px 18px 120px;
+      }
+      .grid-4,
+      .grid-3,
+      .grid-2,
+      .toc,
+      .image-strip {
+        grid-template-columns: 1fr;
+      }
+      .toc a {
+        grid-template-columns: 58px 1fr;
+        padding: 12px;
+      }
+      .toc-num {
+        height: 52px;
+        font-size: 24px;
+      }
+      .top-menu {
+        left: 14px;
+        right: 14px;
+        top: 12px;
+      }
+      .jump {
+        flex: 1;
+        min-width: 0;
+      }
+      .deck-nav {
+        left: 12px;
+        right: 12px;
+        overflow-x: auto;
+        border-radius: 18px;
+      }
+      .deck-nav a { min-width: 42px; }
+      .flag-fold { width: 130px; height: 110px; top: 78px; }
+      .brush { font-size: clamp(42px, 13vw, 70px); }
+      .hint { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 1ms !important;
+        transition-duration: 1ms !important;
+      }
+      .slide, [data-step], .bar {
+        opacity: 1;
+        transform: none;
+        filter: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-menu">
+    <select class="jump" aria-label="选择页面">
+      <option value="#cover">01 封面</option>
+      <option value="#contents">02 目录</option>
+      <option value="#chapter-one">03 第一章</option>
+      <option value="#work-focus">04 重点工作</option>
+      <option value="#chapter-two">05 第二章</option>
+      <option value="#implementation">06 推进举措</option>
+      <option value="#results">07 工作成效</option>
+      <option value="#closing">08 尾页</option>
+    </select>
+    <button class="next" type="button" aria-label="下一步">↓</button>
+  </div>
+
+  <nav class="deck-nav" aria-label="页面目录">
+    <a href="#cover">01</a>
+    <a href="#contents">02</a>
+    <a href="#chapter-one">03</a>
+    <a href="#work-focus">04</a>
+    <a href="#chapter-two">05</a>
+    <a href="#implementation">06</a>
+    <a href="#results">07</a>
+    <a href="#closing">08</a>
+  </nav>
+
+  <main class="deck">
+    <section class="slide cover" id="cover">
+      <div class="flag-fold"></div>
+      <div class="mountains"></div>
+      <div class="silk"></div>
+      <div class="stage">
+        <div>
+          <div class="eyebrow">红色汇报稿 / 行政汇报演示</div>
+          <div class="brush">初心如炬<br />实干笃行</div>
+          <p class="subtitle">适用于行政工作、组织建设、年度总结、专项推进和公共服务复盘的正式 HTML 演示模板。</p>
+          <div class="meta">
+            <span class="pill">汇报人：Author Name</span>
+            <span class="pill">单位：XXXX</span>
+            <span class="pill">日期：20XX 年 XX 月</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="contents">
+      <div class="flag-fold"></div>
+      <div class="mountains"></div>
+      <div class="silk"></div>
+      <div class="stage">
+        <div>
+          <div class="eyebrow">CONTENTS</div>
+          <div class="brush" style="font-size:clamp(46px,5.2vw,90px)">目录</div>
+        </div>
+        <div class="toc">
+          <a href="#chapter-one" data-step><span class="toc-num">1</span><span><strong>工作概览</strong><span>Work Overview</span></span></a>
+          <a href="#work-focus" data-step><span class="toc-num">2</span><span><strong>重点任务</strong><span>Priority Actions</span></span></a>
+          <a href="#implementation" data-step><span class="toc-num">3</span><span><strong>落实路径</strong><span>Execution Path</span></span></a>
+          <a href="#results" data-step><span class="toc-num">4</span><span><strong>阶段成效</strong><span>Results Review</span></span></a>
+        </div>
+      </div>
+      <p class="hint">滚动、目录或右上箭头切换页面</p>
+    </section>
+
+    <section class="slide chapter" id="chapter-one">
+      <div class="flag-fold"></div>
+      <div class="mountains"></div>
+      <div class="silk"></div>
+      <div class="stage">
+        <div>
+          <div class="eyebrow">Chapter One</div>
+          <div class="brush">第一章</div>
+          <h1>工作概览与目标定位</h1>
+          <p class="subtitle">用于承接工作背景、职责范围、阶段目标和汇报主线，让听众先建立清晰的整体判断。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="work-focus">
+      <div class="flag-fold"></div>
+      <div class="mountains"></div>
+      <div class="silk"></div>
+      <div class="stage">
+        <div class="page-title">
+          <span class="num">1</span>
+          <div>
+            <h2>重点工作展开</h2>
+            <small>Key Work Deployment</small>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="image-strip" data-step>
+            <div class="photo"></div>
+            <div class="photo-caption">
+              <h3>统筹推进与服务提升</h3>
+              <p>这里可以放真实会议、项目现场、服务窗口、基层调研或活动照片，也可以替换为数据图和流程图。</p>
+            </div>
+          </div>
+          <div class="timeline">
+            <article class="timeline-item" data-step>
+              <h3>01. 定向谋划</h3>
+              <p>围绕年度任务拆解关键指标，明确责任主体、时间节点和验收标准。</p>
+            </article>
+            <article class="timeline-item" data-step>
+              <h3>02. 联动执行</h3>
+              <p>建立跨部门协同机制，定期复盘进度，及时处理执行过程中的堵点。</p>
+            </article>
+            <article class="timeline-item" data-step>
+              <h3>03. 复盘归档</h3>
+              <p>将成果转化为制度、流程、案例和可复用资料，形成长期工作资产。</p>
+            </article>
+          </div>
+        </div>
+      </div>
+      <p class="hint">内容默认完整显示，适合直接对外预览</p>
+    </section>
+
+    <section class="slide chapter" id="chapter-two">
+      <div class="flag-fold"></div>
+      <div class="mountains"></div>
+      <div class="silk"></div>
+      <div class="stage">
+        <div>
+          <div class="eyebrow">Chapter Two</div>
+          <div class="brush">第二章</div>
+          <h1>落实路径与保障机制</h1>
+          <p class="subtitle">章节页适合在正式汇报中做节奏切换，让页面从密集信息回到清晰主线。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="implementation">
+      <div class="flag-fold"></div>
+      <div class="mountains"></div>
+      <div class="silk"></div>
+      <div class="stage">
+        <div class="page-title">
+          <span class="num">2</span>
+          <div>
+            <h2>三项落实抓手</h2>
+            <small>Implementation Measures</small>
+          </div>
+        </div>
+        <div class="grid-3">
+          <article class="icon-card" data-step>
+            <div class="icon">统</div>
+            <h3>统一部署</h3>
+            <p>围绕目标任务统一安排、统一节奏、统一标准，避免多头推进造成的信息断层。</p>
+          </article>
+          <article class="icon-card" data-step>
+            <div class="icon">督</div>
+            <h3>过程督办</h3>
+            <p>建立过程检查和问题反馈机制，及时发现风险，推动事项闭环落实。</p>
+          </article>
+          <article class="icon-card" data-step>
+            <div class="icon">评</div>
+            <h3>成效复核</h3>
+            <p>用结果数据和案例材料形成复盘，沉淀可复制、可推广的经验做法。</p>
+          </article>
+        </div>
+      </div>
+      <p class="hint">滚动、目录或右上箭头切换页面</p>
+    </section>
+
+    <section class="slide" id="results">
+      <div class="flag-fold"></div>
+      <div class="mountains"></div>
+      <div class="silk"></div>
+      <div class="stage">
+        <div class="page-title">
+          <span class="num">3</span>
+          <div>
+            <h2>阶段成果与后续安排</h2>
+            <small>Results & Review</small>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="content-card" data-step>
+            <div class="section-kicker">阶段成果</div>
+            <h3>重点事项稳步推进，服务保障持续优化</h3>
+            <p>这里可以替换为真实成果：完成事项、覆盖人群、服务次数、办结率、满意度、宣传触达、组织建设成果等。</p>
+            <ul>
+              <li>重点任务按计划推进，关键节点清晰。</li>
+              <li>协同流程逐步顺畅，问题响应更及时。</li>
+              <li>成果材料形成沉淀，可用于后续复盘。</li>
+            </ul>
+          </div>
+          <div data-step>
+            <div class="bars">
+              <div class="bar" style="--value:54" data-label="组织"></div>
+              <div class="bar" style="--value:72" data-label="服务"></div>
+              <div class="bar" style="--value:81" data-label="宣传"></div>
+              <div class="bar" style="--value:92" data-label="落实"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="hint">内容默认完整显示，图表随页面进入动效呈现</p>
+    </section>
+
+    <section class="slide closing" id="closing">
+      <div class="flag-fold"></div>
+      <div class="mountains"></div>
+      <div class="silk"></div>
+      <div class="stage">
+        <div class="quote-box" data-step>
+          <div class="eyebrow">Thank You</div>
+          <h3>汇报完毕<br />敬请指导</h3>
+          <p>下一步可以替换为真实政务、行政、党建或部门工作材料：文档、图片、表格、会议照片、视频片段和阶段数据都可以放入对应页面。</p>
+          <div class="meta">
+            <span class="pill">Created by Author Name</span>
+            <span class="pill">红色汇报稿</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const deck = document.querySelector('.deck');
+    const slides = [...document.querySelectorAll('.slide')];
+    const links = [...document.querySelectorAll('.deck-nav a')];
+    const jump = document.querySelector('.jump');
+    const next = document.querySelector('.next');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        const id = `#${entry.target.id}`;
+        links.forEach((link) => link.classList.toggle('active', link.getAttribute('href') === id));
+        if (jump && [...jump.options].some((option) => option.value === id)) jump.value = id;
+      });
+    }, { root: deck, threshold: 0.45 });
+
+    slides.forEach((slide) => observer.observe(slide));
+
+    function currentIndex() {
+      return slides.reduce((active, slide, index) => (
+        slide.getBoundingClientRect().top <= window.innerHeight * 0.35 ? index : active
+      ), 0);
+    }
+
+    function go(index) {
+      slides[Math.max(0, Math.min(index, slides.length - 1))]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    jump.addEventListener('change', (event) => {
+      document.querySelector(event.target.value)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    next.addEventListener('click', () => {
+      go(currentIndex() + 1);
+    });
+
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowDown' || event.key === 'PageDown' || event.key === ' ' || event.key === 'ArrowRight' || event.key === 'Enter') {
+        event.preventDefault();
+        go(currentIndex() + 1);
+      }
+      if (event.key === 'ArrowUp' || event.key === 'PageUp') {
+        event.preventDefault();
+        go(currentIndex() - 1);
+      }
+    });
+  </script>
+</body>
+</html>

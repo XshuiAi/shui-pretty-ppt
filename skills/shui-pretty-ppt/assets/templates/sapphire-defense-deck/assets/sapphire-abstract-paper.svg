@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="blue white academic paper background">
+  <defs>
+    <linearGradient id="paper" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".68" stop-color="#f5fbff"/>
+      <stop offset="1" stop-color="#e2f1ff"/>
+    </linearGradient>
+    <radialGradient id="seal" cx=".5" cy=".45" r=".5">
+      <stop offset="0" stop-color="#1270df" stop-opacity=".13"/>
+      <stop offset=".42" stop-color="#1270df" stop-opacity=".04"/>
+      <stop offset="1" stop-color="#1270df" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#paper)"/>
+  <rect x="0" y="0" width="1600" height="900" fill="url(#seal)"/>
+  <g fill="none" stroke="#0b57c3" opacity=".12">
+    <path d="M100 180h1400M100 258h1400M100 336h1400M100 414h1400M100 492h1400M100 570h1400"/>
+    <path d="M250 120v600M460 120v600M670 120v600M880 120v600M1090 120v600M1300 120v600"/>
+  </g>
+  <g opacity=".24">
+    <path d="M166 672c153-66 301-39 434 2 141 43 267 62 456-2 177-59 332-55 544 16v212H0V736c55-18 110-39 166-64z" fill="#c7e5ff"/>
+    <path d="M0 780c200-36 345-13 508 8 180 23 349 31 572-8 169-30 314-21 520 26v94H0z" fill="#0b4eb8"/>
+    <path d="M0 740c195-45 346-23 500 2 180 29 350 45 570 2 186-36 334-34 530 18" fill="none" stroke="#e4b950" stroke-width="5"/>
+  </g>
+</svg>

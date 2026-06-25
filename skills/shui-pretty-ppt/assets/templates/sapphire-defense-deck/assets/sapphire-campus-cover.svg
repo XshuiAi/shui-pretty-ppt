@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="blue academic campus background">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#eaf6ff"/>
+      <stop offset=".56" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#dbeeff"/>
+    </linearGradient>
+    <linearGradient id="blueWave" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#05358e"/>
+      <stop offset=".45" stop-color="#1471df"/>
+      <stop offset="1" stop-color="#06215a"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <g fill="#fff" opacity=".82" filter="url(#soft)">
+    <ellipse cx="250" cy="165" rx="190" ry="48"/>
+    <ellipse cx="1180" cy="145" rx="240" ry="62"/>
+    <ellipse cx="890" cy="238" rx="150" ry="42"/>
+  </g>
+  <circle cx="800" cy="390" r="230" fill="none" stroke="#0e62c9" stroke-width="20" opacity=".06"/>
+  <circle cx="800" cy="390" r="320" fill="none" stroke="#0e62c9" stroke-width="4" opacity=".08"/>
+  <g opacity=".84">
+    <path d="M150 705h1300v84H150z" fill="#c79068"/>
+    <path d="M720 585h160v204H720z" fill="#d7ae82"/>
+    <path d="M690 585h220l-110-96z" fill="#b88059"/>
+    <path d="M207 646h1186v36H207z" fill="#e8c9a3"/>
+    <path d="M312 597h204v108H312zM1084 597h204v108h-204z" fill="#d8b58d"/>
+    <g fill="#ffffff" opacity=".7">
+      <path d="M204 729h1184v10H204zM204 761h1184v10H204z"/>
+      <path d="M345 618h24v54h-24zM397 618h24v54h-24zM449 618h24v54h-24z"/>
+      <path d="M1122 618h24v54h-24zM1174 618h24v54h-24zM1226 618h24v54h-24z"/>
+      <path d="M746 621h26v62h-26zM790 621h26v62h-26zM834 621h26v62h-26z"/>
+    </g>
+  </g>
+  <g opacity=".9">
+    <path d="M0 755c175-54 317-23 438 4 135 30 244 50 405 0 183-56 346-64 757 26v115H0z" fill="#e8f8ff"/>
+    <path d="M0 820c187-38 321-18 478 5 150 22 304 42 515-6 186-43 348-34 607 26v55H0z" fill="url(#blueWave)" opacity=".96"/>
+    <path d="M0 793c190-44 330-20 487 8 139 24 289 46 489 2 187-42 349-40 624 22" fill="none" stroke="#f3c85b" stroke-width="5" opacity=".65"/>
+  </g>
+</svg>

@@ -1,0 +1,1053 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Blush Editorial reusable HTML template">
+  <title>Blush Editorial - 内容推荐指南</title>
+  <style>
+    :root {
+      --canvas: #fff5ed;
+      --surface: #ffffff;
+      --ink: #101012;
+      --muted: #5d585b;
+      --pink: #ff4f9a;
+      --pink-soft: #ffe3ef;
+      --surface-tint: #fff8fb;
+      --line: #e9ded9;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --content: 1180px;
+      --space-section: clamp(72px, 10vw, 136px);
+      --ease-out: cubic-bezier(.2, .8, .2, 1);
+      --font-sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--canvas);
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--canvas);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    button, a { font: inherit; }
+    button { color: inherit; }
+    a { color: inherit; }
+
+    :focus-visible {
+      outline: 2px solid var(--pink);
+      outline-offset: 4px;
+    }
+
+    .reading-progress {
+      position: fixed;
+      inset: 0 auto auto 0;
+      z-index: 100;
+      width: 0;
+      height: 3px;
+      background: var(--pink);
+      pointer-events: none;
+    }
+
+    .page-shell {
+      width: min(calc(100% - 48px), var(--content));
+      margin: 0 auto;
+    }
+
+    .chapter-nav-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid rgba(233, 222, 217, .86);
+      background: rgba(255, 245, 237, .94);
+      backdrop-filter: blur(14px);
+    }
+
+    .chapter-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 62px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .chapter-nav::-webkit-scrollbar { display: none; }
+
+    .brand-mark {
+      flex: 0 0 auto;
+      margin-right: auto;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .chapter-link {
+      flex: 0 0 auto;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      transition: color 140ms ease-out, background-color 140ms ease-out;
+    }
+
+    .chapter-link:hover,
+    .chapter-link.is-active {
+      color: var(--ink);
+      background: var(--pink-soft);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(180px, 250px);
+      gap: 56px;
+      align-items: end;
+      padding: clamp(76px, 12vw, 148px) 0 var(--space-section);
+    }
+
+    .eyebrow-pill,
+    .category-pill,
+    .scene-chip,
+    .metric-chip {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      max-width: 100%;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    .eyebrow-pill {
+      padding: 8px 12px;
+      color: var(--ink);
+      background: var(--pink-soft);
+    }
+
+    .hero h1 {
+      max-width: 900px;
+      margin: 24px 0 22px;
+      font-size: clamp(52px, 7vw, 90px);
+      font-weight: 800;
+      line-height: .98;
+      letter-spacing: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .hero-copy {
+      max-width: 720px;
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(17px, 2vw, 20px);
+    }
+
+    .hero-meta {
+      position: relative;
+      padding: 22px 0 4px;
+      border-top: 1px solid var(--line);
+      animation: meta-float 5.2s var(--ease-out) infinite alternate;
+      transform-origin: center;
+    }
+
+    .hero-meta:hover,
+    .hero-meta:focus-within { animation-play-state: paused; }
+
+    @keyframes meta-float {
+      from { transform: translateY(0); }
+      to { transform: translateY(-6px); }
+    }
+
+    .meta-notes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .meta-note {
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      transition: transform 160ms var(--ease-out), color 160ms ease-out, border-color 160ms ease-out;
+    }
+
+    .meta-note:hover {
+      transform: translateY(-2px);
+      color: var(--ink);
+      border-color: var(--pink);
+    }
+
+    .metric-chip {
+      padding: 7px 10px;
+      color: #fff;
+      background: var(--pink);
+    }
+
+    .hero-meta strong {
+      display: block;
+      margin-top: 18px;
+      font-size: 32px;
+      line-height: 1;
+    }
+
+    .hero-meta p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .section-heading {
+      display: grid;
+      grid-template-columns: minmax(0, .7fr) minmax(280px, 1fr);
+      gap: 48px;
+      align-items: end;
+      margin-bottom: 34px;
+    }
+
+    .section-heading h2 {
+      margin: 14px 0 0;
+      font-size: clamp(34px, 5vw, 58px);
+      line-height: 1.04;
+      letter-spacing: 0;
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .feature-list {
+      display: grid;
+      gap: 24px;
+      padding-bottom: var(--space-section);
+    }
+
+    .filter-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin: 0 0 24px;
+    }
+
+    .filter-control {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 5px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .72);
+    }
+
+    .filter-button {
+      min-height: 36px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: color 150ms ease-out, background-color 150ms ease-out, transform 150ms var(--ease-out);
+    }
+
+    .filter-button:hover { transform: translateY(-1px); }
+
+    .filter-button[aria-pressed="true"] {
+      color: #fff;
+      background: var(--pink);
+    }
+
+    .filter-status {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .feature-row {
+      --tilt-x: 0deg;
+      --tilt-y: 0deg;
+      --lift: 0px;
+      display: grid;
+      grid-template-columns: minmax(130px, .32fr) minmax(0, 1.25fr) minmax(250px, .72fr);
+      gap: clamp(28px, 4vw, 58px);
+      padding: clamp(28px, 4vw, 52px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      transform: perspective(1100px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(var(--lift));
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: transform 220ms var(--ease-out), border-color 180ms ease-out, background-color 180ms ease-out, opacity 220ms ease-out;
+    }
+
+    .feature-row.is-filtered-out {
+      display: none;
+    }
+
+    .feature-row.is-filter-entering {
+      animation: filter-enter 360ms var(--ease-out) both;
+    }
+
+    @keyframes filter-enter {
+      from { opacity: 0; transform: translateY(12px) scale(.99); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .feature-row:hover {
+        --lift: -4px;
+        border-color: rgba(255, 79, 154, .58);
+        background: var(--surface-tint);
+      }
+    }
+
+    .row-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .item-index {
+      color: var(--pink);
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .category-pill {
+      padding: 7px 10px;
+      color: var(--ink);
+      background: var(--pink-soft);
+    }
+
+    .letter-mark {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--pink);
+      font-size: 16px;
+      font-weight: 800;
+      transition: transform 220ms var(--ease-out), color 180ms ease-out, background-color 180ms ease-out;
+    }
+
+    .feature-row:hover .letter-mark { transform: rotate(6deg) scale(1.08); }
+
+    .row-content,
+    .row-side { min-width: 0; }
+
+    .positioning {
+      margin: 0 0 10px;
+      color: var(--pink);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .row-content h3 {
+      margin: 0 0 18px;
+      font-size: clamp(28px, 3vw, 43px);
+      line-height: 1.08;
+      letter-spacing: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .row-content > p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .details-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 24px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .details-toggle .arrow {
+      display: inline-block;
+      transition: transform 160ms var(--ease-out);
+    }
+
+    .details-toggle:hover .arrow { transform: translateX(4px); }
+
+    .details-panel {
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      transition: grid-template-rows 260ms var(--ease-out), opacity 220ms ease-out;
+    }
+
+    .details-panel > div { overflow: hidden; }
+
+    .details-panel p {
+      margin: 18px 0 0;
+      padding: 16px 18px;
+      border-left: 3px solid var(--pink);
+      color: var(--muted);
+      background: var(--surface-tint);
+    }
+
+    .details-panel.is-open {
+      grid-template-rows: 1fr;
+      opacity: 1;
+    }
+
+    .capability-title {
+      margin: 0 0 12px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .capability-list {
+      margin: 0 0 24px;
+      padding: 0;
+      list-style: none;
+      border-top: 1px solid var(--line);
+    }
+
+    .capability-item {
+      display: grid;
+      grid-template-columns: 24px minmax(0, 1fr);
+      gap: 10px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+      transition: transform 160ms var(--ease-out), color 160ms ease-out, background-color 160ms ease-out;
+    }
+
+    .capability-item b {
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      color: var(--pink);
+      transition: color 160ms ease-out, background-color 160ms ease-out, transform 160ms var(--ease-out);
+    }
+
+    .capability-item:hover {
+      transform: translateX(4px);
+      color: var(--ink);
+      background: var(--surface-tint);
+    }
+
+    .capability-item:hover b {
+      transform: scale(1.06);
+      color: #fff;
+      background: var(--pink);
+    }
+
+    .scene-chip {
+      padding: 8px 11px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: var(--surface-tint);
+    }
+
+    .section-band {
+      color: #fff;
+      background: var(--pink);
+    }
+
+    .section-band-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 36px;
+      align-items: center;
+      padding: clamp(44px, 7vw, 84px) 0;
+    }
+
+    .section-band h2 {
+      max-width: 850px;
+      margin: 0;
+      font-size: clamp(34px, 5vw, 60px);
+      line-height: 1.02;
+      letter-spacing: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 46px;
+      padding: 0 20px;
+      border: 1px solid var(--ink);
+      border-radius: 999px;
+      color: #fff;
+      background: var(--ink);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 800;
+      white-space: nowrap;
+      transition: color 140ms ease-out, background-color 140ms ease-out, border-color 140ms ease-out;
+    }
+
+    .button .arrow {
+      display: inline-block;
+      transition: transform 160ms var(--ease-out);
+    }
+
+    .button:hover {
+      color: var(--ink);
+      background: #fff;
+      border-color: #fff;
+    }
+
+    .button:hover .arrow { transform: translateX(4px); }
+
+    .secondary-section { padding: var(--space-section) 0; }
+
+    .secondary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+      margin-top: 34px;
+    }
+
+    .secondary-card {
+      position: relative;
+      min-width: 0;
+      padding: clamp(28px, 4vw, 44px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      transition: transform 180ms var(--ease-out), border-color 180ms ease-out;
+    }
+
+    .secondary-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--surface-tint);
+      cursor: pointer;
+      font-size: 20px;
+      font-weight: 700;
+      transition: transform 180ms var(--ease-out), color 180ms ease-out, background-color 180ms ease-out;
+    }
+
+    .secondary-detail {
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      transition: grid-template-rows 240ms var(--ease-out), opacity 200ms ease-out;
+    }
+
+    .secondary-detail > p {
+      overflow: hidden;
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 1px solid transparent;
+      transition: margin-top 200ms ease-out, padding-top 200ms ease-out, border-color 200ms ease-out;
+    }
+
+    .secondary-detail.is-open {
+      grid-template-rows: 1fr;
+      opacity: 1;
+    }
+
+    .secondary-detail.is-open > p {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-color: var(--line);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .secondary-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(255, 79, 154, .58);
+      }
+
+      .secondary-card:hover .secondary-toggle,
+      .secondary-toggle[aria-expanded="true"] {
+        transform: rotate(90deg);
+        color: #fff;
+        background: var(--pink);
+      }
+    }
+
+    .secondary-card h3 {
+      margin: 20px 0 12px;
+      font-size: 28px;
+      line-height: 1.12;
+      overflow-wrap: anywhere;
+    }
+
+    .secondary-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .secondary-card ul {
+      margin: 24px 0 0;
+      padding: 20px 0 0;
+      border-top: 1px solid var(--line);
+      list-style: none;
+    }
+
+    .secondary-card li {
+      position: relative;
+      margin-top: 8px;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .secondary-card li::before {
+      position: absolute;
+      top: .7em;
+      left: 0;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--pink);
+      content: "";
+    }
+
+    .page-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 30px 0 48px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 520ms var(--ease-out), transform 520ms var(--ease-out);
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .feature-row.reveal {
+      transform: perspective(1100px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(calc(16px + var(--lift)));
+    }
+
+    .feature-row.reveal.is-visible {
+      transform: perspective(1100px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(var(--lift));
+    }
+
+    @media (max-width: 820px) {
+      .hero,
+      .section-heading,
+      .section-band-inner { grid-template-columns: 1fr; }
+
+      .hero { gap: 36px; }
+
+      .hero-meta {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 12px 18px;
+        align-items: center;
+      }
+
+      .hero-meta strong { margin: 0; }
+      .hero-meta p { grid-column: 1 / -1; }
+      .meta-notes { grid-column: 1 / -1; }
+
+      .feature-row {
+        transform: none;
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+
+      .row-meta {
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .row-side {
+        padding-top: 4px;
+        border-top: 1px solid var(--line);
+      }
+
+      .section-band-inner { justify-items: start; }
+    }
+
+    @media (max-width: 640px) {
+      .page-shell { width: min(calc(100% - 28px), var(--content)); }
+      .chapter-nav { min-height: 56px; }
+      .brand-mark { display: none; }
+
+      .hero {
+        padding-top: 64px;
+        padding-bottom: 80px;
+      }
+
+      .hero h1 { font-size: clamp(44px, 14vw, 62px); }
+      .hero-copy { font-size: 17px; }
+
+      .section-heading { gap: 20px; }
+      .feature-row { padding: 26px 22px; }
+      .filter-row { align-items: flex-start; flex-direction: column; }
+      .filter-control { width: 100%; overflow-x: auto; flex-wrap: nowrap; }
+      .filter-button { flex: 0 0 auto; }
+
+      .secondary-grid { grid-template-columns: 1fr; }
+
+      .section-band h2 { font-size: 36px; }
+      .page-footer { flex-direction: column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+      .reveal { opacity: 1; transform: none; }
+      .feature-row:hover,
+      .secondary-card:hover,
+      .details-toggle:hover .arrow,
+      .button:hover .arrow { transform: none; }
+      .hero-meta { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="reading-progress" aria-hidden="true"></div>
+
+  <div class="chapter-nav-wrap">
+    <nav class="chapter-nav page-shell" aria-label="页面章节">
+      <span class="brand-mark">BLUSH EDITORIAL</span>
+      <a class="chapter-link is-active" href="#intro">导读</a>
+      <a class="chapter-link" href="#core">核心推荐</a>
+      <a class="chapter-link" href="#more">延伸选择</a>
+    </nav>
+  </div>
+
+  <main>
+    <header class="hero page-shell reveal" id="intro" data-section="intro">
+      <div>
+        <span class="eyebrow-pill">2026 精选指南</span>
+        <h1>把复杂选择，整理成清晰答案。</h1>
+        <p class="hero-copy">这是一套可替换内容的编辑型页面模板。用强标题建立观点，用纵向内容行讲清每一个核心项目，再把次要选择留在页面末尾。</p>
+      </div>
+      <aside class="hero-meta" aria-label="页面信息">
+        <span class="metric-chip">本期更新</span>
+        <strong>05</strong>
+        <p>3 个核心项目 + 2 个延伸推荐，预计阅读 6 分钟。</p>
+        <div class="meta-notes" aria-label="内容标签">
+          <span class="meta-note">编辑精选</span>
+          <span class="meta-note">可快速比较</span>
+        </div>
+      </aside>
+    </header>
+
+    <section class="page-shell" id="core" data-section="core">
+      <div class="section-heading reveal">
+        <div>
+          <span class="eyebrow-pill">Part 01</span>
+          <h2>核心推荐</h2>
+        </div>
+        <p>每一项都独占一整行，让名称、定位、能力和适用场景保持在同一个阅读单元里。替换时应优先保留这个信息顺序。</p>
+      </div>
+
+      <div class="filter-row reveal">
+        <div class="filter-control" role="group" aria-label="筛选核心推荐">
+          <button class="filter-button" type="button" data-filter="all" aria-pressed="true">全部</button>
+          <button class="filter-button" type="button" data-filter="strategy" aria-pressed="false">内容策略</button>
+          <button class="filter-button" type="button" data-filter="visual" aria-pressed="false">视觉表达</button>
+          <button class="filter-button" type="button" data-filter="efficiency" aria-pressed="false">效率工具</button>
+        </div>
+        <span class="filter-status" aria-live="polite">正在显示 3 项</span>
+      </div>
+
+      <div class="feature-list">
+        <article class="feature-row reveal" data-category="strategy">
+          <div class="row-meta">
+            <span class="item-index">01</span>
+            <span class="category-pill">内容策略</span>
+            <span class="letter-mark" aria-label="字母 A">A</span>
+          </div>
+          <div class="row-content">
+            <p class="positioning">从零散信息中找到主线</p>
+            <h3>核心项目名称 A</h3>
+            <p>这里放项目的完整说明。先交代它解决的问题，再解释它为什么值得被放在核心推荐中，最后说明使用它时最需要注意的边界。</p>
+            <button class="details-toggle" type="button" aria-expanded="false" aria-controls="detail-a">
+              查看判断依据 <span class="arrow" aria-hidden="true">-&gt;</span>
+            </button>
+            <div class="details-panel" id="detail-a">
+              <div><p>补充信息应该帮助读者做决定，例如适用门槛、使用成本或与其他选项的关键差异。</p></div>
+            </div>
+          </div>
+          <div class="row-side">
+            <p class="capability-title">3 项核心能力</p>
+            <ul class="capability-list">
+              <li class="capability-item"><b>01</b><span>快速提炼最重要的信息主线</span></li>
+              <li class="capability-item"><b>02</b><span>把抽象判断转成可执行步骤</span></li>
+              <li class="capability-item"><b>03</b><span>保留来源、边界和决策依据</span></li>
+            </ul>
+            <span class="scene-chip">适合：深度教程 / 选题研究</span>
+          </div>
+        </article>
+
+        <article class="feature-row reveal" data-category="visual">
+          <div class="row-meta">
+            <span class="item-index">02</span>
+            <span class="category-pill">视觉表达</span>
+            <span class="letter-mark" aria-label="字母 B">B</span>
+          </div>
+          <div class="row-content">
+            <p class="positioning">让信息层级一眼可见</p>
+            <h3>核心项目名称 B</h3>
+            <p>在这里描述第二项推荐的关键价值。正文保持自然段，不把所有内容都切成小卡片；真正需要扫描的信息才进入右侧能力清单。</p>
+            <button class="details-toggle" type="button" aria-expanded="false" aria-controls="detail-b">
+              查看判断依据 <span class="arrow" aria-hidden="true">-&gt;</span>
+            </button>
+            <div class="details-panel" id="detail-b">
+              <div><p>展开区域适合放比较信息或限制条件，不应隐藏理解项目所必需的正文。</p></div>
+            </div>
+          </div>
+          <div class="row-side">
+            <p class="capability-title">3 项核心能力</p>
+            <ul class="capability-list">
+              <li class="capability-item"><b>01</b><span>建立稳定的颜色和字号层级</span></li>
+              <li class="capability-item"><b>02</b><span>在桌面与手机上保持可读性</span></li>
+              <li class="capability-item"><b>03</b><span>用少量重点色引导阅读顺序</span></li>
+            </ul>
+            <span class="scene-chip">适合：品牌内容 / 产品介绍</span>
+          </div>
+        </article>
+
+        <article class="feature-row reveal" data-category="efficiency">
+          <div class="row-meta">
+            <span class="item-index">03</span>
+            <span class="category-pill">效率工具</span>
+            <span class="letter-mark" aria-label="字母 C">C</span>
+          </div>
+          <div class="row-content">
+            <p class="positioning">把阅读结果推进到下一步</p>
+            <h3>核心项目名称 C</h3>
+            <p>第三项可以承担执行或转化角色，让整篇页面不只停留在介绍。按钮和展开交互都应给出即时反馈，但不制造持续运动。</p>
+            <button class="details-toggle" type="button" aria-expanded="false" aria-controls="detail-c">
+              查看判断依据 <span class="arrow" aria-hidden="true">-&gt;</span>
+            </button>
+            <div class="details-panel" id="detail-c">
+              <div><p>如需增加行动按钮，应使用明确动词，并确保在没有动画时仍然清楚可用。</p></div>
+            </div>
+          </div>
+          <div class="row-side">
+            <p class="capability-title">3 项核心能力</p>
+            <ul class="capability-list">
+              <li class="capability-item"><b>01</b><span>缩短从理解到行动的距离</span></li>
+              <li class="capability-item"><b>02</b><span>提供清晰的操作反馈</span></li>
+              <li class="capability-item"><b>03</b><span>支持后续内容持续扩展</span></li>
+            </ul>
+            <span class="scene-chip">适合：工具清单 / 工作流程</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-band reveal" aria-labelledby="band-title">
+      <div class="section-band-inner page-shell">
+        <h2 id="band-title">先理解核心差异，再选择适合自己的那一个。</h2>
+        <a class="button" href="#more">继续查看 <span class="arrow" aria-hidden="true">-&gt;</span></a>
+      </div>
+    </section>
+
+    <section class="secondary-section page-shell" id="more" data-section="more">
+      <div class="section-heading reveal">
+        <div>
+          <span class="eyebrow-pill">Part 02</span>
+          <h2>延伸选择</h2>
+        </div>
+        <p>次要推荐不需要和核心项目争夺注意力，但仍要说明用途、能力与适合场景，避免变成只有名称的工具列表。</p>
+      </div>
+
+      <div class="secondary-grid">
+        <article class="secondary-card reveal">
+          <button class="secondary-toggle" type="button" aria-label="展开延伸项目 D 的详情" aria-expanded="false" aria-controls="secondary-d">+</button>
+          <span class="category-pill">轻量补充</span>
+          <h3>延伸项目 D</h3>
+          <p>适合任务较轻、希望快速得到结果的读者。它不替代核心方案，而是降低第一次尝试的成本。</p>
+          <ul>
+            <li>用途：快速验证一个小想法</li>
+            <li>能力：模板化输出与基础调整</li>
+            <li>场景：短内容、临时页面、概念演示</li>
+          </ul>
+          <div class="secondary-detail" id="secondary-d"><p>适合第一次尝试或需要快速验证方向时使用；确认方向后，再迁移到更完整的核心方案。</p></div>
+        </article>
+
+        <article class="secondary-card reveal">
+          <button class="secondary-toggle" type="button" aria-label="展开延伸项目 E 的详情" aria-expanded="false" aria-controls="secondary-e">+</button>
+          <span class="category-pill">进阶补充</span>
+          <h3>延伸项目 E</h3>
+          <p>适合已经有稳定方法、需要进一步扩展的人。正文应说清它增加了什么，而不是只用“更专业”概括。</p>
+          <ul>
+            <li>用途：扩展复杂内容结构</li>
+            <li>能力：更细的组件与交互控制</li>
+            <li>场景：专题页、品牌栏目、长期项目</li>
+          </ul>
+          <div class="secondary-detail" id="secondary-e"><p>适合已有稳定流程、需要更细控制的人；使用前应确认额外复杂度是否真的带来价值。</p></div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="page-footer page-shell">
+    <span>Blush Editorial reusable template</span>
+    <span>Replace demo copy with verified source content.</span>
+  </footer>
+
+  <script>
+    (() => {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const progress = document.querySelector('.reading-progress');
+      const revealItems = document.querySelectorAll('.reveal');
+      const sections = document.querySelectorAll('[data-section]');
+      const navLinks = document.querySelectorAll('.chapter-link');
+
+      const updateProgress = () => {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const value = max > 0 ? (window.scrollY / max) * 100 : 0;
+        progress.style.width = `${Math.min(100, Math.max(0, value))}%`;
+      };
+
+      updateProgress();
+      window.addEventListener('scroll', updateProgress, { passive: true });
+      window.addEventListener('resize', updateProgress);
+
+      if (reduceMotion || !('IntersectionObserver' in window)) {
+        revealItems.forEach((item) => item.classList.add('is-visible'));
+      } else {
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          });
+        }, { threshold: 0.12 });
+        revealItems.forEach((item) => revealObserver.observe(item));
+      }
+
+      if ('IntersectionObserver' in window) {
+        const sectionObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            navLinks.forEach((link) => {
+              const active = link.getAttribute('href') === `#${entry.target.id}`;
+              link.classList.toggle('is-active', active);
+            });
+          });
+        }, { rootMargin: '-20% 0px -65% 0px' });
+        sections.forEach((section) => sectionObserver.observe(section));
+      }
+
+      document.querySelectorAll('.details-toggle').forEach((button) => {
+        button.addEventListener('click', () => {
+          const panel = document.getElementById(button.getAttribute('aria-controls'));
+          const open = button.getAttribute('aria-expanded') === 'true';
+          button.setAttribute('aria-expanded', String(!open));
+          panel.classList.toggle('is-open', !open);
+        });
+      });
+
+      document.querySelectorAll('.secondary-toggle').forEach((button) => {
+        button.addEventListener('click', () => {
+          const panel = document.getElementById(button.getAttribute('aria-controls'));
+          const open = button.getAttribute('aria-expanded') === 'true';
+          button.setAttribute('aria-expanded', String(!open));
+          panel.classList.toggle('is-open', !open);
+        });
+      });
+
+      const filterButtons = document.querySelectorAll('.filter-button');
+      const featureRows = document.querySelectorAll('.feature-row');
+      const filterStatus = document.querySelector('.filter-status');
+
+      featureRows.forEach((row) => {
+        row.addEventListener('animationend', () => row.classList.remove('is-filter-entering'));
+      });
+
+      filterButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const filter = button.dataset.filter;
+          let visible = 0;
+
+          filterButtons.forEach((item) => {
+            item.setAttribute('aria-pressed', String(item === button));
+          });
+
+          featureRows.forEach((row) => {
+            const show = filter === 'all' || row.dataset.category === filter;
+            row.classList.toggle('is-filtered-out', !show);
+            row.classList.remove('is-filter-entering');
+            if (show) {
+              visible += 1;
+              if (!reduceMotion) {
+                requestAnimationFrame(() => row.classList.add('is-filter-entering'));
+              }
+            }
+          });
+
+          filterStatus.textContent = `正在显示 ${visible} 项`;
+        });
+      });
+
+      const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      if (finePointer && !reduceMotion) {
+        featureRows.forEach((row) => {
+          row.addEventListener('pointermove', (event) => {
+            const rect = row.getBoundingClientRect();
+            const x = (event.clientX - rect.left) / rect.width - .5;
+            const y = (event.clientY - rect.top) / rect.height - .5;
+            row.style.setProperty('--tilt-x', `${(-y * 1.2).toFixed(2)}deg`);
+            row.style.setProperty('--tilt-y', `${(x * 1.2).toFixed(2)}deg`);
+          });
+          row.addEventListener('pointerleave', () => {
+            row.style.setProperty('--tilt-x', '0deg');
+            row.style.setProperty('--tilt-y', '0deg');
+          });
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

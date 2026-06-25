@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-label="formal blue campus panel background">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#f8fcff"/>
+      <stop offset=".64" stop-color="#edf7ff"/>
+      <stop offset="1" stop-color="#d5eaff"/>
+    </linearGradient>
+    <linearGradient id="building" x1="0" x2="1">
+      <stop offset="0" stop-color="#dcb78e"/>
+      <stop offset=".55" stop-color="#bd8158"/>
+      <stop offset="1" stop-color="#d6aa7d"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="720" fill="url(#bg)"/>
+  <g opacity=".2" fill="none" stroke="#0b5fcb">
+    <circle cx="600" cy="250" r="156" stroke-width="12"/>
+    <circle cx="600" cy="250" r="220" stroke-width="2"/>
+  </g>
+  <path d="M75 520h1050v88H75z" fill="url(#building)" opacity=".86"/>
+  <path d="M514 392h172v216H514z" fill="#c89568"/>
+  <path d="M486 392h228L600 300z" fill="#a96846"/>
+  <path d="M140 463h920v42H140z" fill="#e8cfae" opacity=".9"/>
+  <g opacity=".52" fill="#fff">
+    <path d="M118 552h956v10H118zM118 583h956v10H118z"/>
+    <path d="M245 486h26v56h-26zM302 486h26v56h-26zM359 486h26v56h-26zM416 486h26v56h-26z"/>
+    <path d="M758 486h26v56h-26zM815 486h26v56h-26zM872 486h26v56h-26zM929 486h26v56h-26z"/>
+    <path d="M540 424h28v72h-28zM586 424h28v72h-28zM632 424h28v72h-28z"/>
+  </g>
+  <g fill="#4a9d5c" opacity=".82">
+    <circle cx="114" cy="612" r="46"/>
+    <circle cx="198" cy="610" r="58"/>
+    <circle cx="307" cy="626" r="44"/>
+    <circle cx="913" cy="622" r="54"/>
+    <circle cx="1018" cy="607" r="61"/>
+    <circle cx="1102" cy="628" r="42"/>
+  </g>
+  <path d="M0 638c147-30 264-17 396 4 174 28 301 38 464-2 126-31 236-28 340 10v70H0z" fill="#0b4eb8" opacity=".88"/>
+</svg>

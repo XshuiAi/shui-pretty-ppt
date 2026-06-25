@@ -1,0 +1,1331 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>模板07｜珊瑚企简｜公司汇报演示</title>
+  <style>
+    :root {
+      --stage: #eadbd6;
+      --paper: #fff7f2;
+      --paper-2: #fffdf9;
+      --ink: #252324;
+      --muted: #746c69;
+      --soft: #fbe5df;
+      --soft-2: #ffece6;
+      --coral: #ff5a3f;
+      --coral-2: #ff7a45;
+      --orange: #ff9b38;
+      --line: #ebd8d0;
+      --line-dark: #322b2a;
+      --white: #ffffff;
+      --shadow: 0 24px 48px rgba(81, 52, 43, 0.18);
+      --font: "Inter", "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 8% 3%, rgba(255, 90, 63, 0.15), transparent 30%),
+        linear-gradient(180deg, var(--stage), #efe4df 45%, #eadbd6);
+      color: var(--ink);
+      font-family: var(--font);
+    }
+
+    button,
+    select { font: inherit; color: inherit; }
+
+    .deck {
+      width: min(1240px, calc(100vw - 36px));
+      margin: 0 auto;
+      padding: 104px 0 96px;
+    }
+
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 50;
+      width: 100%;
+      margin: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding: 16px max(18px, calc((100vw - 1240px) / 2)) 16px;
+      color: var(--ink);
+      background: rgba(234, 219, 214, 0.88);
+      border-bottom: 1px solid rgba(235, 216, 208, 0.82);
+      backdrop-filter: blur(18px);
+    }
+
+    .brandline {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+      font-size: 13px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: rgba(37, 35, 36, 0.62);
+      white-space: nowrap;
+      max-width: min(760px, calc(100vw - 370px));
+      overflow: hidden;
+    }
+
+    .brandline::after {
+      content: "";
+      width: min(32vw, 420px);
+      height: 2px;
+      background: linear-gradient(90deg, var(--coral), rgba(255, 90, 63, 0.08));
+    }
+
+    .jump {
+      min-width: 190px;
+      border: 1px solid rgba(50, 43, 42, 0.16);
+      background: rgba(255, 253, 249, 0.9);
+      padding: 11px 14px;
+      outline: none;
+      box-shadow: 0 10px 28px rgba(81, 52, 43, 0.08);
+    }
+
+    .slide {
+      position: relative;
+      min-height: min(65vw, 690px);
+      margin-bottom: 46px;
+      padding: clamp(32px, 4.7vw, 68px);
+      scroll-margin-top: 92px;
+      background:
+        linear-gradient(90deg, rgba(50, 43, 42, 0.035) 1px, transparent 1px) 0 0 / 62px 62px,
+        linear-gradient(180deg, var(--paper-2), var(--paper));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 620ms ease, transform 620ms ease;
+    }
+
+    .slide.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .slide.hero {
+      background:
+        radial-gradient(circle at 78% 8%, rgba(255, 255, 255, 0.2), transparent 18%),
+        linear-gradient(120deg, #ff5137 0%, #ff6a42 54%, #ff8a4a 100%);
+      color: var(--white);
+    }
+
+    .slide.chapter {
+      color: var(--white);
+      background:
+        radial-gradient(circle at 78% 24%, rgba(255, 255, 255, 0.22), transparent 24%),
+        linear-gradient(120deg, #ff5538, #ff7e45);
+    }
+
+    .slide.dark {
+      color: var(--white);
+      background:
+        linear-gradient(135deg, rgba(255, 90, 63, 0.28), transparent 38%),
+        #252324;
+    }
+
+    .slide.close-slide {
+      color: var(--white);
+      background:
+        radial-gradient(circle at 78% 18%, rgba(255, 255, 255, 0.22), transparent 22%),
+        radial-gradient(circle at 18% 90%, rgba(255, 255, 255, 0.14), transparent 20%),
+        linear-gradient(120deg, #ff5137 0%, #ff6a42 52%, #ff8d4d 100%);
+    }
+
+    .meta {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+      margin-bottom: clamp(34px, 7vw, 92px);
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: rgba(37, 35, 36, 0.58);
+    }
+
+    .hero .meta,
+    .chapter .meta,
+    .dark .meta,
+    .close-slide .meta { color: rgba(255, 255, 255, 0.76); }
+
+    h1,
+    h2,
+    h3,
+    p { margin: 0; }
+
+    h1 {
+      position: relative;
+      z-index: 3;
+      max-width: 760px;
+      font-size: clamp(58px, 8.8vw, 128px);
+      line-height: 0.88;
+      letter-spacing: -0.065em;
+    }
+
+    h2 {
+      position: relative;
+      z-index: 3;
+      font-size: clamp(42px, 6vw, 86px);
+      line-height: 0.94;
+      letter-spacing: -0.055em;
+    }
+
+    h3 {
+      font-size: clamp(21px, 2.2vw, 31px);
+      line-height: 1.08;
+      letter-spacing: -0.036em;
+    }
+
+    .body {
+      color: var(--muted);
+      font-size: clamp(14px, 1.28vw, 17px);
+      line-height: 1.72;
+    }
+
+    .hero .body,
+    .chapter .body,
+    .dark .body,
+    .close-slide .body { color: rgba(255, 255, 255, 0.78); }
+
+    .phone-card .body { color: var(--muted); }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: 1.03fr 0.97fr;
+      gap: clamp(28px, 6vw, 72px);
+      align-items: end;
+      min-height: min(52vw, 510px);
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 430px;
+    }
+
+    .hero-subtitle {
+      max-width: 560px;
+      margin-top: 22px;
+      font-size: clamp(19px, 2vw, 28px);
+      line-height: 1.36;
+      font-weight: 700;
+    }
+
+    .hero-info {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 54px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .hero-info span {
+      display: block;
+      padding-top: 12px;
+      border-top: 2px solid rgba(255, 255, 255, 0.55);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .hero-info b {
+      display: block;
+      margin-top: 6px;
+      font-size: 15px;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .orbital {
+      position: relative;
+      min-height: 470px;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 46% 54% 56% 44% / 42% 46% 54% 58%;
+      background: rgba(255, 255, 255, 0.22);
+      filter: blur(0.2px);
+      animation: drift 8s ease-in-out infinite;
+    }
+
+    .blob.one {
+      width: 330px;
+      height: 260px;
+      top: 18px;
+      right: 44px;
+      transform: rotate(-18deg);
+    }
+
+    .blob.two {
+      width: 230px;
+      height: 190px;
+      bottom: 56px;
+      right: 0;
+      background: rgba(255, 255, 255, 0.16);
+      animation-delay: -2.4s;
+    }
+
+    .phone-card {
+      position: absolute;
+      right: 70px;
+      top: 116px;
+      width: min(290px, 54vw);
+      min-height: 330px;
+      padding: 26px;
+      border-radius: 24px;
+      background: rgba(255, 247, 242, 0.94);
+      color: var(--ink);
+      box-shadow: 0 24px 52px rgba(79, 37, 29, 0.2);
+      transform: rotate(5deg);
+      transition: transform 420ms ease;
+    }
+
+    .phone-card:hover { transform: rotate(0deg) translateY(-8px); }
+
+    .phone-dot {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      background: var(--coral);
+      margin-bottom: 42px;
+    }
+
+    .phone-card h3 {
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 32px;
+      padding: 7px 12px;
+      border: 1px solid currentColor;
+      border-radius: 999px;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+
+    .hero-arrow,
+    .next-arrow {
+      position: absolute;
+      right: clamp(32px, 4vw, 60px);
+      bottom: clamp(28px, 4vw, 54px);
+      z-index: 5;
+      display: grid;
+      place-items: center;
+      width: 58px;
+      height: 58px;
+      border: 1px solid rgba(255, 255, 255, 0.54);
+      background: rgba(255, 255, 255, 0.12);
+      color: currentColor;
+      text-decoration: none;
+      font-size: 34px;
+      line-height: 1;
+      transition: transform 240ms ease, background 240ms ease;
+    }
+
+    .next-arrow {
+      border-color: rgba(37, 35, 36, 0.16);
+      color: var(--coral);
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .hero-arrow:hover,
+    .next-arrow:hover {
+      transform: translateY(6px);
+      background: rgba(255, 255, 255, 0.28);
+    }
+
+    .big-number {
+      position: absolute;
+      right: clamp(34px, 5vw, 72px);
+      bottom: clamp(20px, 3vw, 42px);
+      z-index: 1;
+      font-size: clamp(160px, 24vw, 340px);
+      line-height: 0.8;
+      letter-spacing: -0.08em;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.18);
+      pointer-events: none;
+    }
+
+    .section-title {
+      position: relative;
+      z-index: 3;
+      max-width: 760px;
+      margin-top: clamp(70px, 10vw, 150px);
+    }
+
+    .section-title .body {
+      max-width: 560px;
+      margin-top: 18px;
+      font-size: 18px;
+    }
+
+    .contents-grid {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: clamp(30px, 5vw, 70px);
+      align-items: end;
+      min-height: min(52vw, 500px);
+    }
+
+    .contents-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .content-card {
+      display: grid;
+      min-height: 132px;
+      padding: 22px;
+      border: 1px solid rgba(50, 43, 42, 0.14);
+      background: rgba(255, 253, 249, 0.72);
+      color: inherit;
+      text-decoration: none;
+      transition: transform 220ms ease, background 220ms ease, border-color 220ms ease;
+    }
+
+    .content-card:hover {
+      transform: translateY(-7px);
+      background: var(--coral);
+      border-color: var(--coral);
+      color: var(--white);
+    }
+
+    .content-card b {
+      font-size: 32px;
+      line-height: 1;
+      letter-spacing: -0.05em;
+    }
+
+    .content-card span {
+      align-self: end;
+      display: block;
+      font-size: 17px;
+      line-height: 1.3;
+      font-weight: 900;
+    }
+
+    .split {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(26px, 5vw, 72px);
+      align-items: center;
+    }
+
+    .panel {
+      padding: clamp(22px, 3vw, 38px);
+      border: 1px solid rgba(50, 43, 42, 0.12);
+      background: rgba(255, 253, 249, 0.72);
+    }
+
+    .panel.coral {
+      background: var(--coral);
+      color: var(--white);
+      border-color: var(--coral);
+    }
+
+    .panel.soft {
+      background: var(--soft);
+    }
+
+    .panel h3 + .body,
+    .panel .body + .pill-row {
+      margin-top: 14px;
+    }
+
+    .project-visual {
+      position: relative;
+      min-height: 370px;
+      background: linear-gradient(145deg, #fffaf6, #ffe6dd);
+      border: 1px solid rgba(50, 43, 42, 0.12);
+      overflow: hidden;
+    }
+
+    .project-visual::before {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      right: -90px;
+      top: -70px;
+      border-radius: 50%;
+      background: rgba(255, 90, 63, 0.2);
+    }
+
+    .project-visual::after {
+      content: "";
+      position: absolute;
+      inset: auto 44px 44px auto;
+      width: 160px;
+      height: 160px;
+      border-radius: 38% 62% 58% 42%;
+      background: rgba(255, 154, 56, 0.36);
+    }
+
+    .mini-person {
+      position: absolute;
+      left: 68px;
+      bottom: 54px;
+      width: 92px;
+      height: 150px;
+    }
+
+    .mini-person::before {
+      content: "";
+      position: absolute;
+      left: 28px;
+      top: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--ink);
+    }
+
+    .mini-person::after {
+      content: "";
+      position: absolute;
+      left: 16px;
+      top: 48px;
+      width: 70px;
+      height: 86px;
+      border-radius: 40px 40px 14px 14px;
+      background: var(--coral);
+    }
+
+    .mini-line {
+      position: absolute;
+      left: 180px;
+      right: 54px;
+      bottom: 122px;
+      height: 3px;
+      background: var(--ink);
+    }
+
+    .mini-line::after {
+      content: "";
+      position: absolute;
+      right: -2px;
+      top: -8px;
+      width: 18px;
+      height: 18px;
+      border-top: 3px solid var(--ink);
+      border-right: 3px solid var(--ink);
+      transform: rotate(45deg);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 30px;
+    }
+
+    .stat {
+      padding: 22px;
+      background: rgba(255, 253, 249, 0.72);
+      border: 1px solid rgba(50, 43, 42, 0.12);
+    }
+
+    .stat b {
+      display: block;
+      color: var(--coral);
+      font-size: clamp(32px, 4vw, 56px);
+      line-height: 1;
+      letter-spacing: -0.06em;
+      margin-bottom: 10px;
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      font-weight: 700;
+    }
+
+    .work-grid {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: clamp(28px, 5vw, 68px);
+      align-items: center;
+    }
+
+    .task-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .task {
+      position: relative;
+      display: grid;
+      grid-template-columns: 54px 1fr;
+      gap: 18px;
+      padding: 20px;
+      border: 1px solid rgba(50, 43, 42, 0.12);
+      background: rgba(255, 253, 249, 0.78);
+      cursor: pointer;
+      transition: transform 220ms ease, border-color 220ms ease;
+    }
+
+    .task:hover,
+    .task.active {
+      transform: translateX(8px);
+      border-color: rgba(255, 90, 63, 0.55);
+    }
+
+    .task-num {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border-radius: 18px;
+      background: var(--coral);
+      color: var(--white);
+      font-weight: 900;
+    }
+
+    .task h3 {
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+
+    .task-detail {
+      min-height: 360px;
+      padding: clamp(24px, 3.3vw, 44px);
+      background: linear-gradient(145deg, var(--coral), var(--coral-2));
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .task-detail h3 {
+      max-width: 430px;
+      font-size: clamp(32px, 4.2vw, 58px);
+    }
+
+    .task-detail .body {
+      max-width: 520px;
+      color: rgba(255, 255, 255, 0.83);
+      margin-top: 18px;
+    }
+
+    .bars {
+      display: grid;
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .bar {
+      --value: 50%;
+      display: grid;
+      grid-template-columns: 120px 1fr 42px;
+      align-items: center;
+      gap: 14px;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .bar-track {
+      height: 14px;
+      background: rgba(50, 43, 42, 0.08);
+      overflow: hidden;
+    }
+
+    .bar-track span {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--coral), var(--orange));
+      transition: width 900ms ease;
+    }
+
+    .is-visible .bar-track span { width: var(--value); }
+
+    .review-grid {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(24px, 4vw, 52px);
+      align-items: stretch;
+    }
+
+    .metric-card {
+      padding: clamp(24px, 3vw, 38px);
+      border: 1px solid rgba(50, 43, 42, 0.12);
+      background: rgba(255, 253, 249, 0.72);
+    }
+
+    .metric-card strong {
+      display: block;
+      color: var(--coral);
+      font-size: clamp(58px, 7vw, 102px);
+      line-height: 0.9;
+      letter-spacing: -0.07em;
+      margin-bottom: 22px;
+    }
+
+    .ring-wrap {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 26px;
+    }
+
+    .ring {
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle closest-side, var(--paper-2) 72%, transparent 74%),
+        conic-gradient(var(--coral) var(--part), rgba(50,43,42,0.1) 0);
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      font-weight: 900;
+    }
+
+    .funnel {
+      display: grid;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .funnel span {
+      display: grid;
+      place-items: center;
+      height: 44px;
+      margin: 0 auto;
+      background: linear-gradient(90deg, var(--coral), var(--orange));
+      color: var(--white);
+      font-weight: 900;
+      border-radius: 14px;
+    }
+
+    .funnel span:nth-child(1) { width: 96%; }
+    .funnel span:nth-child(2) { width: 78%; }
+    .funnel span:nth-child(3) { width: 58%; }
+    .funnel span:nth-child(4) { width: 40%; }
+
+    .problems {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 42px;
+    }
+
+    .problem {
+      border: 1px solid rgba(50, 43, 42, 0.12);
+      background: rgba(255, 253, 249, 0.76);
+      padding: 24px;
+      cursor: pointer;
+      transition: transform 220ms ease, background 220ms ease;
+    }
+
+    .problem:hover,
+    .problem.open {
+      transform: translateY(-8px);
+      background: var(--coral);
+      color: var(--white);
+    }
+
+    .problem b {
+      display: block;
+      color: var(--coral);
+      font-size: 42px;
+      line-height: 1;
+      margin-bottom: 30px;
+    }
+
+    .problem:hover b,
+    .problem.open b { color: var(--white); }
+
+    .problem .body {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      color: rgba(255, 255, 255, 0.82);
+      transition: max-height 280ms ease, opacity 280ms ease, margin-top 280ms ease;
+    }
+
+    .problem.open .body,
+    .problem:hover .body {
+      max-height: 160px;
+      opacity: 1;
+      margin-top: 12px;
+    }
+
+    .timeline {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 48px;
+    }
+
+    .plan {
+      position: relative;
+      min-height: 270px;
+      padding: 24px;
+      border: 1px solid rgba(50, 43, 42, 0.12);
+      background: rgba(255, 253, 249, 0.78);
+      overflow: hidden;
+    }
+
+    .plan::before {
+      content: attr(data-step);
+      position: absolute;
+      right: -4px;
+      bottom: -16px;
+      font-size: 120px;
+      line-height: 0.8;
+      font-weight: 900;
+      letter-spacing: -0.08em;
+      color: rgba(255, 90, 63, 0.12);
+    }
+
+    .plan h3 {
+      margin-bottom: 14px;
+      font-size: 22px;
+    }
+
+    .plan ul {
+      position: relative;
+      z-index: 2;
+      margin: 18px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .quote-card {
+      position: relative;
+      z-index: 3;
+      width: min(820px, 100%);
+      margin: clamp(64px, 10vw, 128px) auto 0;
+      padding: clamp(28px, 4vw, 54px);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      background: rgba(255, 255, 255, 0.08);
+      text-align: center;
+    }
+
+    .close-slide .quote-card {
+      background: rgba(255, 247, 242, 0.12);
+      box-shadow: 0 24px 62px rgba(79, 37, 29, 0.18);
+    }
+
+    .quote-card h2 {
+      font-size: clamp(42px, 6.8vw, 92px);
+      color: var(--white);
+    }
+
+    .quote-card .body {
+      max-width: 560px;
+      margin: 18px auto 0;
+    }
+
+    .soft-logo {
+      position: absolute;
+      right: clamp(32px, 4vw, 60px);
+      top: clamp(30px, 4vw, 56px);
+      z-index: 2;
+      width: 86px;
+      height: 86px;
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .soft-logo::before,
+    .soft-logo::after {
+      content: "";
+      position: absolute;
+      background: rgba(255, 255, 255, 0.58);
+      border-radius: 999px;
+    }
+
+    .soft-logo::before {
+      width: 52px;
+      height: 18px;
+      left: 18px;
+      top: 24px;
+      transform: rotate(-35deg);
+    }
+
+    .soft-logo::after {
+      width: 18px;
+      height: 52px;
+      left: 35px;
+      top: 18px;
+      transform: rotate(35deg);
+    }
+
+    .footer-note {
+      position: absolute;
+      left: clamp(32px, 4vw, 60px);
+      right: clamp(32px, 4vw, 60px);
+      bottom: clamp(28px, 4vw, 52px);
+      z-index: 3;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      color: rgba(37, 35, 36, 0.58);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .dark .footer-note,
+    .chapter .footer-note,
+    .hero .footer-note,
+    .close-slide .footer-note { color: rgba(255, 255, 255, 0.76); }
+
+    @keyframes drift {
+      0%, 100% { transform: translate3d(0, 0, 0) rotate(-18deg); }
+      50% { transform: translate3d(-18px, 16px, 0) rotate(-10deg); }
+    }
+
+    @media (max-width: 860px) {
+      .deck,
+      .topbar { width: min(100vw - 24px, 720px); }
+
+      .deck { padding: 24px 0 72px; }
+
+      .topbar {
+        position: static;
+        width: min(100vw - 24px, 720px);
+        padding: 12px 0 18px;
+        margin: 0 auto;
+        background: transparent;
+        border-bottom: 0;
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .brandline::after { width: 100%; }
+      .brandline { max-width: 100%; white-space: normal; }
+      .jump { width: 100%; }
+
+      .slide {
+        min-height: auto;
+        padding: 28px;
+        scroll-margin-top: 0;
+      }
+
+      .hero-grid,
+      .contents-grid,
+      .split,
+      .work-grid,
+      .review-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-copy { min-height: auto; }
+      .orbital { min-height: 340px; }
+      .phone-card { right: 18px; top: 32px; }
+      .contents-list,
+      .stats,
+      .problems,
+      .timeline,
+      .ring-wrap { grid-template-columns: 1fr; }
+      .bar { grid-template-columns: 82px 1fr 40px; }
+      .footer-note { position: relative; left: auto; right: auto; bottom: auto; margin-top: 40px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *,
+      *::before,
+      *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar" aria-label="Deck navigation">
+    <div class="brandline">Coral Startup Deck / 珊瑚企简</div>
+    <select class="jump" aria-label="选择幻灯片">
+      <option value="#cover">01 封面</option>
+      <option value="#contents">02 目录</option>
+      <option value="#chapter-1">03 工作内容</option>
+      <option value="#project">04 项目内容</option>
+      <option value="#team">05 工作团队</option>
+      <option value="#data">06 数据复盘</option>
+      <option value="#problem">07 问题诊断</option>
+      <option value="#plan">08 工作计划</option>
+      <option value="#close">09 尾页</option>
+    </select>
+  </div>
+
+  <main class="deck">
+    <section id="cover" class="slide hero">
+      <div class="soft-logo" aria-hidden="true"></div>
+      <div class="meta">
+        <span>Company Deck</span>
+        <span>Work Report / 20XX</span>
+      </div>
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <div>
+            <div class="eyebrow">Business presentation</div>
+            <h1>Coral Company Deck</h1>
+            <p class="hero-subtitle">一套适合公司介绍、工作汇报、项目复盘和年度总结的暖珊瑚商务型 HTML 模板。</p>
+          </div>
+          <div class="hero-info">
+            <span>Department<b>品牌与增长团队</b></span>
+            <span>Speaker<b>Presenter Name</b></span>
+            <span>Date<b>20XX.12</b></span>
+          </div>
+        </div>
+        <div class="orbital" aria-label="abstract coral presentation visual">
+          <div class="blob one"></div>
+          <div class="blob two"></div>
+          <article class="phone-card">
+            <div class="phone-dot"></div>
+            <h3>From document to interactive deck.</h3>
+            <p class="body">把文字、图片、表格和视频材料，整理成可滚动、可点击、可部署的 HTML 汇报页面。</p>
+            <div class="pill-row">
+              <span class="pill">HTML Demo</span>
+              <span class="pill">Report</span>
+            </div>
+          </article>
+        </div>
+      </div>
+      <a class="hero-arrow" href="#contents" aria-label="下一页">↓</a>
+    </section>
+
+    <section id="contents" class="slide">
+      <div class="meta">
+        <span>Contents</span>
+        <span>Click to jump</span>
+      </div>
+      <div class="contents-grid">
+        <div>
+          <div class="eyebrow" style="color: var(--coral)">Overview path</div>
+          <h2>Contents / 目录</h2>
+          <p class="body" style="margin-top: 20px;">这里适合放领导或观众最关心的汇报结构。每一张卡片都可以直接跳转到对应章节。</p>
+        </div>
+        <div class="contents-list">
+          <a class="content-card" href="#chapter-1"><b>01</b><span>工作内容<br />Work Scope</span></a>
+          <a class="content-card" href="#project"><b>02</b><span>项目内容<br />Project</span></a>
+          <a class="content-card" href="#team"><b>03</b><span>工作团队<br />Team</span></a>
+          <a class="content-card" href="#data"><b>04</b><span>数据复盘<br />Data Review</span></a>
+          <a class="content-card" href="#problem"><b>05</b><span>问题诊断<br />Diagnosis</span></a>
+          <a class="content-card" href="#plan"><b>06</b><span>工作计划<br />Plan</span></a>
+        </div>
+      </div>
+      <a class="next-arrow" href="#chapter-1" aria-label="下一页">↓</a>
+    </section>
+
+    <section id="chapter-1" class="slide chapter">
+      <div class="big-number">01</div>
+      <div class="meta">
+        <span>Chapter title</span>
+        <span>Work scope</span>
+      </div>
+      <div class="section-title">
+        <div class="eyebrow">Work content</div>
+        <h2>工作内容</h2>
+        <p class="body">用大面积珊瑚色作为章节过渡页，让听众在长汇报里快速知道已经进入新的主题。</p>
+      </div>
+      <a class="hero-arrow" href="#project" aria-label="下一页">↓</a>
+    </section>
+
+    <section id="project" class="slide">
+      <div class="meta">
+        <span>Project content</span>
+        <span>Page 04</span>
+      </div>
+      <div class="split">
+        <div>
+          <div class="eyebrow" style="color: var(--coral)">Project brief</div>
+          <h2>项目内容</h2>
+          <p class="body" style="margin-top: 22px;">当用户给出真实文档时，可以把项目背景、目标、进度、核心动作和素材图片放到这个页面里。内容较多时，可以继续拆成独立详情页。</p>
+          <div class="stats">
+            <div class="stat"><b>48</b><span>素材与文档整理</span></div>
+            <div class="stat"><b>12</b><span>关键页面生成</span></div>
+            <div class="stat"><b>4</b><span>交互模块沉淀</span></div>
+            <div class="stat"><b>1</b><span>可复用模板</span></div>
+          </div>
+        </div>
+        <div class="project-visual" aria-label="project workflow illustration">
+          <div class="mini-person"></div>
+          <div class="mini-line"></div>
+        </div>
+      </div>
+      <a class="next-arrow" href="#team" aria-label="下一页">↓</a>
+    </section>
+
+    <section id="team" class="slide">
+      <div class="meta">
+        <span>Team collaboration</span>
+        <span>Hover / click cards</span>
+      </div>
+      <div class="work-grid">
+        <div>
+          <div class="eyebrow" style="color: var(--coral)">Team works</div>
+          <h2>工作团队</h2>
+          <p class="body" style="margin-top: 20px;">下面的小项可以根据内容决定是否展开。如果每个小项只有一句话，就留在本页；如果有较多材料，就自动做成单独一屏。</p>
+          <div class="task-list" style="margin-top: 28px;">
+            <article class="task active" data-title="内容策划与结构梳理" data-text="从 Markdown、飞书文档、图片备注中提炼汇报主线，先确定观众关心的问题，再安排章节顺序。">
+              <div class="task-num">01</div>
+              <div><h3>内容策划</h3><p class="body">拆结构、定主线、提炼观点。</p></div>
+            </article>
+            <article class="task" data-title="页面视觉与素材编排" data-text="把图片、图表、视频占位和关键结论放到更合适的位置，避免把大量文字塞进单页。">
+              <div class="task-num">02</div>
+              <div><h3>视觉编排</h3><p class="body">图文混排、模块化展示。</p></div>
+            </article>
+            <article class="task" data-title="交互与演示体验" data-text="为目录、图表、章节转场和重点卡片加入可控动效，让页面适合现场演讲，也适合发链接给别人看。">
+              <div class="task-num">03</div>
+              <div><h3>交互演示</h3><p class="body">跳转、展开、动效、响应式。</p></div>
+            </article>
+          </div>
+        </div>
+        <aside class="task-detail" id="taskDetail">
+          <div>
+            <span class="pill">Selected Work</span>
+            <h3 id="taskTitle" style="margin-top: 28px;">内容策划与结构梳理</h3>
+            <p id="taskText" class="body">从 Markdown、飞书文档、图片备注中提炼汇报主线，先确定观众关心的问题，再安排章节顺序。</p>
+          </div>
+          <div class="pill-row">
+            <span class="pill">Auto Layout</span>
+            <span class="pill">Reusable</span>
+          </div>
+        </aside>
+      </div>
+      <a class="next-arrow" href="#data" aria-label="下一页">↓</a>
+    </section>
+
+    <section id="data" class="slide">
+      <div class="meta">
+        <span>Data dashboard</span>
+        <span>Page 06</span>
+      </div>
+      <div class="review-grid">
+        <article class="metric-card">
+          <div class="eyebrow" style="color: var(--coral)">Data review</div>
+          <strong>86%</strong>
+          <h3>目标完成情况</h3>
+          <p class="body" style="margin-top: 12px;">用于承载季度、年度或项目阶段性数据。滚动到本页后，条形图会自动增长。</p>
+          <div class="bars">
+            <div class="bar" style="--value: 86%"><span>交付完成</span><div class="bar-track"><span></span></div><em>86%</em></div>
+            <div class="bar" style="--value: 72%"><span>内容复用</span><div class="bar-track"><span></span></div><em>72%</em></div>
+            <div class="bar" style="--value: 64%"><span>展示效率</span><div class="bar-track"><span></span></div><em>64%</em></div>
+          </div>
+        </article>
+        <article class="metric-card">
+          <div class="eyebrow" style="color: var(--coral)">Conversion funnel</div>
+          <h3>从资料到汇报页面</h3>
+          <p class="body" style="margin-top: 12px;">可以把用户给到的文字、截图、视频和表格拆成不同页面模块，形成一套更完整的汇报链路。</p>
+          <div class="ring-wrap">
+            <div class="ring" style="--part: 78%">78%</div>
+            <div class="ring" style="--part: 64%">64%</div>
+            <div class="ring" style="--part: 52%">52%</div>
+          </div>
+          <div class="funnel">
+            <span>Source Document</span>
+            <span>Content Structure</span>
+            <span>Visual Pages</span>
+            <span>Share Link</span>
+          </div>
+        </article>
+      </div>
+      <a class="next-arrow" href="#problem" aria-label="下一页">↓</a>
+    </section>
+
+    <section id="problem" class="slide">
+      <div class="meta">
+        <span>Problem diagnosis</span>
+        <span>Click to expand</span>
+      </div>
+      <div>
+        <div class="eyebrow" style="color: var(--coral)">Risk and solution</div>
+        <h2>项目问题与调整</h2>
+        <p class="body" style="max-width: 720px; margin-top: 20px;">这类页面适合在正式汇报里说清楚：发生了什么问题、为什么会发生、下一步如何修正。点击卡片可以展开更多解释。</p>
+      </div>
+      <div class="problems">
+        <article class="problem open">
+          <b>01</b>
+          <h3>内容过密</h3>
+          <p class="body">把长段落拆成主结论、证据、行动项，必要时拆成单独详情页。</p>
+        </article>
+        <article class="problem">
+          <b>02</b>
+          <h3>素材不统一</h3>
+          <p class="body">图片统一灰阶、裁切比例和留白规则，避免页面像素材堆叠。</p>
+        </article>
+        <article class="problem">
+          <b>03</b>
+          <h3>演示路径长</h3>
+          <p class="body">提供顶部跳转、目录跳转和章节页，让观众可以快速回到重点。</p>
+        </article>
+      </div>
+      <a class="next-arrow" href="#plan" aria-label="下一页">↓</a>
+    </section>
+
+    <section id="plan" class="slide">
+      <div class="meta">
+        <span>Implementation plan</span>
+        <span>Page 08</span>
+      </div>
+      <div>
+        <div class="eyebrow" style="color: var(--coral)">Next step</div>
+        <h2>目标实施计划</h2>
+        <p class="body" style="max-width: 760px; margin-top: 20px;">如果用户给的是一份真实工作计划，可以用时间线承载阶段、负责人、产出物和关键风险。</p>
+      </div>
+      <div class="timeline">
+        <article class="plan" data-step="01">
+          <h3>资料收集</h3>
+          <p class="body">统一接收文档、图片、视频、表格。</p>
+          <ul><li>确认汇报对象</li><li>提取关键结论</li><li>标注可视化素材</li></ul>
+        </article>
+        <article class="plan" data-step="02">
+          <h3>结构拆解</h3>
+          <p class="body">从内容逻辑决定页面类型。</p>
+          <ul><li>封面与目录</li><li>章节过渡页</li><li>数据与案例页</li></ul>
+        </article>
+        <article class="plan" data-step="03">
+          <h3>视觉生成</h3>
+          <p class="body">沿用模板风格，不重新发散。</p>
+          <ul><li>配色统一</li><li>组件复用</li><li>响应式检查</li></ul>
+        </article>
+        <article class="plan" data-step="04">
+          <h3>演示交付</h3>
+          <p class="body">本地展示、部署链接或导出截图。</p>
+          <ul><li>浏览器验证</li><li>Git 版本留存</li><li>可继续迭代</li></ul>
+        </article>
+      </div>
+      <a class="next-arrow" href="#close" aria-label="下一页">↓</a>
+    </section>
+
+    <section id="close" class="slide close-slide">
+      <div class="soft-logo" aria-hidden="true"></div>
+      <div class="meta">
+        <span>Thank you</span>
+        <span>Coral Startup Deck</span>
+      </div>
+      <div class="quote-card">
+        <div class="eyebrow" style="justify-content: center;">Closing page</div>
+        <h2>Thank You</h2>
+        <p class="body">适合公司介绍、项目复盘、工作汇报、年终总结、品牌提案和团队路演。真实文档进入后，可以自动把文字、图片、表格、视频安排到更合适的页面结构里。</p>
+        <p class="body" style="margin-top: 20px; font-weight: 900;">Created by Author Name · Team or Brand</p>
+        <div class="pill-row" style="justify-content: center;">
+          <span class="pill">Company Deck</span>
+          <span class="pill">Work Report</span>
+          <span class="pill">HTML Presentation</span>
+        </div>
+      </div>
+      <div class="footer-note">
+        <span>Created as a reusable HTML style</span>
+        <span>Done</span>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const slides = [...document.querySelectorAll('.slide')];
+    const jump = document.querySelector('.jump');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          const id = `#${entry.target.id}`;
+          if (jump && jump.value !== id) jump.value = id;
+        }
+      });
+    }, { threshold: 0.28 });
+
+    slides.forEach((slide) => observer.observe(slide));
+
+    jump?.addEventListener('change', (event) => {
+      const target = document.querySelector(event.target.value);
+      target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    document.querySelectorAll('.task').forEach((task) => {
+      task.addEventListener('click', () => {
+        document.querySelectorAll('.task').forEach((item) => item.classList.remove('active'));
+        task.classList.add('active');
+        document.querySelector('#taskTitle').textContent = task.dataset.title;
+        document.querySelector('#taskText').textContent = task.dataset.text;
+      });
+    });
+
+    document.querySelectorAll('.problem').forEach((card) => {
+      card.addEventListener('click', () => {
+        card.classList.toggle('open');
+      });
+    });
+  </script>
+</body>
+</html>

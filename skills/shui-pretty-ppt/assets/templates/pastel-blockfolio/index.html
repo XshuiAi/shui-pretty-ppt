@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Codex 对话区整理案例复盘</title>
+  <meta name="description" content="把混乱的 Codex 左侧聊天区整理成项目导航的前后对比案例。" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='10' y='18' width='42' height='28' rx='6' fill='%23ffd8e6' stroke='%23111' stroke-width='6'/%3E%3C/svg%3E" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+    :root {
+      --paper: #f7f7f4;
+      --white: #ffffff;
+      --ink: #111111;
+      --muted: #5f5f5f;
+      --line: #111111;
+      --pink: #ffd8e6;
+      --hot-pink: #ff8fc7;
+      --green: #bff0c9;
+      --yellow: #fff06a;
+      --gray: #e9e9e6;
+      --shadow: 6px 6px 0 var(--ink);
+      --shadow-soft: 0 20px 60px rgba(17, 17, 17, 0.12);
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; background: var(--paper); }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(var(--hot-pink), var(--hot-pink)) top / 100% 6px no-repeat,
+        var(--paper);
+      font-family: Inter, "PingFang SC", "Hiragino Sans GB", system-ui, sans-serif;
+      letter-spacing: 0;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .progress {
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 6px;
+      width: 0;
+      background: var(--ink);
+      z-index: 100;
+    }
+
+    .site-nav {
+      position: sticky;
+      top: 6px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 16px 24px 10px;
+      background: rgba(247, 247, 244, 0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 3px solid var(--ink);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: "Space Grotesk", Inter, sans-serif;
+      font-weight: 800;
+      text-transform: uppercase;
+      line-height: 0.95;
+    }
+
+    .mark {
+      width: 34px;
+      height: 24px;
+      border: 4px solid var(--ink);
+      border-radius: 4px 4px 10px 4px;
+      background: var(--pink);
+      transform: rotate(-3deg);
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .nav-links a {
+      border: 2px solid var(--ink);
+      background: var(--white);
+      padding: 7px 10px;
+      transition: transform .18s ease, background .18s ease;
+    }
+
+    .nav-links a:hover { transform: translateY(-2px) rotate(-1deg); background: var(--yellow); }
+
+    main { overflow: hidden; }
+
+    .hero {
+      position: relative;
+      min-height: calc(100svh - 72px);
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 42px 24px 32px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, 430px);
+      gap: 40px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 14px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 48px;
+      height: 8px;
+      background: var(--ink);
+      display: inline-block;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 860px;
+      font-size: clamp(44px, 6.2vw, 88px);
+      line-height: .92;
+      letter-spacing: 0;
+      font-weight: 900;
+    }
+
+    .hero-copy {
+      max-width: 680px;
+      margin: 22px 0 0;
+      font-size: clamp(16px, 1.55vw, 21px);
+      line-height: 1.5;
+      color: #282828;
+      font-weight: 600;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 26px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 3px solid var(--ink);
+      background: var(--yellow);
+      box-shadow: var(--shadow);
+      padding: 12px 17px;
+      font-weight: 900;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .btn.secondary { background: var(--white); }
+    .btn:hover { transform: translate(-3px, -3px); box-shadow: 12px 12px 0 var(--ink); }
+
+    .hero-card {
+      position: relative;
+      border: 4px solid var(--ink);
+      background: var(--white);
+      min-height: 390px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      transform: rotate(2deg);
+    }
+
+    .workflow-visual {
+      position: relative;
+      min-height: 320px;
+      border: 4px solid var(--ink);
+      overflow: hidden;
+      background:
+        radial-gradient(circle, rgba(17, 17, 17, .18) 1px, transparent 1px) 0 0 / 20px 20px,
+        var(--paper);
+    }
+
+    .workflow-visual::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 14px;
+      background: var(--pink);
+      border-bottom: 4px solid var(--ink);
+    }
+
+    .mini-window {
+      position: absolute;
+      top: 40px;
+      border: 4px solid var(--ink);
+      background: var(--white);
+      box-shadow: 5px 5px 0 var(--ink);
+    }
+
+    .mini-window::before {
+      content: "";
+      display: block;
+      height: 22px;
+      background: var(--gray);
+      border-bottom: 4px solid var(--ink);
+    }
+
+    .mini-window.codex {
+      left: 18px;
+      width: 48%;
+      min-height: 206px;
+      transform: rotate(-1deg);
+    }
+
+    .mini-window.files {
+      right: 18px;
+      width: 42%;
+      min-height: 186px;
+      top: 70px;
+      transform: rotate(1.5deg);
+    }
+
+    .mini-title {
+      position: absolute;
+      top: 5px;
+      left: 10px;
+      font: 900 11px/1 "Space Grotesk", Inter, sans-serif;
+      letter-spacing: .04em;
+    }
+
+    .thread-list {
+      padding: 14px 10px 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .thread-item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 7px;
+      align-items: center;
+      padding: 6px;
+      border: 2px solid var(--ink);
+      background: var(--white);
+      font-size: 11px;
+      font-weight: 850;
+      line-height: 1.15;
+    }
+
+    .thread-item:nth-child(2) { background: var(--green); }
+    .thread-item:nth-child(3) { background: var(--pink); }
+
+    .tag {
+      display: inline-flex;
+      border: 2px solid var(--ink);
+      background: var(--yellow);
+      padding: 2px 4px;
+      font: 900 9px/1 "Space Grotesk", Inter, sans-serif;
+      white-space: nowrap;
+    }
+
+    .folder-grid {
+      padding: 16px 12px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .folder {
+      min-height: 52px;
+      border: 3px solid var(--ink);
+      background: var(--green);
+      padding: 16px 7px 6px;
+      position: relative;
+      font-size: 11px;
+      font-weight: 900;
+      line-height: 1.05;
+    }
+
+    .folder::before {
+      content: "";
+      position: absolute;
+      left: 7px;
+      top: -10px;
+      width: 34px;
+      height: 12px;
+      border: 3px solid var(--ink);
+      border-bottom: 0;
+      background: var(--green);
+    }
+
+    .folder:nth-child(2), .folder:nth-child(4) {
+      background: var(--pink);
+    }
+
+    .folder:nth-child(2)::before, .folder:nth-child(4)::before {
+      background: var(--pink);
+    }
+
+    .connector {
+      position: absolute;
+      left: 47%;
+      top: 160px;
+      width: 80px;
+      height: 4px;
+      background: var(--ink);
+      transform: rotate(-8deg);
+    }
+
+    .connector::after {
+      content: "";
+      position: absolute;
+      right: -8px;
+      top: -7px;
+      width: 0;
+      height: 0;
+      border-left: 14px solid var(--ink);
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+    }
+
+    .visual-caption {
+      position: absolute;
+      right: 22px;
+      bottom: 18px;
+      border: 3px solid var(--ink);
+      background: var(--yellow);
+      padding: 9px 12px;
+      font-weight: 900;
+      font-size: 13px;
+      box-shadow: 4px 4px 0 var(--ink);
+      transform: rotate(-2deg);
+    }
+
+    .sticky-note {
+      position: absolute;
+      left: -32px;
+      bottom: 34px;
+      width: 170px;
+      min-height: 96px;
+      padding: 18px;
+      background: var(--yellow);
+      border: 4px solid var(--ink);
+      transform: rotate(-8deg);
+      font-weight: 900;
+      line-height: 1.2;
+      box-shadow: 5px 5px 0 var(--ink);
+    }
+
+    .flower {
+      position: absolute;
+      right: -26px;
+      top: 70px;
+      width: 62px;
+      height: 62px;
+      animation: spin 14s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .section {
+      max-width: var(--max);
+      margin: 0 auto;
+      min-height: calc(100svh - 90px);
+      padding: 38px 24px;
+      border-top: 5px solid var(--ink);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      scroll-margin-top: 72px;
+    }
+
+    .section-title {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 22px;
+      align-items: start;
+      margin-bottom: 24px;
+    }
+
+    .part {
+      font-family: "Space Grotesk", Inter, sans-serif;
+      font-size: clamp(32px, 3.5vw, 46px);
+      font-weight: 900;
+      line-height: .9;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 56px);
+      line-height: 1;
+      letter-spacing: 0;
+      font-weight: 900;
+    }
+
+    .lead {
+      margin: 14px 0 0;
+      max-width: 740px;
+      color: #333;
+      font-size: 17px;
+      line-height: 1.55;
+      font-weight: 600;
+    }
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .panel {
+      border: 4px solid var(--ink);
+      background: var(--white);
+      box-shadow: var(--shadow-soft);
+      min-height: 210px;
+      padding: 22px;
+    }
+
+    .panel.pink { background: var(--pink); }
+    .panel.green { background: var(--green); }
+    .panel.yellow { background: var(--yellow); }
+
+    .panel h3 {
+      margin: 0 0 16px;
+      font-size: 25px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .panel ul {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 16px;
+      line-height: 1.62;
+      font-weight: 650;
+    }
+
+    .compare-wrap {
+      border: 5px solid var(--ink);
+      background: var(--white);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .compare-wrap img {
+      border: 2px solid var(--gray);
+      width: 100%;
+      max-height: 52svh;
+      object-fit: contain;
+    }
+
+    .compare-caption {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 12px;
+      font-weight: 900;
+      font-size: 18px;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .step {
+      position: relative;
+      min-height: 168px;
+      border: 4px solid var(--ink);
+      background: var(--white);
+      padding: 18px;
+      transition: transform .22s ease, background .22s ease;
+    }
+
+    .step:nth-child(1) { background: var(--pink); }
+    .step:nth-child(2) { background: var(--green); }
+    .step:nth-child(3) { background: var(--yellow); }
+    .step:hover { transform: translateY(-8px) rotate(-1deg); }
+
+    .step .num {
+      font-family: "Space Grotesk", Inter, sans-serif;
+      font-size: 42px;
+      line-height: .8;
+      font-weight: 900;
+    }
+
+    .step h3 { margin: 18px 0 10px; font-size: 22px; line-height: 1; }
+    .step p { margin: 0; line-height: 1.5; font-weight: 650; color: #282828; font-size: 15px; }
+
+    .rename-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 4px solid var(--ink);
+      background: var(--white);
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .rename-table th, .rename-table td {
+      border: 3px solid var(--ink);
+      padding: 11px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .rename-table th { background: var(--pink); font-size: 16px; }
+    .badge {
+      display: inline-flex;
+      padding: 5px 8px;
+      border: 3px solid var(--ink);
+      background: var(--green);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .tabs {
+      border: 5px solid var(--ink);
+      background: var(--white);
+      box-shadow: var(--shadow);
+    }
+
+    .tab-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-bottom: 4px solid var(--ink);
+    }
+
+    .tab-buttons button {
+      border: 0;
+      border-right: 4px solid var(--ink);
+      background: var(--gray);
+      padding: 14px 10px;
+      font: inherit;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .tab-buttons button:last-child { border-right: 0; }
+    .tab-buttons button.active { background: var(--yellow); }
+
+    .tab-panel {
+      display: none;
+      padding: 24px;
+      min-height: 160px;
+      font-size: 17px;
+      line-height: 1.62;
+      font-weight: 650;
+    }
+
+    .tab-panel.active { display: block; }
+
+    .palette {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .swatch {
+      border: 4px solid var(--ink);
+      min-height: 124px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      font-weight: 900;
+    }
+
+    .swatch small {
+      display: block;
+      margin-top: 5px;
+      font-family: "Space Grotesk", Inter, sans-serif;
+      color: #333;
+      font-size: 13px;
+    }
+
+    .swatch.paper { background: var(--paper); }
+    .swatch.ink { background: var(--ink); color: var(--white); }
+    .swatch.ink small { color: #ddd; }
+    .swatch.pink { background: var(--pink); }
+    .swatch.green { background: var(--green); }
+    .swatch.yellow { background: var(--yellow); }
+
+    .script-card {
+      border: 5px solid var(--ink);
+      background: var(--white);
+      padding: 26px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .script-card blockquote {
+      margin: 0;
+      font-size: clamp(22px, 2.6vw, 32px);
+      line-height: 1.18;
+      font-weight: 900;
+    }
+
+    .script-card ol {
+      margin: 0;
+      padding-left: 24px;
+      line-height: 1.62;
+      font-weight: 700;
+    }
+
+    .title-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .title-chip {
+      border: 3px solid var(--ink);
+      background: var(--white);
+      padding: 13px;
+      font-size: 16px;
+      font-weight: 850;
+      min-height: 62px;
+      transition: transform .18s ease, background .18s ease;
+    }
+
+    .title-chip:hover { transform: rotate(-1deg); background: var(--green); }
+
+    footer {
+      margin-top: 60px;
+      border-top: 6px solid var(--ink);
+      background: var(--pink);
+      padding: 42px 24px 60px;
+    }
+
+    .footer-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: flex-end;
+      font-weight: 900;
+    }
+
+    .sparkle {
+      display: inline-block;
+      font-size: 38px;
+      transform: rotate(-12deg);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 920px) {
+      .site-nav { align-items: flex-start; flex-direction: column; }
+      .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 46px; }
+      .hero-card { transform: none; min-height: auto; }
+      .workflow-visual { min-height: 340px; }
+      .mini-window.codex { width: 54%; left: 12px; }
+      .mini-window.files { width: 42%; right: 12px; }
+      .sticky-note { left: 10px; bottom: -24px; width: 150px; }
+      .section { min-height: auto; padding: 56px 24px; }
+      .section-title { grid-template-columns: 1fr; }
+      .problem-grid, .flow, .script-card, .title-list { grid-template-columns: 1fr; }
+      .palette { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .tab-buttons { grid-template-columns: 1fr; }
+      .tab-buttons button { border-right: 0; border-bottom: 4px solid var(--ink); }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+      }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <nav class="site-nav" aria-label="页面导航">
+    <a class="brand" href="#top" aria-label="返回顶部"><span class="mark"></span><span>HTML<br/>CASE</span></a>
+    <div class="nav-links">
+      <a href="#problem">Problem</a>
+      <a href="#action">Action</a>
+      <a href="#compare">Compare</a>
+      <a href="#extend">Extend</a>
+    </div>
+  </nav>
+
+  <main id="top">
+    <section class="hero">
+      <div class="reveal">
+        <p class="eyebrow">Codex Workflow Case · 2026.06.15</p>
+        <h1>把混乱对话<br/>整理成项目<br/>导航</h1>
+        <p class="hero-copy">这不是一个“改标题”的小动作，而是一次 AI 工作流整理：让 Codex 左侧聊天区从时间流，变成能继续任务、查找产出、复用流程的项目入口。</p>
+        <div class="hero-actions">
+          <a class="btn" href="#compare">看前后对比</a>
+          <a class="btn secondary" href="#script">看拍摄脚本</a>
+        </div>
+      </div>
+      <div class="hero-card reveal" data-tilt>
+        <div class="workflow-visual" aria-label="Codex 对话区整理成项目导航的抽象示意图">
+          <div class="mini-window codex">
+            <div class="mini-title">CODEX THREADS</div>
+            <div class="thread-list">
+              <div class="thread-item"><span class="tag">01</span><span>AI HOT 每日早报</span></div>
+              <div class="thread-item"><span class="tag">02</span><span>Codex 入门口播教程</span></div>
+              <div class="thread-item"><span class="tag">06</span><span>宠物 UI 原型设计</span></div>
+              <div class="thread-item"><span class="tag">SYS</span><span>项目对话与文件夹整理</span></div>
+            </div>
+          </div>
+          <div class="connector" aria-hidden="true"></div>
+          <div class="mini-window files">
+            <div class="mini-title">PROJECT FOLDERS</div>
+            <div class="folder-grid">
+              <div class="folder">01<br/>选题</div>
+              <div class="folder">02<br/>口播</div>
+              <div class="folder">03<br/>封面</div>
+              <div class="folder">06<br/>UI</div>
+            </div>
+          </div>
+          <div class="visual-caption">聊天区 = 项目入口</div>
+        </div>
+        <div class="sticky-note">用色彩讲故事，用设计定义可能。</div>
+        <svg class="flower" viewBox="0 0 80 80" aria-hidden="true">
+          <path d="M40 10 C50 24 50 24 70 20 C60 38 60 38 75 52 C55 54 55 54 52 74 C40 58 40 58 25 72 C28 52 28 52 8 48 C26 38 26 38 14 20 C32 25 32 25 40 10Z" fill="#bff0c9" stroke="#111" stroke-width="5"/>
+          <circle cx="41" cy="42" r="9" fill="#fff06a" stroke="#111" stroke-width="4"/>
+        </svg>
+      </div>
+    </section>
+
+    <section class="section reveal" id="problem">
+      <div class="section-title">
+        <div class="part">Part 01</div>
+        <div>
+          <h2>问题不是文件夹乱，<br/>而是聊天没有分类信号。</h2>
+          <p class="lead">Finder 里已经有选题、口播、封面、剪辑和 UI 原型分类；但 Codex 左侧只显示按时间排列的聊天线程。项目越做越久，就越难从一串标题里找到上下文。</p>
+        </div>
+      </div>
+      <div class="problem-grid">
+        <article class="panel pink">
+          <h3>Finder 里有真实分类</h3>
+          <ul>
+            <li>01-选题与内容</li>
+            <li>02-口播文案</li>
+            <li>03-封面视觉</li>
+            <li>04-视频剪辑</li>
+            <li>06-UI原型</li>
+          </ul>
+        </article>
+        <article class="panel">
+          <h3>Codex 左侧只有任务名</h3>
+          <ul>
+            <li>AI HOT 每日早报</li>
+            <li>Create campaign mo...</li>
+            <li>在Figma中设计宠物UI原型</li>
+            <li>撰写 Codex 手机远控教程</li>
+            <li>codex更新教程</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section reveal" id="action">
+      <div class="section-title">
+        <div class="part">Part 02</div>
+        <div>
+          <h2>我让 Codex 做了三件事。</h2>
+          <p class="lead">先读项目结构，再设计标题前缀，然后直接批量重命名左侧线程，并建立一个“对话与产出索引”。</p>
+        </div>
+      </div>
+      <div class="flow">
+        <article class="step"><div class="num">01</div><h3>读结构</h3><p>先看 Finder 里的项目分类，确认真实业务模块。</p></article>
+        <article class="step"><div class="num">02</div><h3>定规则</h3><p>用 [01选题]、[02口播]、[03封面] 这类前缀做入口。</p></article>
+        <article class="step"><div class="num">03</div><h3>改标题</h3><p>把左侧线程批量改名，让聊天列表能对应文件夹。</p></article>
+        <article class="step"><div class="num">04</div><h3>建索引</h3><p>记录每条对话、所属分类、产出位置和下一步。</p></article>
+      </div>
+    </section>
+
+    <section class="section reveal" id="compare">
+      <div class="section-title">
+        <div class="part">Part 03</div>
+        <div>
+          <h2>前后对比：<br/>从零散聊天到可导航工作区。</h2>
+          <p class="lead">整理前看不出任务归属；整理后每条标题前面都有分类标签，能够直接对应 Finder 文件夹。</p>
+        </div>
+      </div>
+      <div class="compare-wrap" data-tilt>
+        <img src="assets/codex-sidebar-before-after.png" alt="Codex 左侧对话区整理前后对比" />
+        <div class="compare-caption">
+          <span>Before：只有任务名，混在一起</span>
+          <span>After：标题前缀对应业务分类</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-title">
+        <div class="part">Part 04</div>
+        <div>
+          <h2>命名规则就是项目入口。</h2>
+          <p class="lead">每个前缀都对应一个项目文件夹，左侧聊天区不再只是历史记录，而是可以继续工作的入口。</p>
+        </div>
+      </div>
+      <table class="rename-table">
+        <thead><tr><th>标题前缀</th><th>对应文件夹</th><th>适合内容</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge">[01选题]</span></td><td>01-选题与内容</td><td>热点、AI 日报、栏目、内容规划</td></tr>
+          <tr><td><span class="badge">[02口播]</span></td><td>02-口播文案</td><td>口播稿、教程讲解、去 AI 味改写</td></tr>
+          <tr><td><span class="badge">[03封面]</span></td><td>03-封面视觉</td><td>封面、头像、背景图、视觉风格</td></tr>
+          <tr><td><span class="badge">[06UI]</span></td><td>06-UI原型</td><td>App / Web 原型、Figma、界面设计</td></tr>
+          <tr><td><span class="badge">[系统]</span></td><td>项目根目录或 notes</td><td>项目整理、工具规则、Codex 使用问题</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section reveal" id="extend">
+      <div class="section-title">
+        <div class="part">Part 05</div>
+        <div>
+          <h2>它优化的不是标题，<br/>而是长期项目的秩序。</h2>
+          <p class="lead">这类整理适合所有“AI 生成很多，但最终版本找不到”的项目。你可以把它延伸成项目管理、内容生产、长期记忆和个人知识库四个方向。</p>
+        </div>
+      </div>
+      <div class="tabs" data-tabs>
+        <div class="tab-buttons" role="tablist">
+          <button class="active" type="button" data-tab="pm">项目管理</button>
+          <button type="button" data-tab="content">内容生产</button>
+          <button type="button" data-tab="memory">长期记忆</button>
+          <button type="button" data-tab="kb">知识库</button>
+        </div>
+        <div class="tab-panel active" data-panel="pm">把 Codex 从“聊天工具”变成“项目工作台”：统一命名、对话和文件夹对应、每个任务都有下一步。</div>
+        <div class="tab-panel" data-panel="content">把一次真实操作变成可拍教程：从痛点出发，展示前后对比，把过程拆成步骤，最后总结方法。</div>
+        <div class="tab-panel" data-panel="memory">让 AI 下次更容易接上：索引文件告诉 AI 读哪里，旧任务不会被聊天列表淹没。</div>
+        <div class="tab-panel" data-panel="kb">把零散对话变成可查资产：每个分类沉淀成专题，后续可以扩展成教程库、案例库、素材库。</div>
+      </div>
+    </section>
+
+    <section class="section reveal">
+      <div class="section-title">
+        <div class="part">Color</div>
+        <div>
+          <h2>自有视觉系统的画板配色。</h2>
+          <p class="lead">白底、黑线、粉色、绿色、黄色，作为这次 HTML 和飞书画板的核心视觉语言；它借鉴的是元素方法，不直接使用外部作品图片。</p>
+        </div>
+      </div>
+      <div class="palette">
+        <div class="swatch paper">纸白<small>#f7f7f4</small></div>
+        <div class="swatch ink">墨黑<small>#111111</small></div>
+        <div class="swatch pink">贴纸粉<small>#ffd8e6</small></div>
+        <div class="swatch green">清新绿<small>#bff0c9</small></div>
+        <div class="swatch yellow">便签黄<small>#fff06a</small></div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="script">
+      <div class="section-title">
+        <div class="part">Script</div>
+        <div>
+          <h2>这个选题可以怎么拍。</h2>
+          <p class="lead">视频重点不是“我改了几个标题”，而是“AI 做长期项目时，怎样维护秩序”。</p>
+        </div>
+      </div>
+      <div class="script-card">
+        <blockquote>真正有用的 AI 工作流，不只是让 AI 帮你生成内容，也要让 AI 帮你维护秩序。</blockquote>
+        <ol>
+          <li>开头：展示左侧聊天和 Finder 文件夹对不上。</li>
+          <li>中段：让 Codex 设计前缀并批量重命名。</li>
+          <li>对比：展示整理前后差别。</li>
+          <li>结尾：总结成长期项目 SOP。</li>
+        </ol>
+      </div>
+      <div class="title-list">
+        <div class="title-chip">我让 Codex 帮我整理混乱的项目聊天记录</div>
+        <div class="title-chip">用 Codex 做长期项目，最该先整理的不是文件，而是对话</div>
+        <div class="title-chip">AI 项目越做越乱？我用一个命名规则救回来了</div>
+        <div class="title-chip">Codex 不只是写代码，也能帮你整理工作流</div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div><span class="sparkle">✦</span><br/>HTML Case · Workflow Project</div>
+      <div>Case page · Codex thread rename workflow</div>
+    </div>
+  </footer>
+
+  <script>
+    const progress = document.querySelector('#progress');
+    const updateProgress = () => {
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - doc.clientHeight;
+      progress.style.width = `${max > 0 ? (doc.scrollTop / max) * 100 : 0}%`;
+    };
+    updateProgress();
+    window.addEventListener('scroll', updateProgress, { passive: true });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+    document.querySelectorAll('[data-tabs]').forEach((tabs) => {
+      const buttons = [...tabs.querySelectorAll('[data-tab]')];
+      const panels = [...tabs.querySelectorAll('[data-panel]')];
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          buttons.forEach((b) => b.classList.toggle('active', b === button));
+          panels.forEach((p) => p.classList.toggle('active', p.dataset.panel === button.dataset.tab));
+        });
+      });
+    });
+
+    document.querySelectorAll('[data-tilt]').forEach((card) => {
+      card.addEventListener('pointermove', (event) => {
+        const rect = card.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width - 0.5;
+        const y = (event.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = `rotateX(${y * -4}deg) rotateY(${x * 5}deg)`;
+      });
+      card.addEventListener('pointerleave', () => {
+        card.style.transform = '';
+      });
+    });
+  </script>
+</body>
+</html>

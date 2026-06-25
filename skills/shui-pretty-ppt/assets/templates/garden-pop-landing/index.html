@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Garden Pop Landing / 花园跳色长页</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Noto+Sans+SC:wght@500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sun: #f8b92e;
+      --grass: #83d15f;
+      --grass-deep: #35a44f;
+      --pink: #ff7fbd;
+      --pink-soft: #ffd7ea;
+      --sky: #bde8ff;
+      --mint: #dff7cb;
+      --cream: #fff7df;
+      --ink: #183320;
+      --white: #fffdf4;
+      --line: #17351f;
+      --shadow: 0 20px 44px rgba(41, 83, 38, 0.18);
+      --title-size: clamp(3.1rem, 10vw, 9rem);
+      --h2-size: clamp(2rem, 5.6vw, 5.8rem);
+      --h3-size: clamp(1.05rem, 2vw, 1.75rem);
+      --body-size: clamp(0.86rem, 1.35vw, 1.2rem);
+      --small-size: clamp(0.68rem, 1vw, 0.9rem);
+      --slide-padding: clamp(16px, 3.2vw, 44px);
+      --gap: clamp(12px, 2vw, 28px);
+      --radius: 30px;
+      --ease: cubic-bezier(.18, .84, .26, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow-x: hidden; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Noto Sans SC", sans-serif;
+      color: var(--ink);
+      background: var(--sun);
+    }
+    button, a { font: inherit; }
+    button { border: 0; cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+
+    .deck {
+      height: 100vh;
+      height: 100dvh;
+      overflow-y: auto;
+      scroll-snap-type: y mandatory;
+      background:
+        radial-gradient(circle at 10% 18%, rgba(255,255,255,.35), transparent 16%),
+        linear-gradient(180deg, #f7b733, #ffc64e 42%, #f7b733);
+    }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      min-height: 100vh;
+      overflow: hidden;
+      scroll-snap-align: start;
+      position: relative;
+      padding: var(--slide-padding);
+      display: grid;
+      place-items: center;
+    }
+
+    .stage {
+      position: relative;
+      z-index: 2;
+      width: min(100%, 1540px);
+      height: min(100%, 860px);
+      min-height: 0;
+      border: 3px solid var(--line);
+      border-radius: clamp(28px, 4vw, 54px);
+      background: var(--white);
+      box-shadow: 14px 14px 0 rgba(24, 51, 32, 0.14), var(--shadow);
+      overflow: hidden;
+      display: grid;
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(24,51,32,.045) 1px, transparent 1px) 0 0 / 42px 42px,
+        linear-gradient(rgba(24,51,32,.035) 1px, transparent 1px) 0 0 / 42px 42px;
+      opacity: .7;
+    }
+
+    .scene {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      padding: clamp(28px, 4vw, 72px);
+      display: grid;
+      gap: var(--gap);
+      align-content: center;
+    }
+
+    .two { grid-template-columns: 1.02fr .98fr; align-items: center; }
+    .three { grid-template-columns: repeat(3, 1fr); align-items: stretch; }
+    .split { grid-template-columns: .78fr 1.22fr; align-items: center; }
+
+    .label {
+      width: fit-content;
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      padding: .48em 1em;
+      background: var(--mint);
+      font-size: var(--small-size);
+      font-weight: 900;
+      letter-spacing: .04em;
+      box-shadow: 5px 5px 0 rgba(24,51,32,.13);
+    }
+
+    h1, h2 {
+      font-family: "Baloo 2", "Noto Sans SC", sans-serif;
+      letter-spacing: 0;
+      line-height: .86;
+      color: var(--ink);
+      text-wrap: balance;
+    }
+    h1 { font-size: var(--title-size); max-width: 7.5ch; }
+    h2 { font-size: var(--h2-size); max-width: 9ch; }
+    h3 { font-size: var(--h3-size); line-height: 1.1; }
+    p { font-size: var(--body-size); line-height: 1.65; color: rgba(24,51,32,.78); }
+
+    .accent { color: var(--pink); text-shadow: 4px 4px 0 var(--pink-soft); }
+    .muted { color: rgba(24,51,32,.62); }
+
+    .top-nav {
+      position: absolute;
+      top: clamp(18px, 2.6vw, 34px);
+      left: clamp(22px, 3vw, 50px);
+      right: clamp(22px, 3vw, 50px);
+      z-index: 6;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-weight: 900;
+      font-size: var(--small-size);
+      pointer-events: none;
+    }
+    .brand-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      padding: 9px 14px;
+      background: var(--cream);
+      box-shadow: 5px 5px 0 rgba(24,51,32,.14);
+    }
+    .brand-mark::before {
+      content: "✿";
+      color: var(--pink);
+      font-size: 1.25em;
+      animation: spin 8s linear infinite;
+    }
+
+    .bottom-strip {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: clamp(58px, 8vh, 88px);
+      background:
+        radial-gradient(ellipse at 10% 100%, var(--grass-deep) 0 22%, transparent 23%),
+        radial-gradient(ellipse at 26% 100%, var(--grass) 0 24%, transparent 25%),
+        radial-gradient(ellipse at 44% 100%, var(--grass-deep) 0 20%, transparent 21%),
+        radial-gradient(ellipse at 64% 100%, var(--grass) 0 28%, transparent 29%),
+        radial-gradient(ellipse at 84% 100%, var(--grass-deep) 0 22%, transparent 23%),
+        linear-gradient(180deg, transparent 0 10%, var(--grass) 11%);
+      border-top: 3px solid var(--line);
+    }
+
+    .hero-copy { padding-top: clamp(24px, 5vh, 70px); max-width: 780px; }
+    .hero-copy p { max-width: 680px; font-weight: 700; margin-top: 1.1em; }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
+    .pop-btn {
+      position: relative;
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      padding: .78em 1.18em;
+      background: var(--pink);
+      color: var(--ink);
+      font-weight: 900;
+      box-shadow: 6px 6px 0 var(--line);
+      transform: translateY(0);
+      transition: transform 180ms var(--ease), box-shadow 180ms var(--ease), background 180ms ease;
+    }
+    .pop-btn.secondary { background: var(--mint); }
+    .pop-btn:hover { transform: translateY(-4px); box-shadow: 8px 10px 0 var(--line); }
+    .pop-btn:active { transform: translateY(2px); box-shadow: 3px 3px 0 var(--line); }
+
+    .device-stack {
+      position: relative;
+      height: min(62vh, 600px);
+      min-height: 430px;
+      perspective: 1200px;
+      transform-style: preserve-3d;
+    }
+    .tablet, .phone, .note {
+      position: absolute;
+      border: 3px solid var(--line);
+      background: var(--white);
+      box-shadow: 12px 12px 0 rgba(24,51,32,.18);
+    }
+    .tablet {
+      width: min(92%, 650px);
+      aspect-ratio: 1.5;
+      border-radius: 28px;
+      top: 6%;
+      right: 5%;
+      transform: rotate(-2deg) translateZ(50px);
+      overflow: hidden;
+    }
+    .mini-page {
+      height: 100%;
+      display: grid;
+      grid-template-rows: 18% 24% 21% 1fr;
+      background: linear-gradient(#bde8ff 0 18%, #f9ffe7 18% 42%, #ffd7ea 42% 63%, #91db62 63%);
+    }
+    .mini-row { border-bottom: 2px solid rgba(24,51,32,.2); display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 900; }
+    .mini-card { width: 18%; height: 48%; border: 2px solid var(--line); border-radius: 12px; background: var(--white); }
+    .phone {
+      width: min(32%, 190px);
+      aspect-ratio: .52;
+      border-radius: 28px;
+      right: 0;
+      bottom: 5%;
+      background: linear-gradient(#bde8ff, #f9ffe7 42%, #91db62);
+      transform: rotate(5deg) translateZ(90px);
+    }
+    .note {
+      left: 2%;
+      bottom: 15%;
+      width: min(42%, 270px);
+      border-radius: 20px;
+      padding: 18px;
+      background: var(--cream);
+      transform: rotate(-7deg) translateZ(120px);
+      font-weight: 900;
+    }
+
+    .garden-map {
+      position: relative;
+      width: 100%;
+      height: min(64vh, 620px);
+      min-height: 440px;
+      overflow: visible;
+      transform-style: preserve-3d;
+    }
+    .garden-pond {
+      position: absolute;
+      inset: 8% 4% 10%;
+      border: 3px solid var(--line);
+      border-radius: 42% 58% 52% 48% / 44% 40% 60% 56%;
+      background:
+        radial-gradient(circle at 24% 24%, rgba(255,255,255,.78), transparent 22%),
+        linear-gradient(135deg, #dff7cb 0 42%, #bde8ff 42% 66%, #ffd7ea 66%);
+      box-shadow: 14px 14px 0 rgba(24,51,32,.12);
+      transform: rotate(-2deg);
+      overflow: hidden;
+    }
+    .garden-pond::after {
+      content: "";
+      position: absolute;
+      left: -8%;
+      right: -8%;
+      bottom: -8%;
+      height: 30%;
+      background:
+        radial-gradient(ellipse at 16% 100%, var(--grass-deep) 0 26%, transparent 27%),
+        radial-gradient(ellipse at 40% 100%, var(--grass) 0 30%, transparent 31%),
+        radial-gradient(ellipse at 72% 100%, var(--grass-deep) 0 24%, transparent 25%);
+      opacity: .92;
+    }
+    .vine-map {
+      position: absolute;
+      inset: 4% 5%;
+      width: 90%;
+      height: 82%;
+      z-index: 2;
+      overflow: visible;
+      filter: drop-shadow(4px 5px 0 rgba(24,51,32,.12));
+    }
+    .vine-map path {
+      fill: none;
+      stroke: var(--line);
+      stroke-width: 5;
+      stroke-linecap: round;
+      stroke-dasharray: 12 12;
+      animation: dashFlow 14s linear infinite;
+    }
+    .map-badge, .seed-panel, .media-sprout {
+      position: absolute;
+      z-index: 3;
+      border: 3px solid var(--line);
+      box-shadow: 8px 8px 0 rgba(24,51,32,.13);
+      font-weight: 900;
+    }
+    .map-badge {
+      width: clamp(150px, 18vw, 245px);
+      border-radius: 26px;
+      padding: 16px;
+      background: var(--white);
+      transition: transform 220ms var(--ease), background 220ms ease;
+    }
+    .map-badge:hover { transform: translateY(-7px) rotate(-1deg); background: var(--mint); }
+    .map-badge strong { display: block; font-size: clamp(1.3rem, 2.2vw, 2rem); color: var(--pink); line-height: 1; }
+    .map-badge span { display: block; margin-top: 8px; font-size: clamp(.9rem, 1.25vw, 1.1rem); }
+    .map-badge small { display: block; margin-top: 8px; line-height: 1.45; color: rgba(24,51,32,.66); }
+    .badge-a { left: 3%; top: 9%; transform: rotate(-5deg); }
+    .badge-b { right: 4%; top: 15%; transform: rotate(4deg); }
+    .badge-c { left: 10%; bottom: 9%; transform: rotate(3deg); }
+    .seed-panel {
+      left: 32%;
+      top: 28%;
+      width: clamp(210px, 24vw, 330px);
+      border-radius: 30px;
+      padding: 20px 22px;
+      background: var(--cream);
+      transform: rotate(-1deg) translateZ(80px);
+    }
+    .seed-panel h3 { margin-bottom: 10px; }
+    .seed-panel p { font-size: clamp(.86rem, 1.05vw, 1rem); line-height: 1.55; }
+    .seed-list { display: grid; gap: 8px; margin-top: 14px; list-style: none; font-size: clamp(.78rem, .92vw, .9rem); }
+    .seed-list li { display: flex; align-items: center; gap: 8px; }
+    .seed-list li::before { content: ""; width: 10px; height: 10px; border: 2px solid var(--line); border-radius: 50%; background: var(--pink); }
+    .media-sprout {
+      right: 10%;
+      bottom: 4%;
+      width: clamp(150px, 18vw, 250px);
+      border-radius: 999px 999px 30px 30px;
+      padding: 18px 18px 16px;
+      background: var(--sky);
+      text-align: center;
+      transform: rotate(-3deg);
+    }
+    .media-sprout::before {
+      content: "";
+      display: block;
+      width: 64px;
+      height: 42px;
+      margin: 0 auto 8px;
+      border: 3px solid var(--line);
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--pink) 0 50%, var(--mint) 50%);
+    }
+    .media-sprout p { font-size: clamp(.82rem, 1vw, .95rem); line-height: 1.35; font-weight: 900; color: var(--ink); }
+    .map-flower {
+      position: absolute;
+      z-index: 4;
+      width: clamp(46px, 5.5vw, 76px);
+      aspect-ratio: 1;
+      border: 3px solid var(--line);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, var(--sun) 0 22%, transparent 23%),
+        conic-gradient(var(--pink) 0 18%, transparent 18% 25%, var(--mint) 25% 43%, transparent 43% 51%, var(--pink) 51% 69%, transparent 69% 76%, var(--mint) 76% 94%, transparent 94%);
+      animation: spin 12s linear infinite;
+    }
+    .map-flower.one { left: 48%; top: 8%; }
+    .map-flower.two { right: 2%; bottom: 34%; animation-direction: reverse; }
+
+    .flower, .blob, .bee {
+      position: absolute;
+      z-index: 0;
+      pointer-events: none;
+      will-change: transform;
+    }
+    .flower {
+      width: clamp(46px, 7vw, 104px);
+      aspect-ratio: 1;
+      background:
+        radial-gradient(circle, var(--sun) 0 20%, transparent 21%),
+        radial-gradient(circle at 50% 0%, var(--pink) 0 24%, transparent 25%),
+        radial-gradient(circle at 100% 50%, var(--pink) 0 24%, transparent 25%),
+        radial-gradient(circle at 50% 100%, var(--pink) 0 24%, transparent 25%),
+        radial-gradient(circle at 0% 50%, var(--pink) 0 24%, transparent 25%);
+      filter: drop-shadow(5px 6px 0 rgba(24,51,32,.18));
+      animation: spin 14s linear infinite;
+    }
+    .blob {
+      width: clamp(80px, 12vw, 180px);
+      aspect-ratio: 1.2;
+      border: 3px solid var(--line);
+      border-radius: 55% 45% 62% 38%;
+      background: var(--sky);
+      animation: float 5s ease-in-out infinite;
+    }
+    .bee {
+      width: 64px;
+      height: 36px;
+      border: 3px solid var(--line);
+      border-radius: 999px;
+      background: repeating-linear-gradient(90deg, var(--sun) 0 14px, var(--ink) 15px 22px);
+      animation: bee 7s ease-in-out infinite;
+    }
+    .bee::before, .bee::after {
+      content: "";
+      position: absolute;
+      top: -18px;
+      width: 30px;
+      height: 24px;
+      border: 2px solid var(--line);
+      border-radius: 50%;
+      background: rgba(255,255,255,.75);
+    }
+    .bee::before { left: 8px; transform: rotate(-18deg); }
+    .bee::after { right: 8px; transform: rotate(18deg); }
+
+    .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gap); }
+    .card {
+      position: relative;
+      min-height: min(34vh, 300px);
+      border: 3px solid var(--line);
+      border-radius: 24px;
+      background: var(--cream);
+      padding: clamp(18px, 2.2vw, 30px);
+      box-shadow: 10px 10px 0 rgba(24,51,32,.13);
+      transition: transform 240ms var(--ease), box-shadow 240ms var(--ease), background 240ms ease;
+      overflow: hidden;
+    }
+    .card:hover, .card.is-active {
+      transform: translateY(-10px) rotate(-1deg);
+      box-shadow: 14px 16px 0 rgba(24,51,32,.2);
+      background: var(--mint);
+    }
+    .card .num {
+      font-family: "Baloo 2", sans-serif;
+      font-size: clamp(2.2rem, 6vw, 5.5rem);
+      line-height: .8;
+      color: var(--pink);
+      text-shadow: 4px 4px 0 var(--pink-soft);
+    }
+    .card p { font-size: clamp(.78rem, 1vw, 1rem); margin-top: 12px; }
+
+    .reveal-item {
+      opacity: 0;
+      transform: translateY(20px) scale(.96);
+      pointer-events: none;
+      transition: opacity 360ms var(--ease), transform 360ms var(--ease);
+    }
+    .reveal-item.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .build-panel {
+      display: grid;
+      grid-template-columns: .86fr 1.14fr;
+      gap: var(--gap);
+      align-items: center;
+    }
+    .step-control {
+      border: 3px solid var(--line);
+      border-radius: 30px;
+      padding: clamp(22px, 3vw, 42px);
+      background: var(--pink-soft);
+      box-shadow: 10px 10px 0 rgba(24,51,32,.14);
+    }
+    .step-grid { display: grid; gap: 14px; }
+    .step-box {
+      border: 3px solid var(--line);
+      border-radius: 24px;
+      padding: clamp(16px, 2vw, 26px);
+      background: var(--white);
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    .step-dot {
+      width: 46px;
+      height: 46px;
+      border: 3px solid var(--line);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--grass);
+      font-weight: 900;
+    }
+
+    .detail-wrap {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: var(--gap);
+      align-items: center;
+    }
+    .detail-panel {
+      border: 3px solid var(--line);
+      border-radius: 30px;
+      background: var(--mint);
+      min-height: min(48vh, 420px);
+      padding: clamp(22px, 3vw, 46px);
+      box-shadow: 10px 10px 0 rgba(24,51,32,.14);
+      display: grid;
+      align-content: center;
+    }
+    .detail-panel strong {
+      font-family: "Baloo 2", sans-serif;
+      font-size: clamp(2rem, 5vw, 5rem);
+      line-height: .88;
+      margin-bottom: 12px;
+    }
+
+    .media-frame {
+      border: 3px solid var(--line);
+      border-radius: 34px;
+      background: #111;
+      padding: 18px;
+      box-shadow: 12px 12px 0 rgba(24,51,32,.18);
+    }
+    .video-box {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      border-radius: 24px;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(255,127,189,.78), rgba(189,232,255,.82)),
+        radial-gradient(circle at 50% 40%, var(--sun), transparent 30%);
+      display: grid;
+      place-items: center;
+      color: var(--white);
+      font-weight: 900;
+      text-align: center;
+    }
+    .play {
+      width: 78px;
+      height: 78px;
+      border: 3px solid var(--line);
+      border-radius: 50%;
+      background: var(--white);
+      color: var(--ink);
+      display: grid;
+      place-items: center;
+      font-size: 34px;
+      box-shadow: 7px 7px 0 var(--line);
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    .tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+    .tab {
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      padding: 9px 14px;
+      background: var(--white);
+      font-weight: 900;
+      transition: transform 160ms var(--ease), background 160ms ease;
+    }
+    .tab.active, .tab:hover { background: var(--grass); transform: translateY(-3px); }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+    .path-card {
+      border: 3px solid var(--line);
+      border-radius: 28px;
+      background: var(--white);
+      padding: clamp(16px, 2vw, 26px);
+      min-height: min(42vh, 340px);
+      box-shadow: 8px 8px 0 rgba(24,51,32,.14);
+    }
+    .path-card:nth-child(even) { background: var(--sky); transform: translateY(20px); }
+    .path-card:nth-child(3) { background: var(--pink-soft); }
+
+    .price-board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--gap);
+    }
+    .price {
+      border: 3px solid var(--line);
+      border-radius: 30px;
+      padding: clamp(18px, 2.4vw, 34px);
+      background: var(--white);
+      box-shadow: 9px 9px 0 rgba(24,51,32,.14);
+    }
+    .price.featured { background: var(--grass); transform: rotate(-1.2deg); }
+    .price strong { display: block; font-family: "Baloo 2", sans-serif; font-size: clamp(2.4rem, 6vw, 5.4rem); line-height: .9; }
+
+    .nav-dots {
+      position: fixed;
+      left: 24px;
+      bottom: 22px;
+      z-index: 20;
+      display: flex;
+      gap: 8px;
+      padding: 8px;
+      border: 2px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,253,244,.82);
+      backdrop-filter: blur(10px);
+      box-shadow: 6px 6px 0 rgba(24,51,32,.12);
+    }
+    .nav-dots a {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 900;
+      transition: transform 160ms var(--ease), background 160ms ease;
+    }
+    .nav-dots a.active, .nav-dots a:hover { background: var(--pink); transform: scale(1.12) rotate(-8deg); }
+    .next {
+      position: fixed;
+      right: 24px;
+      bottom: 22px;
+      z-index: 21;
+      width: 58px;
+      height: 58px;
+      border: 3px solid var(--line);
+      border-radius: 50%;
+      background: var(--grass);
+      box-shadow: 6px 6px 0 var(--line);
+      font-size: 28px;
+      font-weight: 900;
+      transition: transform 180ms var(--ease);
+    }
+    .next:hover { transform: translateY(-5px) rotate(10deg); }
+    .progress {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 30;
+      height: 6px;
+      width: 0;
+      background: var(--pink);
+      box-shadow: 0 0 0 2px rgba(24,51,32,.25);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px) scale(.98);
+      transition: opacity 660ms var(--ease), transform 660ms var(--ease);
+      transition-delay: calc(var(--i, 0) * 100ms);
+    }
+    .slide.visible .reveal { opacity: 1; transform: translateY(0) scale(1); }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes float { 50% { transform: translateY(-18px) rotate(4deg); } }
+    @keyframes bee {
+      0%, 100% { transform: translate(0,0) rotate(-8deg); }
+      50% { transform: translate(34px,-28px) rotate(8deg); }
+    }
+    @keyframes pulse { 50% { transform: scale(1.08); } }
+    @keyframes dashFlow { to { stroke-dashoffset: -240; } }
+
+    @media (max-width: 980px) {
+      .stage { height: calc(100vh - 24px); border-radius: 28px; }
+      .scene { padding: 72px 18px 92px; }
+      .two, .split, .build-panel, .detail-wrap { grid-template-columns: 1fr; }
+      .three, .cards, .price-board { grid-template-columns: repeat(2, 1fr); }
+      .timeline { grid-template-columns: repeat(2, 1fr); }
+      .device-stack { min-height: 320px; height: 34vh; }
+      .tablet { width: 72%; left: 8%; right: auto; }
+      .phone { width: 24%; right: 8%; }
+      .note { width: 48%; bottom: 5%; }
+      .garden-map { min-height: 330px; height: 35vh; }
+      .seed-panel { left: 28%; top: 24%; width: 260px; padding: 16px; }
+      .map-badge { width: 180px; padding: 13px; }
+      .media-sprout { width: 170px; right: 5%; }
+      .card, .path-card { min-height: auto; }
+    }
+    @media (max-width: 640px) {
+      .slide { padding: 10px; }
+      .scene { padding: 70px 14px 92px; }
+      .three, .cards, .price-board, .timeline { grid-template-columns: 1fr; }
+      .cards .card:nth-child(n+4), .timeline .path-card:nth-child(n+4) { display: none; }
+      .hero-copy p { font-size: .86rem; }
+      .top-nav { left: 16px; right: 16px; }
+      .top-nav > span:last-child { display: none; }
+      .garden-map { min-height: 290px; height: 34vh; }
+      .garden-pond { inset: 8% 0 3%; }
+      .seed-panel { left: 12%; top: 23%; width: 76%; }
+      .seed-panel p, .seed-list { display: none; }
+      .map-badge { width: 128px; padding: 10px; border-width: 2px; }
+      .map-badge small { display: none; }
+      .badge-a { left: 2%; top: 3%; }
+      .badge-b { right: 2%; top: 5%; }
+      .badge-c { left: 3%; bottom: 4%; }
+      .media-sprout { right: 2%; bottom: 4%; width: 112px; padding: 9px; border-width: 2px; }
+      .media-sprout::before { width: 46px; height: 30px; }
+      .map-flower { display: none; }
+      .nav-dots { left: 10px; right: 82px; overflow-x: auto; }
+      .next { right: 12px; bottom: 18px; }
+    }
+    @media (max-height: 700px) {
+      .scene { padding-top: 62px; padding-bottom: 78px; }
+      h1 { font-size: clamp(2.8rem, 8vw, 6.6rem); }
+      h2 { font-size: clamp(1.8rem, 4.4vw, 4.3rem); }
+      p { line-height: 1.45; }
+      .bottom-strip { height: 56px; }
+      .device-stack { min-height: 300px; }
+      .garden-map { min-height: 310px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .2s !important; }
+      html { scroll-behavior: auto; }
+      .reveal, .reveal-item { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true"></div>
+  <button class="next" type="button" aria-label="下一页">↓</button>
+  <nav class="nav-dots" aria-label="页面导航">
+    <a href="#cover">01</a><a href="#map">02</a><a href="#offer">03</a><a href="#build">04</a><a href="#detail">05</a><a href="#media">06</a><a href="#path">07</a><a href="#launch">08</a><a href="#thanks">09</a>
+  </nav>
+
+  <main class="deck">
+    <section class="slide" id="cover">
+      <div class="stage">
+        <div class="top-nav"><span class="brand-mark">Garden Pop</span><span>Course / Product / Creator Launch</span></div>
+        <div class="scene two">
+          <div class="hero-copy">
+            <div class="label reveal">Garden Pop Landing / 花园跳色长页</div>
+            <h1 class="reveal" style="--i:1">Grow your <span class="accent">course</span>.</h1>
+            <p class="reveal" style="--i:2">适合自媒体教程、课程产品、工具发布和内容服务包。用橙黄底色、绿色草地、粉色花朵和移动端展示，把“教程产品”做得像一个会动的花园官网。</p>
+            <div class="cta-row reveal" style="--i:3">
+              <button class="pop-btn" data-go="#build">点我逐步展开模块</button>
+              <button class="pop-btn secondary" data-go="#media">查看图片/视频区</button>
+            </div>
+          </div>
+          <div class="garden-map parallax" data-depth="24" aria-label="课程花园互动地图">
+            <div class="garden-pond"></div>
+            <svg class="vine-map" viewBox="0 0 640 420" aria-hidden="true">
+              <path d="M55 90 C180 5 245 155 190 220 C150 270 235 360 350 285 C470 205 540 330 594 248" />
+            </svg>
+            <article class="map-badge badge-a">
+              <strong>01</strong><span>逐步展开</span><small>点击一次出现一块内容，适合讲课程模块。</small>
+            </article>
+            <article class="map-badge badge-b">
+              <strong>02</strong><span>卡片详情</span><small>每张卡可以打开独立段落，承载更多说明。</small>
+            </article>
+            <article class="map-badge badge-c">
+              <strong>03</strong><span>素材插入</span><small>图片、视频、截图都能放进对应区域。</small>
+            </article>
+            <div class="seed-panel">
+              <h3>这个 HTML 的特点</h3>
+              <p>它不是普通 PPT，而是可以滚动、点击、展开和跳转的互动长页，适合把教程产品讲得更像一个可体验的小官网。</p>
+              <ul class="seed-list">
+                <li>首页有鼠标跟随和花园路径动效</li>
+                <li>中段支持单击逐块显现内容</li>
+                <li>后续可替换真实课程图片和视频</li>
+              </ul>
+            </div>
+            <div class="media-sprout"><p>预留图片 / 视频 / 案例展示区</p></div>
+            <div class="map-flower one"></div>
+            <div class="map-flower two"></div>
+          </div>
+        </div>
+        <div class="flower parallax" data-depth="18" style="left:8%;top:18%"></div>
+        <div class="flower parallax" data-depth="-16" style="right:9%;top:14%;animation-direction:reverse"></div>
+        <div class="blob parallax" data-depth="10" style="right:36%;bottom:14%"></div>
+        <div class="bee parallax" data-depth="30" style="right:12%;top:28%"></div>
+        <div class="bottom-strip"></div>
+      </div>
+    </section>
+
+    <section class="slide" id="map">
+      <div class="stage">
+        <div class="top-nav"><span class="brand-mark">Contents</span><span>Click or scroll</span></div>
+        <div class="scene">
+          <div>
+            <div class="label reveal">What this template is for</div>
+            <h2 class="reveal" style="--i:1">一个会跳出来的教程产品页。</h2>
+          </div>
+          <div class="cards">
+            <article class="card reveal" style="--i:2" data-go="#offer"><div class="num">01</div><h3>课程介绍</h3><p>讲清楚适合谁、解决什么问题、学完能得到什么。</p></article>
+            <article class="card reveal" style="--i:3" data-go="#build"><div class="num">02</div><h3>模块逐步出现</h3><p>点击一次出现一块，适合演示时控制节奏。</p></article>
+            <article class="card reveal" style="--i:4" data-go="#media"><div class="num">03</div><h3>图文视频插入</h3><p>预留截图、封面、短视频、课程试看等素材位。</p></article>
+            <article class="card reveal" style="--i:5" data-go="#launch"><div class="num">04</div><h3>发布转化</h3><p>可以放购买入口、社群入口、领取资料和行动按钮。</p></article>
+          </div>
+        </div>
+        <div class="bottom-strip"></div>
+      </div>
+    </section>
+
+    <section class="slide" id="offer">
+      <div class="stage">
+        <div class="top-nav"><span class="brand-mark">Offer</span><span>Course Product Story</span></div>
+        <div class="scene split">
+          <div>
+            <div class="label reveal">Product Positioning</div>
+            <h2 class="reveal" style="--i:1">把教程包装成一个<span class="accent">可购买</span>的产品。</h2>
+            <p class="reveal" style="--i:2">不只是罗列目录，而是把用户的痛点、学习路径、成果样例和交付方式放在同一个视觉系统里。</p>
+          </div>
+          <div class="cards">
+            <article class="card reveal" style="--i:2"><div class="num">A</div><h3>自媒体教程</h3><p>选题、脚本、封面、发布、复盘。</p></article>
+            <article class="card reveal" style="--i:3"><div class="num">B</div><h3>AI 工具课</h3><p>工具清单、提示词、工作流案例。</p></article>
+            <article class="card reveal" style="--i:4"><div class="num">C</div><h3>产品发布</h3><p>卖点、截图、定价、用户证言。</p></article>
+            <article class="card reveal" style="--i:5"><div class="num">D</div><h3>服务方案</h3><p>交付物、适合人群、合作方式。</p></article>
+          </div>
+        </div>
+        <div class="bottom-strip"></div>
+      </div>
+    </section>
+
+    <section class="slide" id="build">
+      <div class="stage">
+        <div class="top-nav"><span class="brand-mark">Build Click</span><span>点一下，出现一块</span></div>
+        <div class="scene build-panel">
+          <div class="step-control reveal">
+            <div class="label">Interactive Build</div>
+            <h2>点击按钮，模块逐步长出来。</h2>
+            <p>适合直播演示、课程讲解和路演说明。不会一上来把所有内容堆满，而是让观众跟着你的讲解一步一步看到重点。</p>
+            <div class="cta-row">
+              <button class="pop-btn" id="revealNext" type="button">出现下一块</button>
+              <button class="pop-btn secondary" id="resetReveal" type="button">重新开始</button>
+            </div>
+          </div>
+          <div class="step-grid">
+            <article class="step-box reveal-item show"><span class="step-dot">1</span><div><h3>先抛问题</h3><p>用户为什么需要这个课程？卡在哪一步？</p></div></article>
+            <article class="step-box reveal-item"><span class="step-dot">2</span><div><h3>再给路径</h3><p>从资料整理到成品交付，拆成清晰的学习步骤。</p></div></article>
+            <article class="step-box reveal-item"><span class="step-dot">3</span><div><h3>展示样例</h3><p>可以插入截图、短视频、前后对比图和课程作业。</p></div></article>
+            <article class="step-box reveal-item"><span class="step-dot">4</span><div><h3>最后转化</h3><p>放领取资料、购买课程、加入社群或预约咨询入口。</p></div></article>
+          </div>
+        </div>
+        <div class="bottom-strip"></div>
+      </div>
+    </section>
+
+    <section class="slide" id="detail">
+      <div class="stage">
+        <div class="top-nav"><span class="brand-mark">Deep Cards</span><span>单击卡片进入详情</span></div>
+        <div class="scene detail-wrap">
+          <div class="cards">
+            <article class="card detail-card is-active" data-title="课程大纲" data-copy="适合放 4-6 个核心章节，每个章节可以继续拆成单独页面或下钻详情。"><div class="num">01</div><h3>课程大纲</h3></article>
+            <article class="card detail-card" data-title="交付清单" data-copy="适合放模板、提示词、案例库、检查表、视频回放、社群答疑等交付物。"><div class="num">02</div><h3>交付清单</h3></article>
+            <article class="card detail-card" data-title="适合人群" data-copy="适合说明新手、博主、运营、讲师、创业者分别能怎么用。"><div class="num">03</div><h3>适合人群</h3></article>
+            <article class="card detail-card" data-title="成果案例" data-copy="适合插入学员作业、产品页面、发布截图、收益数据或复盘图片。"><div class="num">04</div><h3>成果案例</h3></article>
+          </div>
+          <div class="detail-panel">
+            <strong id="detailTitle">课程大纲</strong>
+            <p id="detailCopy">适合放 4-6 个核心章节，每个章节可以继续拆成单独页面或下钻详情。</p>
+          </div>
+        </div>
+        <div class="bottom-strip"></div>
+      </div>
+    </section>
+
+    <section class="slide" id="media">
+      <div class="stage">
+        <div class="top-nav"><span class="brand-mark">Media</span><span>Image / Video / Screenshot</span></div>
+        <div class="scene two">
+          <div>
+            <div class="label reveal">Material Slots</div>
+            <h2 class="reveal" style="--i:1">图片、视频、截图都可以放进来。</h2>
+            <p class="reveal" style="--i:2">如果你给的是课程截图，我会放到产品展示区；如果给的是短视频，会放到试看区；如果给的是文档内容，会拆成目录、模块和详情页。</p>
+            <div class="tabs reveal" style="--i:3">
+              <button class="tab active" data-media="试看视频">试看视频</button>
+              <button class="tab" data-media="课程截图">课程截图</button>
+              <button class="tab" data-media="作业案例">作业案例</button>
+            </div>
+          </div>
+          <div class="media-frame reveal" style="--i:2">
+            <div class="video-box">
+              <div><div class="play">▶</div><p id="mediaLabel" style="color:var(--white);margin-top:18px">试看视频</p></div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom-strip"></div>
+      </div>
+    </section>
+
+    <section class="slide" id="path">
+      <div class="stage">
+        <div class="top-nav"><span class="brand-mark">Learning Path</span><span>5-step tutorial map</span></div>
+        <div class="scene">
+          <div>
+            <div class="label reveal">Tutorial Journey</div>
+            <h2 class="reveal" style="--i:1">把学习路径做得像花园导览。</h2>
+          </div>
+          <div class="timeline">
+            <article class="path-card reveal" style="--i:2"><h3>01 认识问题</h3><p>先用真实场景让用户知道为什么要学。</p></article>
+            <article class="path-card reveal" style="--i:3"><h3>02 拆解方法</h3><p>把复杂步骤拆成可跟做的动作。</p></article>
+            <article class="path-card reveal" style="--i:4"><h3>03 上手练习</h3><p>给模板、案例和提示词直接套用。</p></article>
+            <article class="path-card reveal" style="--i:5"><h3>04 作品输出</h3><p>做出页面、封面、脚本或发布包。</p></article>
+            <article class="path-card reveal" style="--i:6"><h3>05 复盘迭代</h3><p>根据数据和反馈持续优化内容。</p></article>
+          </div>
+        </div>
+        <div class="bottom-strip"></div>
+      </div>
+    </section>
+
+    <section class="slide" id="launch">
+      <div class="stage">
+        <div class="top-nav"><span class="brand-mark">Launch</span><span>Offer blocks</span></div>
+        <div class="scene">
+          <div>
+            <div class="label reveal">Product Launch</div>
+            <h2 class="reveal" style="--i:1">最后要让用户知道下一步点哪里。</h2>
+          </div>
+          <div class="price-board">
+            <article class="price reveal" style="--i:2"><span class="label">Free</span><strong>资料包</strong><p>适合放免费领取、清单下载、试听课程。</p></article>
+            <article class="price featured reveal" style="--i:3"><span class="label">Core</span><strong>系统课</strong><p>适合放主产品、训练营、工作流课程。</p></article>
+            <article class="price reveal" style="--i:4"><span class="label">Pro</span><strong>陪跑</strong><p>适合放咨询、社群、定制服务或项目共创。</p></article>
+          </div>
+        </div>
+        <div class="bottom-strip"></div>
+      </div>
+    </section>
+
+    <section class="slide" id="thanks">
+      <div class="stage">
+        <div class="top-nav"><span class="brand-mark">Garden Pop</span><span>Created for reusable HTML decks</span></div>
+        <div class="scene two">
+          <div>
+            <div class="label reveal">Thank You</div>
+            <h2 class="reveal" style="--i:1">让你的教程产品，自己会<span class="accent">开花</span>。</h2>
+            <p class="reveal" style="--i:2">示例展示区可以替换成任何创作者、品牌、课程或产品名；正式使用时只需要替换文字、图片和视频素材。</p>
+            <div class="cta-row reveal" style="--i:3">
+              <span class="label">Created by Author Name</span>
+              <span class="label">Garden Pop Landing</span>
+            </div>
+          </div>
+          <div class="device-stack parallax" data-depth="16">
+            <div class="tablet"><div class="mini-page"><div class="mini-row">Launch Page</div><div class="mini-row"><span class="mini-card"></span><span class="mini-card"></span><span class="mini-card"></span></div><div class="mini-row">Media Preview</div><div class="mini-row">Buy / Join / Learn</div></div></div>
+            <div class="flower" style="right:10%;top:8%"></div>
+            <div class="flower" style="left:10%;bottom:16%;animation-direction:reverse"></div>
+          </div>
+        </div>
+        <div class="bottom-strip"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    class GardenDeck {
+      constructor() {
+        this.deck = document.querySelector('.deck');
+        this.slides = [...document.querySelectorAll('.slide')];
+        this.links = [...document.querySelectorAll('.nav-dots a')];
+        this.progress = document.querySelector('.progress');
+        this.current = 0;
+        this.setupObserver();
+        this.setupNavigation();
+        this.setupParallax();
+        this.setupBuildReveal();
+        this.setupDetailCards();
+        this.setupMediaTabs();
+      }
+      setupObserver() {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('visible');
+            this.current = this.slides.indexOf(entry.target);
+            const id = `#${entry.target.id}`;
+            this.links.forEach((link) => link.classList.toggle('active', link.getAttribute('href') === id));
+            this.progress.style.width = `${((this.current + 1) / this.slides.length) * 100}%`;
+          });
+        }, { root: this.deck, threshold: 0.52 });
+        this.slides.forEach((slide) => observer.observe(slide));
+      }
+      go(index) {
+        this.slides[Math.max(0, Math.min(index, this.slides.length - 1))]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      setupNavigation() {
+        document.querySelector('.next').addEventListener('click', () => this.go(this.current + 1));
+        document.querySelectorAll('[data-go]').forEach((item) => item.addEventListener('click', () => {
+          document.querySelector(item.dataset.go)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }));
+        window.addEventListener('keydown', (event) => {
+          if (event.key === 'ArrowDown' || event.key === 'PageDown' || event.key === ' ') this.go(this.current + 1);
+          if (event.key === 'ArrowUp' || event.key === 'PageUp') this.go(this.current - 1);
+        });
+      }
+      setupParallax() {
+        const items = [...document.querySelectorAll('.parallax')];
+        window.addEventListener('pointermove', (event) => {
+          const x = (event.clientX / window.innerWidth - .5);
+          const y = (event.clientY / window.innerHeight - .5);
+          items.forEach((item) => {
+            const depth = Number(item.dataset.depth || 10);
+            item.style.transform = `translate3d(${x * depth}px, ${y * depth}px, 0)`;
+          });
+        });
+      }
+      setupBuildReveal() {
+        const boxes = [...document.querySelectorAll('#build .reveal-item')];
+        let index = 1;
+        document.getElementById('revealNext').addEventListener('click', () => {
+          boxes[Math.min(index, boxes.length - 1)]?.classList.add('show');
+          index = Math.min(index + 1, boxes.length);
+        });
+        document.getElementById('resetReveal').addEventListener('click', () => {
+          boxes.forEach((box, i) => box.classList.toggle('show', i === 0));
+          index = 1;
+        });
+      }
+      setupDetailCards() {
+        const title = document.getElementById('detailTitle');
+        const copy = document.getElementById('detailCopy');
+        document.querySelectorAll('.detail-card').forEach((card) => {
+          card.addEventListener('click', () => {
+            document.querySelectorAll('.detail-card').forEach((item) => item.classList.remove('is-active'));
+            card.classList.add('is-active');
+            title.textContent = card.dataset.title;
+            copy.textContent = card.dataset.copy;
+            title.animate([{ transform: 'translateY(14px)', opacity: .3 }, { transform: 'translateY(0)', opacity: 1 }], { duration: 260, easing: 'ease-out' });
+          });
+        });
+      }
+      setupMediaTabs() {
+        const label = document.getElementById('mediaLabel');
+        document.querySelectorAll('.tab').forEach((tab) => {
+          tab.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach((item) => item.classList.remove('active'));
+            tab.classList.add('active');
+            label.textContent = tab.dataset.media;
+          });
+        });
+      }
+    }
+    new GardenDeck();
+  </script>
+</body>
+</html>

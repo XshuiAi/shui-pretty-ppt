@@ -1,0 +1,1005 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>模板06｜钴蓝商策｜商务汇报演示</title>
+  <style>
+    :root {
+      --stage: #c4c7cc;
+      --paper: #f7f8fa;
+      --paper-2: #ffffff;
+      --ink: #111318;
+      --muted: #68707c;
+      --line: #d8dde6;
+      --line-dark: #1c2430;
+      --blue: #1956c9;
+      --blue-2: #edf3ff;
+      --blue-3: #dce9ff;
+      --black: #101217;
+      --white: #ffffff;
+      --shadow: 0 26px 48px rgba(28, 34, 43, 0.22);
+      --font: "Inter", "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-snap-type: y mandatory;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: var(--font);
+      background: var(--paper);
+    }
+
+    button,
+    select { font: inherit; color: inherit; }
+
+    .deck {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 30;
+      width: 100%;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      color: var(--ink);
+      padding: 16px clamp(22px, 4vw, 64px);
+      background: rgba(247, 248, 250, 0.84);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(216, 221, 230, 0.72);
+    }
+
+    .topbar strong {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    .topbar strong::after {
+      content: "";
+      width: min(36vw, 420px);
+      height: 2px;
+      background: rgba(25,86,201,0.34);
+    }
+
+    .jump {
+      min-width: 190px;
+      border: 1px solid rgba(17,19,24,0.12);
+      background: rgba(255,255,255,0.92);
+      padding: 10px 14px;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .slide {
+      position: relative;
+      min-height: 100vh;
+      height: 100vh;
+      width: 100vw;
+      margin-bottom: 0;
+      padding: clamp(78px, 8vh, 96px) clamp(32px, 5vw, 76px) clamp(30px, 5vh, 52px);
+      background:
+        linear-gradient(90deg, rgba(25,86,201,0.03) 1px, transparent 1px) 0 0 / 58px 58px,
+        var(--paper);
+      box-shadow: none;
+      overflow: hidden;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 620ms ease, transform 620ms ease;
+    }
+
+    .slide.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .slide.no-pad {
+      padding: 0;
+    }
+
+    .meta-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: clamp(34px, 7vw, 92px);
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+
+    .mark {
+      display: inline-grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      background: var(--blue);
+      color: var(--white);
+      font-weight: 900;
+      margin-bottom: 18px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p { margin: 0; }
+
+    h1 {
+      max-width: 720px;
+      font-size: clamp(52px, 7.2vw, 100px);
+      line-height: 0.9;
+      letter-spacing: -0.055em;
+    }
+
+    h2 {
+      font-size: clamp(34px, 4.6vw, 62px);
+      line-height: 0.95;
+      letter-spacing: -0.048em;
+    }
+
+    h3 {
+      font-size: clamp(19px, 1.8vw, 27px);
+      line-height: 1.06;
+      letter-spacing: -0.03em;
+    }
+
+    .body {
+      color: var(--muted);
+      font-size: clamp(13px, 1.12vw, 16px);
+      line-height: 1.62;
+    }
+
+    .label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border: 1px solid var(--line-dark);
+      border-radius: 999px;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+
+    .label.blue {
+      border-color: transparent;
+      background: var(--blue);
+      color: var(--white);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 28px;
+      min-height: 100vh;
+      height: 100vh;
+    }
+
+    .hero-copy {
+      padding: clamp(78px, 8vh, 96px) clamp(42px, 7vw, 92px) clamp(32px, 5vh, 56px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hero-title-area {
+      padding-top: clamp(26px, 5vh, 62px);
+    }
+
+    .hero-subgrid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      max-width: 520px;
+      margin-top: 24px;
+    }
+
+    .mini-field {
+      border-top: 2px solid var(--ink);
+      padding-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .mini-field strong {
+      display: block;
+      color: var(--ink);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 3px;
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 28% 36%, rgba(25,86,201,0.22), transparent 18%),
+        linear-gradient(135deg, rgba(25,86,201,0.08), transparent 56%);
+      overflow: hidden;
+    }
+
+    .vertical-brand {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 96px;
+      display: grid;
+      place-items: center;
+      background: var(--blue);
+      color: rgba(255,255,255,0.78);
+      font-size: clamp(52px, 8vw, 102px);
+      font-weight: 900;
+      letter-spacing: -0.08em;
+      writing-mode: vertical-rl;
+      text-transform: uppercase;
+    }
+
+    .device {
+      position: absolute;
+      left: 12%;
+      top: 16%;
+      width: min(380px, 42vw);
+      aspect-ratio: 1.14;
+      border-radius: 34px;
+      background: linear-gradient(145deg, #fff, #dce5f3 62%, #b8c7df);
+      box-shadow: inset -18px -22px 40px rgba(16,24,40,0.18), 0 34px 70px rgba(16,24,40,0.22);
+      transform: rotate(-8deg);
+      transition: transform 360ms ease;
+    }
+
+    .slide.is-visible .device {
+      animation: deviceFloat 6s ease-in-out infinite;
+    }
+
+    .device::before {
+      content: "";
+      position: absolute;
+      inset: 17%;
+      border: 2px solid rgba(25,86,201,0.32);
+      border-radius: 50%;
+      transform: rotate(24deg);
+    }
+
+    .device::after {
+      content: "";
+      position: absolute;
+      right: 18%;
+      bottom: 18%;
+      width: 76px;
+      height: 76px;
+      border-radius: 22px;
+      background: var(--blue);
+      box-shadow: 0 20px 42px rgba(25,86,201,0.35);
+    }
+
+    .avatar-note {
+      position: absolute;
+      left: clamp(26px, 4vw, 58px);
+      bottom: clamp(26px, 4vw, 58px);
+      display: grid;
+      grid-template-columns: 46px 1fr;
+      gap: 14px;
+      width: min(340px, 48%);
+      padding: 16px;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+    }
+
+    .avatar-dot {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      background: var(--black);
+      color: var(--white);
+      font-weight: 900;
+      border-radius: 50%;
+    }
+
+    .blue-block {
+      background: var(--blue);
+      color: var(--white);
+      padding: clamp(34px, 5vw, 66px);
+    }
+
+    .contents {
+      display: grid;
+      grid-template-columns: 0.72fr 1.28fr;
+      gap: 34px;
+      align-items: stretch;
+    }
+
+    .contents-title {
+      background: var(--blue);
+      color: var(--white);
+      min-height: calc(100vh - 190px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .contents-title h2 {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+    }
+
+    .contents-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      align-content: center;
+    }
+
+    .chapter {
+      min-height: 150px;
+      border: 1px solid var(--line);
+      background: var(--paper-2);
+      padding: 22px;
+      cursor: pointer;
+      transition: transform 240ms ease, background 240ms ease, color 240ms ease;
+    }
+
+    .chapter:hover,
+    .chapter.is-active {
+      transform: translateY(-6px);
+      background: var(--blue);
+      color: var(--white);
+    }
+
+    .chapter strong {
+      display: block;
+      font-size: 32px;
+      margin-bottom: 28px;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 34px;
+      align-items: stretch;
+    }
+
+    .photo-panel {
+      position: relative;
+      min-height: calc(100vh - 190px);
+      background:
+        linear-gradient(135deg, rgba(16,18,23,0.86), rgba(16,18,23,0.28)),
+        repeating-linear-gradient(90deg, #d8dde6 0 24px, #f6f8fb 24px 48px);
+      overflow: hidden;
+    }
+
+    .photo-panel::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0 auto;
+      width: 42%;
+      height: 46%;
+      background: var(--blue);
+    }
+
+    .photo-panel .caption {
+      position: absolute;
+      left: 28px;
+      bottom: 28px;
+      z-index: 2;
+      color: var(--white);
+      max-width: 320px;
+    }
+
+    .story {
+      padding: clamp(22px, 3vw, 42px);
+      background: var(--paper-2);
+      border: 1px solid var(--line);
+    }
+
+    .stat-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .stat {
+      border-top: 3px solid var(--blue);
+      padding-top: 16px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: clamp(34px, 4.4vw, 58px);
+      letter-spacing: -0.06em;
+      line-height: 0.9;
+    }
+
+    .product-layout {
+      display: grid;
+      grid-template-columns: 0.86fr 1.14fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .product-hero {
+      position: relative;
+      min-height: calc(100vh - 250px);
+      background: var(--paper-2);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .product-hero::before {
+      content: "REPORT";
+      position: absolute;
+      right: -10px;
+      top: 8px;
+      color: rgba(25,86,201,0.12);
+      font-size: clamp(82px, 11vw, 136px);
+      font-weight: 900;
+      writing-mode: vertical-rl;
+      letter-spacing: -0.08em;
+    }
+
+    .product-object {
+      position: absolute;
+      left: 11%;
+      top: 20%;
+      width: min(310px, 52%);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 34px solid var(--black);
+      box-shadow: 0 28px 46px rgba(16,18,23,0.22);
+    }
+
+    .product-object::after {
+      content: "";
+      position: absolute;
+      right: -62px;
+      top: 42%;
+      width: 150px;
+      height: 34px;
+      border-radius: 999px;
+      background: var(--blue);
+      transform: rotate(-16deg);
+    }
+
+    .product-tabs {
+      display: grid;
+      gap: 14px;
+    }
+
+    .product-tab {
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      gap: 18px;
+      border: 1px solid var(--line);
+      background: var(--paper-2);
+      padding: 14px 16px;
+      text-align: left;
+      cursor: pointer;
+      transition: background 220ms ease, transform 220ms ease;
+    }
+
+    .product-tab:hover,
+    .product-tab.is-active {
+      background: var(--blue-2);
+      transform: translateX(6px);
+    }
+
+    .product-tab strong {
+      font-size: 28px;
+      color: var(--blue);
+    }
+
+    .tab-detail {
+      margin-top: 14px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      background: var(--black);
+      color: var(--white);
+      min-height: 104px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .kpi-main {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .kpi {
+      position: relative;
+      min-height: 170px;
+      padding: 24px;
+      background: var(--paper-2);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .kpi.dark {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .kpi strong {
+      display: block;
+      font-size: clamp(42px, 5vw, 70px);
+      letter-spacing: -0.07em;
+      line-height: 0.92;
+    }
+
+    .kpi::after {
+      content: "";
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: 24px;
+      height: 8px;
+      background: linear-gradient(90deg, var(--blue) var(--fill, 55%), var(--line) var(--fill, 55%));
+    }
+
+    .roadmap {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: 28px;
+      border-top: 2px solid var(--ink);
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .road-step {
+      min-height: 190px;
+      padding: 24px;
+      border-right: 1px solid var(--line);
+      background: var(--paper-2);
+      cursor: pointer;
+      transition: background 220ms ease;
+    }
+
+    .road-step:last-child { border-right: 0; }
+
+    .road-step:hover { background: var(--blue-2); }
+
+    .road-step strong {
+      display: block;
+      color: var(--blue);
+      font-size: 36px;
+      margin-bottom: 52px;
+    }
+
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 32px;
+    }
+
+    .scenario {
+      position: relative;
+      min-height: 220px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      background: var(--paper-2);
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .scenario::before {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 10px;
+      height: 100%;
+      background: var(--blue);
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform 260ms ease;
+    }
+
+    .scenario:hover::before,
+    .scenario.is-active::before {
+      transform: scaleY(1);
+    }
+
+    .scenario-note {
+      margin-top: 28px;
+      padding: 24px;
+      background: var(--blue);
+      color: var(--white);
+      min-height: 98px;
+    }
+
+    .closing {
+      display: grid;
+      place-items: center;
+      text-align: center;
+      min-height: calc(100vh - 150px);
+    }
+
+    .closing .mark {
+      margin: 0 auto 20px;
+      border-radius: 50%;
+    }
+
+    .floating-actions {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      display: grid;
+      gap: 12px;
+      z-index: 40;
+    }
+
+    .float-btn {
+      width: 54px;
+      height: 54px;
+      border: 0;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 12px 28px rgba(16,18,23,0.2);
+      color: var(--blue);
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    @keyframes deviceFloat {
+      0%, 100% { transform: translateY(0) rotate(-8deg); }
+      50% { transform: translateY(-12px) rotate(-5deg); }
+    }
+
+    @media (max-width: 900px) {
+      html { scroll-snap-type: none; }
+      .deck { width: 100%; }
+      .topbar { position: static; width: 100%; }
+      .topbar strong::after { display: none; }
+      .slide { min-height: auto; height: auto; padding: 26px 20px; margin-bottom: 28px; width: 100%; }
+      .slide.no-pad { padding: 0; }
+      .hero,
+      .contents,
+      .split,
+      .product-layout,
+      .kpi-grid { grid-template-columns: 1fr; }
+      .hero-visual { min-height: 420px; }
+      .vertical-brand { width: 58px; font-size: 58px; }
+      .contents-title { min-height: 170px; }
+      .contents-title h2 { writing-mode: horizontal-tb; transform: none; }
+      .contents-grid,
+      .kpi-main,
+      .roadmap,
+      .scenario-grid,
+      .stat-list { grid-template-columns: 1fr; }
+      .road-step { border-right: 0; border-bottom: 1px solid var(--line); min-height: auto; }
+      .avatar-note { position: relative; width: auto; left: auto; bottom: auto; margin: 22px; }
+      h1 { font-size: clamp(44px, 16vw, 74px); }
+      .floating-actions { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+      .slide { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <strong>Cobalt Executive Deck / 钴蓝商策</strong>
+    <select class="jump" aria-label="快速定位页面">
+      <option value="#cover">01 封面</option>
+      <option value="#contents">02 目录</option>
+      <option value="#about">03 背景与目标</option>
+      <option value="#products">04 方案模块</option>
+      <option value="#metrics">05 关键指标</option>
+      <option value="#roadmap">06 推进路线</option>
+      <option value="#scenarios">07 应用场景</option>
+      <option value="#closing">08 结尾</option>
+    </select>
+  </div>
+
+  <main class="deck">
+    <section class="slide no-pad hero" id="cover" aria-label="封面">
+      <div class="hero-copy">
+        <div>
+          <div class="mark">S</div>
+          <div class="meta-row">
+            <span>BUSINESS REPORT</span>
+            <span>2026</span>
+          </div>
+        </div>
+        <div class="hero-title-area">
+          <h1>Business HTML Portfolio</h1>
+          <p class="body" style="max-width: 560px; margin-top: 22px;">适合商务汇报、产品介绍、年度总结和商业方案的蓝白灰 HTML 演示模板。</p>
+          <div class="hero-subgrid">
+            <div class="mini-field"><strong>Creator</strong>Author Name / Team Name</div>
+            <div class="mini-field"><strong>Format</strong>Interactive HTML report</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="device"></div>
+        <div class="vertical-brand">SHUI</div>
+        <div class="avatar-note">
+          <div class="avatar-dot">AI</div>
+          <div>
+            <h3>Executive-ready visual story.</h3>
+            <p class="body" style="margin-top: 8px;">把工作结果、产品价值和下一步计划放到一套有商业感的页面里。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="contents" aria-label="目录">
+      <div class="contents">
+        <div class="contents-title"><h2>Contents.</h2></div>
+        <div>
+          <div class="meta-row"><span>目录</span><span>Executive path</span></div>
+          <div class="contents-grid">
+            <button class="chapter is-active" type="button" data-target="#about">
+              <strong>01</strong>
+              <h3>背景与目标</h3>
+              <p class="body">为什么要用 HTML 做商务汇报。</p>
+            </button>
+            <button class="chapter" type="button" data-target="#products">
+              <strong>02</strong>
+              <h3>方案模块</h3>
+              <p class="body">产品、服务、能力如何组织。</p>
+            </button>
+            <button class="chapter" type="button" data-target="#metrics">
+              <strong>03</strong>
+              <h3>关键指标</h3>
+              <p class="body">用 KPI 和图形强调结果。</p>
+            </button>
+            <button class="chapter" type="button" data-target="#roadmap">
+              <strong>04</strong>
+              <h3>推进路线</h3>
+              <p class="body">把计划拆成阶段和行动。</p>
+            </button>
+            <button class="chapter" type="button" data-target="#scenarios">
+              <strong>05</strong>
+              <h3>应用场景</h3>
+              <p class="body">适合哪些商务内容。</p>
+            </button>
+            <button class="chapter" type="button" data-target="#closing">
+              <strong>06</strong>
+              <h3>总结收束</h3>
+              <p class="body">用简洁结尾建立记忆点。</p>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="about" aria-label="背景与目标">
+      <div class="split">
+        <div class="photo-panel">
+          <div class="caption">
+            <span class="label blue">About us</span>
+            <h2 style="margin-top: 20px;">From slides to live business pages.</h2>
+          </div>
+        </div>
+        <div class="story">
+          <span class="label">Our Story</span>
+          <h2 style="margin-top: 24px;">汇报不只是一页页 PPT，也可以是一条可分享的页面路径。</h2>
+          <p class="body" style="margin-top: 18px;">商务汇报通常需要同时承载目标、过程、数据、产品、行动方案和风险说明。HTML 的优势是可以加入目录跳转、卡片展开、数据高亮和响应式阅读。</p>
+          <div class="stat-list">
+            <div class="stat"><strong>3x</strong><p class="body">更适合跨设备阅读和转发。</p></div>
+            <div class="stat"><strong>08</strong><p class="body">可组合页面模块。</p></div>
+            <div class="stat"><strong>24h</strong><p class="body">内容更新后可快速重新发布。</p></div>
+            <div class="stat"><strong>1 URL</strong><p class="body">对外分享无需下载文件。</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="products" aria-label="方案模块">
+      <div class="meta-row"><span>Products / 系列产品</span><span>Page 04</span></div>
+      <div class="product-layout">
+        <div class="product-hero">
+          <div class="product-object"></div>
+        </div>
+        <div>
+          <span class="label blue">Solution Center</span>
+          <h2 style="margin-top: 22px;">Three modules for a complete business report.</h2>
+          <p class="body" style="margin-top: 18px; max-width: 600px;">点击右侧模块，查看这个模板可以承载的不同商务内容。</p>
+          <div class="product-tabs" style="margin-top: 28px;">
+            <button class="product-tab is-active" type="button" data-detail="适合放公司介绍、团队能力、项目背景、客户需求和业务目标。">
+              <strong>01</strong>
+              <div><h3>Company Profile</h3><p class="body">公司介绍 / 背景与定位</p></div>
+            </button>
+            <button class="product-tab" type="button" data-detail="适合放产品矩阵、服务模块、价格版本、核心卖点和方案对比。">
+              <strong>02</strong>
+              <div><h3>Product Matrix</h3><p class="body">产品矩阵 / 能力模块</p></div>
+            </button>
+            <button class="product-tab" type="button" data-detail="适合放交付路径、里程碑、风险控制、资源需求和下一步行动。">
+              <strong>03</strong>
+              <div><h3>Delivery Plan</h3><p class="body">交付计划 / 推进路线</p></div>
+            </button>
+          </div>
+          <div class="tab-detail" id="productDetail">适合放公司介绍、团队能力、项目背景、客户需求和业务目标。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="metrics" aria-label="关键指标">
+      <div class="meta-row"><span>Performance / 关键指标</span><span>Page 05</span></div>
+      <div class="kpi-grid">
+        <div>
+          <h2>Make numbers visible before the explanation.</h2>
+          <p class="body" style="margin-top: 18px; max-width: 620px;">适合在工作汇报中先给领导看到结论，再进入原因、过程和行动建议。</p>
+          <div class="kpi-main" style="margin-top: 34px;">
+            <div class="kpi dark" style="--fill: 86%;"><strong>86%</strong><p>完成率 / progress</p></div>
+            <div class="kpi" style="--fill: 62%;"><strong>12</strong><p>关键项目 / initiatives</p></div>
+            <div class="kpi" style="--fill: 74%;"><strong>3.4x</strong><p>效率提升 / efficiency</p></div>
+            <div class="kpi" style="--fill: 48%;"><strong>￥899</strong><p>可替换为价格或预算。</p></div>
+          </div>
+        </div>
+        <div class="blue-block">
+          <span class="label">Executive Note</span>
+          <h3 style="margin-top: 28px;">数据卡片可以用于月报、年报、产品发布或销售复盘。</h3>
+          <p class="body" style="color: rgba(255,255,255,0.76); margin-top: 16px;">保持数字足够大，说明文字足够短，现场讲解时才能迅速建立重点。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="roadmap" aria-label="推进路线">
+      <div class="meta-row"><span>Roadmap / 推进路线</span><span>Page 06</span></div>
+      <span class="label blue">Planning</span>
+      <h2 style="margin-top: 22px;">A clean route from idea to delivery.</h2>
+      <div class="roadmap">
+        <div class="road-step"><strong>01</strong><h3>Define</h3><p class="body" style="margin-top: 14px;">明确业务目标、汇报对象和判断标准。</p></div>
+        <div class="road-step"><strong>02</strong><h3>Structure</h3><p class="body" style="margin-top: 14px;">把内容拆成背景、产品、数据、计划。</p></div>
+        <div class="road-step"><strong>03</strong><h3>Design</h3><p class="body" style="margin-top: 14px;">使用蓝白灰商务视觉系统组织页面。</p></div>
+        <div class="road-step"><strong>04</strong><h3>Publish</h3><p class="body" style="margin-top: 14px;">本地打开、发给同事或部署成链接。</p></div>
+      </div>
+    </section>
+
+    <section class="slide" id="scenarios" aria-label="应用场景">
+      <div class="meta-row"><span>Use Cases / 应用场景</span><span>Page 07</span></div>
+      <h2>Business pages with enough polish to send out.</h2>
+      <div class="scenario-grid">
+        <button class="scenario is-active" type="button" data-note="适合把月度目标、完成情况、关键问题和下月计划整理成一份可分享的页面。">
+          <span class="label blue">01</span>
+          <h3 style="margin-top: 32px;">职场工作汇报</h3>
+          <p class="body" style="margin-top: 14px;">月报、季度复盘、年终总结。</p>
+        </button>
+        <button class="scenario" type="button" data-note="适合介绍一个产品线、一个服务方案、一个功能模块，突出价格、卖点和案例。">
+          <span class="label">02</span>
+          <h3 style="margin-top: 32px;">产品介绍方案</h3>
+          <p class="body" style="margin-top: 14px;">产品矩阵、功能卖点、发布说明。</p>
+        </button>
+        <button class="scenario" type="button" data-note="适合把商业合作、课程合作、客户方案做成更清晰的在线提案。">
+          <span class="label">03</span>
+          <h3 style="margin-top: 32px;">商务合作提案</h3>
+          <p class="body" style="margin-top: 14px;">合作背景、交付内容、推进计划。</p>
+        </button>
+      </div>
+      <div class="scenario-note" id="scenarioNote">适合把月度目标、完成情况、关键问题和下月计划整理成一份可分享的页面。</div>
+    </section>
+
+    <section class="slide closing" id="closing" aria-label="结尾">
+      <div>
+        <div class="mark">S</div>
+        <h2>Thank you.</h2>
+        <p class="body" style="max-width: 620px; margin: 18px auto 0;">Cobalt Executive Deck / 钴蓝商策，适合商务汇报、产品介绍、工作总结和商业提案。</p>
+        <p class="body" style="margin-top: 22px;">Created by Author Name · Team or Brand</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="floating-actions" aria-label="页面工具">
+    <button class="float-btn" type="button" id="toTop" aria-label="回到顶部">↑</button>
+    <button class="float-btn" type="button" id="nextSlide" aria-label="下一页">↓</button>
+  </div>
+
+  <script>
+    const slides = [...document.querySelectorAll('.slide')];
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add('is-visible');
+      });
+    }, { threshold: 0.38 });
+    slides.forEach((slide) => observer.observe(slide));
+
+    const goToSlide = (index) => {
+      const target = slides[Math.max(0, Math.min(index, slides.length - 1))];
+      target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    const currentSlideIndex = () => {
+      return slides.reduce((active, slide, index) => {
+        return slide.getBoundingClientRect().top <= window.innerHeight * 0.35 ? index : active;
+      }, 0);
+    };
+
+    document.querySelector('.jump').addEventListener('change', (event) => {
+      document.querySelector(event.target.value)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    document.querySelectorAll('.chapter').forEach((chapter) => {
+      chapter.addEventListener('click', () => {
+        document.querySelectorAll('.chapter').forEach((item) => item.classList.remove('is-active'));
+        chapter.classList.add('is-active');
+        document.querySelector(chapter.dataset.target)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    const detail = document.querySelector('#productDetail');
+    document.querySelectorAll('.product-tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.product-tab').forEach((item) => item.classList.remove('is-active'));
+        tab.classList.add('is-active');
+        detail.textContent = tab.dataset.detail;
+      });
+    });
+
+    const scenarioNote = document.querySelector('#scenarioNote');
+    document.querySelectorAll('.scenario').forEach((item) => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.scenario').forEach((card) => card.classList.remove('is-active'));
+        item.classList.add('is-active');
+        scenarioNote.textContent = item.dataset.note;
+      });
+    });
+
+    document.querySelector('#toTop').addEventListener('click', () => {
+      document.querySelector('#cover').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    document.querySelector('#nextSlide').addEventListener('click', () => {
+      goToSlide(currentSlideIndex() + 1);
+    });
+
+    slides.forEach((slide) => {
+      slide.addEventListener('click', (event) => {
+        if (event.target.closest('button, a, select, input, textarea, .product-tab, .scenario, .chapter')) return;
+        goToSlide(slides.indexOf(slide) + 1);
+      });
+    });
+
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowDown' || event.key === 'PageDown' || event.key === ' ') {
+        event.preventDefault();
+        goToSlide(currentSlideIndex() + 1);
+      }
+      if (event.key === 'ArrowUp' || event.key === 'PageUp') {
+        event.preventDefault();
+        goToSlide(currentSlideIndex() - 1);
+      }
+    });
+  </script>
+</body>
+</html>
