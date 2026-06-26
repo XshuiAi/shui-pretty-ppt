@@ -4,7 +4,7 @@ Use this reference when the user asks how a generated HTML web PPT can be revise
 
 ## What Editable Mode Solves
 
-Generated HTML PPT is valuable because it can be opened and presented immediately. The weak point is that non-technical users may still want to change wording after generation. Shui Pretty PPT handles this with a lightweight browser edit layer:
+Generated HTML PPT is valuable because it can be opened and presented immediately. The weak point is that non-technical users may still want to change wording after generation. XiaoShui Pretty PPT handles this with a lightweight browser edit layer:
 
 - Press `E` to enter or exit edit mode.
 - Click text directly to revise headings, paragraphs, list items, table cells, captions, and elements marked with `data-editable`.
@@ -73,15 +73,6 @@ Use this wording when delivering an editable deck:
 这份 HTML PPT 已开启可编辑模式。打开页面后按 E 进入编辑模式，直接点文字就能改；按 Cmd+S / Ctrl+S 保存到本机浏览器；点“导出 HTML”可以下载一份带修改内容的新 HTML 文件。图片、视频、版式结构如果要改，继续用对话告诉 Agent 改哪一页。
 ```
 
-## Video Demo Hook
+## Demo Tips
 
-For competition or self-media demos, show this sequence:
-
-1. Drop a Feishu doc link into the agent.
-2. Say one sentence: "把这份文档做成可演示、可编辑的 HTML 网页 PPT。"
-3. Open the generated deck and show the visual result.
-4. Press `E`, click a headline, change wording live.
-5. Press `Cmd+S`, refresh the page, show the edit stayed.
-6. Click `导出 HTML`, explain that it becomes a shareable static file.
-
-The message: this is not a frozen screenshot or a normal PPT template. It is a reusable presentation workflow that stays editable after generation.
+For demonstrations, show the complete workflow: drop in a document, generate the deck, press `E` to edit text live, save with `Cmd+S`, and export the edited HTML. The key message: this is not a frozen export — it stays editable and maintains visual quality after generation.

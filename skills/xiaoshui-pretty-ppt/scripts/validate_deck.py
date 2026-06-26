@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Basic static validation for a Shui Pretty PPT deck folder."""
+"""Basic static validation for a XiaoShui Pretty PPT deck folder."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ def is_external(value: str) -> bool:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Validate a Shui Pretty PPT output folder.")
+    parser = argparse.ArgumentParser(description="Validate a XiaoShui Pretty PPT output folder.")
     parser.add_argument("deck_dir", help="Deck folder containing index.html")
     args = parser.parse_args()
 

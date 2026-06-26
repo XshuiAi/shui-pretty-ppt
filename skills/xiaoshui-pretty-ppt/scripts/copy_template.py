@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Copy a Shui Pretty PPT template into an output directory."""
+"""Copy a XiaoShui Pretty PPT template into an output directory."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from inject_edit_mode import inject_edit_mode
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Copy a Shui Pretty PPT template.")
+    parser = argparse.ArgumentParser(description="Copy a XiaoShui Pretty PPT template.")
     parser.add_argument("style", help="Style slug, e.g. pastel-blockfolio")
     parser.add_argument("output_dir", help="Directory to create or overwrite")
     parser.add_argument("--force", action="store_true", help="Overwrite output_dir if it exists")

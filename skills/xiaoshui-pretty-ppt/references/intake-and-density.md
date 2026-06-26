@@ -1,6 +1,6 @@
 # Intake And Density Guide
 
-This guide decides what to ask before creating a Shui Pretty PPT deck and how much content should appear on each page.
+This guide decides what to ask before creating a XiaoShui Pretty PPT deck and how much content should appear on each page.
 
 ## Why This Exists
 

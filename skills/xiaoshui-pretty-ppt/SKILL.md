@@ -1,9 +1,9 @@
 ---
-name: shui-pretty-ppt
-description: Create polished standalone HTML presentation decks using the Shui Pretty PPT template library. Use when turning notes, scripts, reports, self-media outlines, portfolios, work summaries, academic/business/government/finance-tech materials, product proposals, or Feishu docs into visual web PPT decks. Includes lively creator/personal templates and practical report/presentation templates such as Pastel Blockfolio, Blush Editorial, Mono Curve Slides, One Dot Cinnabar, Ivory Research Deck, Cobalt Executive Deck, Coral Startup Deck, Ribbon Tab Brochure, Sapphire Defense Deck, Vermilion Civic Deck, Blue Growth Deck, and Garden Pop Landing.
+name: xiaoshui-pretty-ppt
+description: Create polished standalone HTML presentation decks using the XiaoShui Pretty PPT template library. Use when turning notes, scripts, reports, self-media outlines, portfolios, work summaries, academic/business/government/finance-tech materials, product proposals, or Feishu docs into visual web PPT decks. Includes lively creator/personal templates and practical report/presentation templates such as Pastel Blockfolio, Blush Editorial, Mono Curve Slides, One Dot Cinnabar, Ivory Research Deck, Cobalt Executive Deck, Coral Startup Deck, Ribbon Tab Brochure, Sapphire Defense Deck, Vermilion Civic Deck, Blue Growth Deck, and Garden Pop Landing.
 ---
 
-# Shui Pretty PPT
+# XiaoShui Pretty PPT
 
 Use this skill to build **standalone HTML web PPT decks** from a fixed library of reusable visual templates. The output is usually a local static folder containing `index.html` and any required assets. It can be opened directly in a browser, shared as a static page, or used as the visual basis for a talk.
 
@@ -239,21 +239,6 @@ Return:
 
 If publishing, package only the final static deck directory and required assets. If the user asks for install/update instructions, use `references/workflow-and-install.md`.
 
-## Naming Rule
-
-The skill/product name is **Shui Pretty PPT**. Individual template names should be public-facing and based on visual language, not the user's name.
-
-Good:
-
-- `Pastel Blockfolio`
-- `Cobalt Executive Deck`
-- `Vermilion Civic Deck`
-
-Avoid:
-
-- `小水模板 01`
-- `小水风格 PPT`
-
 ## Growing The Library
 
 When a new PPT result should become a reusable template:
@@ -276,7 +261,7 @@ Keep each template distinct. Do not let all styles collapse into the same pastel
 |---|---|---|
 | `references/intake-and-density.md` | intake questions, document-to-deck compression, density rules | before planning a deck |
 | `references/ppt-template-catalog.md` | 12-template catalog and scenario mapping | before choosing a template |
-| `references/workflow-and-install.md` | how the skill is written, installed, updated, and published | install/use/update questions |
+| `references/workflow-and-install.md` | install, update, publish, and validation instructions | install/use/update questions |
 | `references/editable-delivery.md` | browser edit mode, export flow, and what should still be changed through the agent | editable handoff questions |
 | `references/quality-checklist.md` | final QA checklist | before delivery |
 | `scripts/copy_template.py` | copy one template into an output folder | every deck build |

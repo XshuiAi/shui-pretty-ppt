@@ -1,6 +1,6 @@
 # Quality Checklist
 
-Use this before delivering a Shui Pretty PPT deck.
+Use this before delivering a XiaoShui Pretty PPT deck.
 
 ## P0 · Must Pass
 

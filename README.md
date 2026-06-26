@@ -1,4 +1,4 @@
-# Shui Pretty PPT
+# XiaoShui Pretty PPT
 
 一套面向 Codex / Claude Code 等 Coding Agent 的可复用 **HTML 网页 PPT 技能**。
 
@@ -104,7 +104,7 @@
 
 ## What It Can Do
 
-Shui Pretty PPT 可以帮助 Coding Agent：
+XiaoShui Pretty PPT 可以帮助 Coding Agent：
 
 - 读取用户提供的文字、Markdown、飞书文档内容、图片、截图、视频素材。
 - 在动手前判断 PPT 的使用场景、受众、内容密度和模板方向。
@@ -115,34 +115,15 @@ Shui Pretty PPT 可以帮助 Coding Agent：
 - 根据内容长度决定应该做成几页，而不是把所有内容硬塞进一屏。
 - 可选开启浏览器编辑模式：按 `E` 直接改页面文字，保存到本机，或导出修改后的 HTML。
 
-## How This Skill Is Written
+## What Makes It Different
 
-这个 skill 参考了两类成熟写法：
+XiaoShui Pretty PPT 的独特之处：
 
-- 归藏 PPT skill 的强项：先澄清场景、受众、素材、截图、主题，再复制模板并严格验收。
-- frontend-slides 的强项：先判断模式和内容密度，用清晰的阶段流程生成、验证、分享和导出。
-
-Shui Pretty PPT 采用同样的思路，但保持自己的模板库结构：
-
-```text
-skills/shui-pretty-ppt/
-├── SKILL.md                         # skill 入口和主工作流
-├── agents/openai.yaml               # Codex 展示信息
-├── references/
-│   ├── intake-and-density.md        # 使用前提问、内容密度、文档压缩
-│   ├── ppt-template-catalog.md      # 12 个模板的分类和选择
-│   ├── quality-checklist.md         # 交付前验收
-│   ├── workflow-and-install.md      # 安装、更新、发布说明
-│   ├── style-index.md
-│   └── *.md                         # 每套模板的详细风格说明
-├── scripts/
-│   ├── copy_template.py             # 复制模板
-│   ├── inject_edit_mode.py          # 注入浏览器编辑模式
-│   └── validate_deck.py             # 基础可用性检查
-└── assets/templates/<style-slug>/    # 每套模板的可运行 index.html
-```
-
-核心原则是：`SKILL.md` 保持短而清楚；长规则放进 `references/`；重复动作放进 `scripts/`；每次生成 PPT 都从一个真实可运行的模板复制开始。
+- **模板驱动**：不是从零生成代码，而是从 12 套精心设计的视觉模板出发，保持每组配色、字体层级和交互动画的一致性。
+- **先判断再动手**：在使用前会先了解场景、受众、内容密度和素材情况，再推荐最合适的模板方向。
+- **渐进式交付**：清晰的工作流 — 判断模式 → 内容摄入 → 选择模板 → 规划页面 → 复制模板 → 填充内容 → 质量验收 → 交付。
+- **可编辑交付物**：生成的 HTML PPT 可按 `E` 进入浏览器编辑模式，直接在页面上改文字，保存到本地或导出独立 HTML 文件。
+- **内容压缩**：不是把文档逐段贴进页面，而是将素材分类为"必须展示/可口头说明/可省略/需要可视化"再规划页面。
 
 ## Before Creating A PPT
 
@@ -176,35 +157,35 @@ skills/shui-pretty-ppt/
 在 Codex 里可以这样调用：
 
 ```text
-使用 $shui-pretty-ppt，把这份文档做成一个适合晚上分享的 HTML 网页 PPT。
+使用 $xiaoshui-pretty-ppt，把这份文档做成一个适合晚上分享的 HTML 网页 PPT。
 请根据内容自动选择最合适的模板。
 ```
 
 指定模板：
 
 ```text
-使用 $shui-pretty-ppt 的 Cobalt Executive Deck / 钴蓝商策，
+使用 $xiaoshui-pretty-ppt 的 Cobalt Executive Deck / 钴蓝商策，
 把这份产品介绍做成商务汇报型网页 PPT。
 ```
 
 复制模板到本地输出目录：
 
 ```bash
-python3 skills/shui-pretty-ppt/scripts/copy_template.py cobalt-executive-deck /tmp/shui-cobalt-demo --force
+python3 skills/xiaoshui-pretty-ppt/scripts/copy_template.py cobalt-executive-deck /tmp/shui-cobalt-demo --force
 open /tmp/shui-cobalt-demo/index.html
 ```
 
 复制并开启可编辑模式：
 
 ```bash
-python3 skills/shui-pretty-ppt/scripts/copy_template.py cobalt-executive-deck /tmp/shui-cobalt-demo --force --editable
+python3 skills/xiaoshui-pretty-ppt/scripts/copy_template.py cobalt-executive-deck /tmp/shui-cobalt-demo --force --editable
 open /tmp/shui-cobalt-demo/index.html
 ```
 
 给已有 HTML PPT 注入可编辑模式：
 
 ```bash
-python3 skills/shui-pretty-ppt/scripts/inject_edit_mode.py /tmp/shui-cobalt-demo/index.html
+python3 skills/xiaoshui-pretty-ppt/scripts/inject_edit_mode.py /tmp/shui-cobalt-demo/index.html
 ```
 
 打开后按 `E` 进入编辑模式，直接点文字修改；按 `Cmd+S` / `Ctrl+S` 保存；点 `导出 HTML` 下载修改后的文件。图片替换、增删页面、版式调整仍建议通过 Agent 修改源码。
@@ -212,7 +193,7 @@ python3 skills/shui-pretty-ppt/scripts/inject_edit_mode.py /tmp/shui-cobalt-demo
 验证输出：
 
 ```bash
-python3 skills/shui-pretty-ppt/scripts/validate_deck.py /tmp/shui-cobalt-demo
+python3 skills/xiaoshui-pretty-ppt/scripts/validate_deck.py /tmp/shui-cobalt-demo
 ```
 
 ## Install
@@ -222,8 +203,8 @@ python3 skills/shui-pretty-ppt/scripts/validate_deck.py /tmp/shui-cobalt-demo
 推荐使用 `skills` CLI：
 
 ```bash
-npx -y skills@latest add XshuiAi/shui-pretty-ppt \
-  --skill shui-pretty-ppt \
+npx -y skills@latest add XshuiAi/xiaoshui-pretty-ppt \
+  --skill xiaoshui-pretty-ppt \
   --agent codex \
   --global
 ```
@@ -231,8 +212,8 @@ npx -y skills@latest add XshuiAi/shui-pretty-ppt \
 如果希望复制文件而不是软链接：
 
 ```bash
-npx -y skills@latest add XshuiAi/shui-pretty-ppt \
-  --skill shui-pretty-ppt \
+npx -y skills@latest add XshuiAi/xiaoshui-pretty-ppt \
+  --skill xiaoshui-pretty-ppt \
   --agent codex \
   --global \
   --copy \
@@ -245,7 +226,7 @@ npx -y skills@latest add XshuiAi/shui-pretty-ppt \
 
 ```bash
 mkdir -p ~/.codex/skills
-cp -R skills/shui-pretty-ppt ~/.codex/skills/shui-pretty-ppt
+cp -R skills/xiaoshui-pretty-ppt ~/.codex/skills/xiaoshui-pretty-ppt
 ```
 
 然后重启 Codex，让新 skill 生效。
@@ -256,45 +237,37 @@ cp -R skills/shui-pretty-ppt ~/.codex/skills/shui-pretty-ppt
 
 ```bash
 npx -y skills@latest list --global --agent codex --json
-test -f ~/.agents/skills/shui-pretty-ppt/SKILL.md
+test -f ~/.agents/skills/xiaoshui-pretty-ppt/SKILL.md
 ```
 
 ## Repository Structure
 
 ```text
-shui-pretty-ppt/
+xiaoshui-pretty-ppt/
 ├── README.md
 ├── assets/
-│   └── previews/                 # README preview images
+│   └── previews/                    # README preview images
 └── skills/
-    └── shui-pretty-ppt/          # Codex skill source
+    └── xiaoshui-pretty-ppt/         # Codex skill source
         ├── SKILL.md
         ├── agents/openai.yaml
         ├── references/
-	        │   ├── intake-and-density.md
-	        │   ├── ppt-template-catalog.md
-	        │   ├── quality-checklist.md
-	        │   ├── editable-delivery.md
-	        │   ├── workflow-and-install.md
-	        │   ├── style-index.md
-	        │   └── *.md              # detailed style specs
-	        ├── scripts/
-	        │   ├── copy_template.py
-	        │   ├── inject_edit_mode.py
-	        │   └── validate_deck.py
-        └── assets/templates/      # reusable HTML PPT template sources
+        │   ├── intake-and-density.md
+        │   ├── ppt-template-catalog.md
+        │   ├── quality-checklist.md
+        │   ├── editable-delivery.md
+        │   ├── workflow-and-install.md
+        │   ├── style-index.md
+        │   └── *.md                 # detailed style specs
+        ├── scripts/
+        │   ├── copy_template.py
+        │   ├── inject_edit_mode.py
+        │   └── validate_deck.py
+        └── assets/templates/        # reusable HTML PPT template sources
 ```
 
 ## Design Principle
 
-这个 skill 使用 progressive disclosure 的结构：
-
-- `SKILL.md` 只保留核心工作流和风格选择规则。
-- `references/intake-and-density.md` 负责用户使用前的提问、内容密度和文档压缩。
-- `references/ppt-template-catalog.md` 负责模板分类和选择。
-- `references/quality-checklist.md` 负责交付前验收。
-- 每个模板的详细设计规范放在 `references/`。
-- 可复用 HTML 源文件放在 `assets/templates/`。
-- 复制模板使用脚本完成，避免每次都让模型从零重写。
-
-这样做可以减少上下文消耗，也能让每一种 PPT 风格长期保持一致。
+- 每个模板都是独立可运行的完整 HTML 页面，复制即用，不需要从零开始生成。
+- 模板之间有明确的视觉差异，确保每套 PPT 风格都有自己的辨识度。
+- 所有生成逻辑都基于真实的模板源文件，保证产出质量稳定。

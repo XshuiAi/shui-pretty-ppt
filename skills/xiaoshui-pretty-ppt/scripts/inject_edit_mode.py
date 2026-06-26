@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Inject Shui Pretty PPT browser edit mode into an HTML deck."""
+"""Inject XiaoShui Pretty PPT browser edit mode into an HTML deck."""
 
 from __future__ import annotations
 
@@ -239,7 +239,7 @@ def inject_edit_mode(index_path: Path) -> bool:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Inject browser edit mode into a Shui Pretty PPT deck.")
+    parser = argparse.ArgumentParser(description="Inject browser edit mode into a XiaoShui Pretty PPT deck.")
     parser.add_argument("html", help="Path to index.html or another HTML file")
     args = parser.parse_args()
     inject_edit_mode(Path(args.html))
