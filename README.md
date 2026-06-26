@@ -113,6 +113,7 @@ Shui Pretty PPT 可以帮助 Coding Agent：
 - 生成可以直接打开的静态 HTML 网页 PPT。
 - 保留每套模板自己的配色、字体层级、版式节奏和交互动效。
 - 根据内容长度决定应该做成几页，而不是把所有内容硬塞进一屏。
+- 可选开启浏览器编辑模式：按 `E` 直接改页面文字，保存到本机，或导出修改后的 HTML。
 
 ## How This Skill Is Written
 
@@ -136,6 +137,7 @@ skills/shui-pretty-ppt/
 │   └── *.md                         # 每套模板的详细风格说明
 ├── scripts/
 │   ├── copy_template.py             # 复制模板
+│   ├── inject_edit_mode.py          # 注入浏览器编辑模式
 │   └── validate_deck.py             # 基础可用性检查
 └── assets/templates/<style-slug>/    # 每套模板的可运行 index.html
 ```
@@ -191,6 +193,21 @@ skills/shui-pretty-ppt/
 python3 skills/shui-pretty-ppt/scripts/copy_template.py cobalt-executive-deck /tmp/shui-cobalt-demo --force
 open /tmp/shui-cobalt-demo/index.html
 ```
+
+复制并开启可编辑模式：
+
+```bash
+python3 skills/shui-pretty-ppt/scripts/copy_template.py cobalt-executive-deck /tmp/shui-cobalt-demo --force --editable
+open /tmp/shui-cobalt-demo/index.html
+```
+
+给已有 HTML PPT 注入可编辑模式：
+
+```bash
+python3 skills/shui-pretty-ppt/scripts/inject_edit_mode.py /tmp/shui-cobalt-demo/index.html
+```
+
+打开后按 `E` 进入编辑模式，直接点文字修改；按 `Cmd+S` / `Ctrl+S` 保存；点 `导出 HTML` 下载修改后的文件。图片替换、增删页面、版式调整仍建议通过 Agent 修改源码。
 
 验证输出：
 
@@ -254,15 +271,17 @@ shui-pretty-ppt/
         ├── SKILL.md
         ├── agents/openai.yaml
         ├── references/
-        │   ├── intake-and-density.md
-        │   ├── ppt-template-catalog.md
-        │   ├── quality-checklist.md
-        │   ├── workflow-and-install.md
-        │   ├── style-index.md
-        │   └── *.md              # detailed style specs
-        ├── scripts/
-        │   ├── copy_template.py
-        │   └── validate_deck.py
+	        │   ├── intake-and-density.md
+	        │   ├── ppt-template-catalog.md
+	        │   ├── quality-checklist.md
+	        │   ├── editable-delivery.md
+	        │   ├── workflow-and-install.md
+	        │   ├── style-index.md
+	        │   └── *.md              # detailed style specs
+	        ├── scripts/
+	        │   ├── copy_template.py
+	        │   ├── inject_edit_mode.py
+	        │   └── validate_deck.py
         └── assets/templates/      # reusable HTML PPT template sources
 ```
 

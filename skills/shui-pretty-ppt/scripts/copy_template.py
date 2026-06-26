@@ -7,12 +7,19 @@ import argparse
 import shutil
 from pathlib import Path
 
+from inject_edit_mode import inject_edit_mode
+
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Copy a Shui Pretty PPT template.")
     parser.add_argument("style", help="Style slug, e.g. pastel-blockfolio")
     parser.add_argument("output_dir", help="Directory to create or overwrite")
     parser.add_argument("--force", action="store_true", help="Overwrite output_dir if it exists")
+    parser.add_argument(
+        "--editable",
+        action="store_true",
+        help="Inject browser edit mode into the copied deck.",
+    )
     args = parser.parse_args()
 
     skill_root = Path(__file__).resolve().parents[1]
@@ -28,6 +35,8 @@ def main() -> int:
         shutil.rmtree(target)
 
     shutil.copytree(source, target)
+    if args.editable:
+        inject_edit_mode(target / "index.html")
     print(target)
     return 0
 

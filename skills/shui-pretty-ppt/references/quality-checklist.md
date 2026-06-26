@@ -13,6 +13,7 @@ Use this before delivering a Shui Pretty PPT deck.
 - Local images/videos referenced by the HTML exist.
 - Image paths are relative to the deck folder, not absolute `/Users/...` paths.
 - The deck uses one template grammar; do not mix classes from unrelated templates.
+- If editable delivery is requested, the edit toolbar appears and does not cover primary slide content.
 
 ## P1 · Content Quality
 
@@ -31,12 +32,14 @@ Use this before delivering a Shui Pretty PPT deck.
 - Important screenshots are legible at presentation size.
 - No repeated generic card grid across every page unless the template intentionally uses it.
 - Motion is restrained and does not hide content if scripts fail.
+- Browser edit mode should not make navigation labels, buttons, images, videos, canvas, or SVG graphics accidentally editable.
 
 ## P3 · Delivery
 
 - Report the local path.
 - Report the selected template.
 - Mention the density level used.
+- Mention whether edit mode is enabled. If enabled, explain `E`, `保存`, `导出 HTML`, and `重置`.
 - Mention any missing assets or assumptions.
 - If publishing, package the final static folder only.
 
@@ -46,4 +49,5 @@ Use this before delivering a Shui Pretty PPT deck.
 rg "\\[必填\\]|TODO|Lorem|placeholder" /absolute/output/dir
 python3 scripts/validate_deck.py /absolute/output/dir
 open /absolute/output/dir/index.html
+python3 scripts/inject_edit_mode.py /absolute/output/dir/index.html
 ```

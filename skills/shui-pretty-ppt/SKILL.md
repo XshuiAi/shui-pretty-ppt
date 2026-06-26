@@ -32,7 +32,8 @@ This is not a generic webpage generator. It turns source material into a **prese
 4. Copy the template instead of writing the PPT from scratch.
 5. Convert the user's content into cover, agenda, chapter, data, image, comparison, process, summary, and closing pages.
 6. Preserve the chosen template's color system, typography, navigation, interaction model, and motion rules.
-7. Verify the resulting deck visually and structurally before delivery.
+7. Decide whether the deck should include browser edit mode, so the user can directly revise text after generation.
+8. Verify the resulting deck visually and structurally before delivery.
 
 ## What This Skill Is Not
 
@@ -40,6 +41,7 @@ This is not a generic webpage generator. It turns source material into a **prese
 - Not a normal long article renderer.
 - Not a PowerPoint binary exporter.
 - Not a place to cram every paragraph from the source document into slides.
+- Not a full visual editor that replaces a design tool. Browser edit mode is for fast text edits and handoff, while structural changes still go through the agent or source HTML.
 
 If the source is long, convert it into a presentation structure first. Decide what must be shown on slides, what should become speaker notes, and what should be omitted or moved to an appendix-like section.
 
@@ -80,8 +82,9 @@ Before asking questions, detect the user's mode:
 - **Mode C · Existing Deck Enhancement**: user gives an existing generated `index.html` or folder and wants improvements.
 - **Mode D · Template Exploration**: user wants to see available templates, compare styles, or choose a direction.
 - **Mode E · Install / Use / Update**: user asks how to install, write, publish, or update the skill.
+- **Mode F · Editable Delivery**: user asks how to keep modifying the generated HTML PPT, edit text boxes, export an edited file, or make the result easier to hand off.
 
-For Mode D, summarize `references/ppt-template-catalog.md` and recommend 2-3 candidates. For Mode E, read `references/workflow-and-install.md`.
+For Mode D, summarize `references/ppt-template-catalog.md` and recommend 2-3 candidates. For Mode E, read `references/workflow-and-install.md`. For Mode F, read `references/editable-delivery.md`.
 
 ### Step 1 · Intake And Density
 
@@ -160,6 +163,12 @@ python3 scripts/copy_template.py cobalt-executive-deck /tmp/shui-cobalt-demo --f
 open /tmp/shui-cobalt-demo/index.html
 ```
 
+If the user needs to make quick text edits after generation, copy with edit mode:
+
+```bash
+python3 scripts/copy_template.py cobalt-executive-deck /tmp/shui-cobalt-demo --force --editable
+```
+
 Valid slugs:
 
 ```text
@@ -189,6 +198,7 @@ Follow these rules:
 - Convert long prose into presentation pages: cover, agenda, chapter, key point, data, process, comparison, example, summary, closing.
 - Images and videos should live next to `index.html` under a local `assets/` or `images/` folder unless the template already defines another path.
 - Do not reuse borrowed web images unless the user owns them, provides them, or explicitly approves the source.
+- For client handoff, public sharing, or repeated polishing, use `references/editable-delivery.md` and include browser edit mode unless it would distract from a locked presentation.
 
 ### Step 6 · Verify
 
@@ -210,6 +220,12 @@ python3 scripts/copy_template.py <style-slug> /tmp/<style-slug>-test --force
 python3 scripts/validate_deck.py /absolute/output/dir
 ```
 
+For editable decks:
+
+```bash
+python3 scripts/inject_edit_mode.py /absolute/output/dir/index.html
+```
+
 ### Step 7 · Delivery
 
 Return:
@@ -217,6 +233,7 @@ Return:
 - local deck path
 - selected template name
 - what content was transformed
+- whether browser edit mode is included and how to use it
 - any assets that still need the user's replacement
 - any verification command results
 
@@ -260,6 +277,8 @@ Keep each template distinct. Do not let all styles collapse into the same pastel
 | `references/intake-and-density.md` | intake questions, document-to-deck compression, density rules | before planning a deck |
 | `references/ppt-template-catalog.md` | 12-template catalog and scenario mapping | before choosing a template |
 | `references/workflow-and-install.md` | how the skill is written, installed, updated, and published | install/use/update questions |
+| `references/editable-delivery.md` | browser edit mode, export flow, and what should still be changed through the agent | editable handoff questions |
 | `references/quality-checklist.md` | final QA checklist | before delivery |
 | `scripts/copy_template.py` | copy one template into an output folder | every deck build |
+| `scripts/inject_edit_mode.py` | add edit toolbar to an existing HTML deck | when editable delivery is needed |
 | `scripts/validate_deck.py` | basic static validation for generated deck folders | before delivery |

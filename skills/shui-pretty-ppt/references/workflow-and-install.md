@@ -14,11 +14,13 @@ shui-pretty-ppt/
 │   ├── intake-and-density.md
 │   ├── ppt-template-catalog.md
 │   ├── quality-checklist.md
+│   ├── editable-delivery.md
 │   ├── workflow-and-install.md
 │   ├── style-index.md
 │   └── <template-reference>.md
 ├── scripts/
 │   ├── copy_template.py
+│   ├── inject_edit_mode.py
 │   └── validate_deck.py
 └── assets/templates/<style-slug>/index.html
 ```
@@ -42,6 +44,7 @@ Long instructions live here. The agent reads only the relevant reference file:
 - `intake-and-density.md`: questions, density, document-to-deck compression
 - `ppt-template-catalog.md`: 12-template selection guide
 - `quality-checklist.md`: final QA
+- `editable-delivery.md`: browser edit mode and handoff rules
 - one reference file per template
 
 ### assets/templates/
@@ -53,6 +56,7 @@ Each template has a complete runnable `index.html`. A generated deck starts by c
 Use scripts for repeatable actions:
 
 - `copy_template.py`: copy a template to a target folder
+- `inject_edit_mode.py`: add browser edit mode to an existing HTML deck
 - `validate_deck.py`: check common output problems before delivery
 
 ## Install From GitHub
@@ -129,6 +133,29 @@ python3 skills/shui-pretty-ppt/scripts/validate_deck.py /tmp/shui-cobalt-demo
 open /tmp/shui-cobalt-demo/index.html
 ```
 
+## Create An Editable Deck
+
+Use this when the user needs to revise wording after generation, hand the deck to a client, or record a video showing that the result is not frozen.
+
+```bash
+python3 skills/shui-pretty-ppt/scripts/copy_template.py cobalt-executive-deck /tmp/shui-cobalt-demo --force --editable
+open /tmp/shui-cobalt-demo/index.html
+```
+
+For an existing deck:
+
+```bash
+python3 skills/shui-pretty-ppt/scripts/inject_edit_mode.py /tmp/shui-cobalt-demo/index.html
+```
+
+Keyboard and toolbar behavior:
+
+- Press `E` to enter or exit edit mode.
+- Click text directly to edit it.
+- Press `Cmd+S` / `Ctrl+S`, or click `保存`, to save changes to browser localStorage.
+- Click `导出 HTML` to download a standalone edited HTML file.
+- Click `重置` to clear local browser edits.
+
 ## Prompt Examples
 
 Use automatic selection:
@@ -150,4 +177,11 @@ Specify a template:
 ```text
 使用 $shui-pretty-ppt 的 Garden Pop Landing / 花园跳色长页，
 把这个课程介绍做成更适合自媒体发布的 PPT。
+```
+
+Editable handoff:
+
+```text
+使用 $shui-pretty-ppt，把这份飞书文档做成可直接演示的 HTML 网页 PPT。
+请开启可编辑模式，这样我录视频时可以展示直接修改页面文字和导出 HTML。
 ```
